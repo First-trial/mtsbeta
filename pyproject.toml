@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "repl_python3_Kkaguavsfowbstsjsvvskalqk"
+version = "0.1.0"
+description = ""
+authors = ["Rishiraj0100 <<>>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiohttp = "^3.7.4"
+asyncpg = "^0.24.0"
+"discord.py" = "^1.7.3"
+lru-dict = "^1.1.7"
+parsedatetime = "^2.6"
+tortoise = "^0.1.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
