@@ -1,2 +1,2 @@
-pip install git+https://github.com/Rapptz/discord.py.git
+pip install -r r.txt
 python3 main.py

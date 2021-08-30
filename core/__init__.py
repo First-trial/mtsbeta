@@ -47,6 +47,7 @@ class MtsBot(AutoShardedBot):
 
 	def run(self, *args, **kwargs):
 		self.loop.run_until_complete(self._on_ready())
+		self.load_commands()
 		super().run(*args, **kwargs)
 
 	async def parse_interaction(self, data):

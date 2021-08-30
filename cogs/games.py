@@ -175,11 +175,10 @@ class ga(commands.Cog, name="Games"):
 		rolldice.set_footer(text="Mts bot")
 		await ctx.send(embed=rolldice)
 
-	@commands.command()
-	async def tournament(self, ctx, tc1: discord.Member, tc2: discord.Member,
-	                     tc3: discord.Member,tc4: discord.Member=None):
+	@commands.command(hidden=True)
+	async def tournament(self,ctx,tc1: discord.Member,tc2: discord.Member,tc3: discord.Member,tc4: discord.Member = None):
 		try:
-			tc4 =tc4 or ctx.author
+			tc4 = tc4 or ctx.author
 			user = [tc1, tc2, tc3, tc4]
 			hitu1 = f'{tc1} chose a card!'
 			hitu2 = f'{tc2} chose a card!'
@@ -268,9 +267,8 @@ class ga(commands.Cog, name="Games"):
 			hit12.set_image(url=random.choice(rndmc))
 			await hit_.edit(embed=hit12)
 			await asyncio.sleep(3)
-			m = [
-			    fight1, hit_]#, hit2_, hit3_, hit4_, hit5_, hit6_, hit7_,
-			    #hit8_, hit9_, hit10_, hit11_, hit12_
+			m = [fight1, hit_]  #, hit2_, hit3_, hit4_, hit5_, hit6_, hit7_,
+			#hit8_, hit9_, hit10_, hit11_, hit12_
 			#]
 			for i in m:
 				try:
@@ -296,10 +294,13 @@ class ga(commands.Cog, name="Games"):
 			                      description='User ```<@user>```')
 			await ctx.send(embed=error)
 
-	@commands.command(aliases=["rps", "sps"])
-	async def ssp(self, ctx, args):
+	@commands.command(aliases=["sps"], brief="A Rock Paper Scissor command",usage="<argument>")
+	async def rps(self, ctx, argument):
+		"""Rps command"""
 		ssp_choice = ['scissor', 'stone', 'paper']
-		args = args.lower()
+		args = argument.lower()
+		if args == "rock":
+			args = "scissor"
 		choice = random.choice(ssp_choice)
 		icon = "https://hqsartworks.me/icons/ssp.png"
 
@@ -423,7 +424,7 @@ class ga(commands.Cog, name="Games"):
 
 		else:
 			n = discord.Embed(title='Dont try to cheat', color=colors.red)
-			n.set_author(name='Scissor, stone and paper', icon_url=icon)
+			n.set_author(name='Scissor, rock and paper', icon_url=icon)
 			await ctx.send(embed=n)
 
 

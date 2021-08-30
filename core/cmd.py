@@ -10,16 +10,22 @@ class Command:
 	def add_command(cls, bot):
 		cls.bot = bot
 		cls.bot.remove_command(cls.name)
-		alias=[]
-		if hasattr(cls,"aliases"):
-		  alias=cls.aliases
-		kwargs = {
-		  "aliases": alias
-		}
-		cls.bot.command(name=cls.name, brief=cls.brief,usage=cls.args,**kwargs)(cls.handler)
+		alias = []
+		if hasattr(cls, "aliases"):
+			alias = cls.aliases
+		kwargs = {"aliases": alias}
+		cmd = cls.bot.command(name=cls.name,
+		                      brief=cls.brief,
+		                      usage=cls.args,
+		                      **kwargs)(cls.handler)
+		cmd.cog = cls.bot.get_cog("Games")
+		new_list = [cmd]
+		for cmd in bot.get_cog("Games").__cog_commands__:
+			new_list.append(cmd)
+		bot.get_cog("Games").__cog_commands__ = new_list
 
 	@classmethod
-	async def handler(cls, context):
+	async def handler(cls, self, context):
 		missing_permissions = cls.bot.get_missing_permissions(context)
 		if len(missing_permissions) > 0:
 			await cls.bot.send_missing_permissions(context,

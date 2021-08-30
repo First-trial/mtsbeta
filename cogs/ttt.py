@@ -5,6 +5,7 @@ from core.em import REPEAT
 from discord.ext import commands
 import sys, traceback
 from core import Cog
+import random
 
 
 async def o(ctx, *args, **kwargs):
@@ -12,7 +13,8 @@ async def o(ctx, *args, **kwargs):
 
 
 class RestartButton(discord.ui.Button["Restart"]):
-	def __init__(self):
+	def __init__(self, bb: bool = False):
+		self.bb = bb
 		super().__init__(style=discord.ButtonStyle.primary,
 		                 label="Restart",
 		                 emoji=REPEAT,
@@ -26,9 +28,15 @@ class RestartButton(discord.ui.Button["Restart"]):
 			return await interaction.response.send_message(
 			    "You are not in this game!", ephemeral=True)
 		#await view.remove_item(self)
-		await interaction.message.edit(content=f"Its {view.o.mention}'s turn!",
-		                               view=TicTacToe(view.o, view.x, view.m,
-		                                              view.b))
+		if self.bb:
+			await interaction.message.edit(
+			    f"It's your turn!\nYou have `30 seconds` to respond!",
+			    view=TicTacToe(view.x, view.o, view.m, view.b))
+		else:
+			await interaction.message.edit(
+			    content=
+			    f"Its {view.o.mention}'s turn!\nYou have `30 seconds` to respond!",
+			    view=TicTacToe(view.o, view.x, view.m, view.b))
 		await interaction.response.send_message(
 		    "Successfully started a new match!", ephemeral=True)
 
@@ -43,6 +51,71 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
 
 	# This function is called whenever this particular button is pressed
 	# This is part of the "meat" of the game logic
+	async def my_call(self, interaction: discord.Interaction):
+		assert self.view is not None
+		view = self.view
+		if not interaction.user.id in (view.x.id, view.o.id):
+			content = "You are not in this game."
+			return await interaction.response.send_message(content=content,
+			                                               ephemeral=True)
+
+		view.board[self.y][
+		    self.x] = view.X if view.b.user.id != view.x.id else view.O
+		self.style = discord.ButtonStyle.danger if view.b.user.id != view.x.id else discord.ButtonStyle.success
+		self.label = 'O' if view.b.user.id == view.x.id else "X"
+		self.disabled = True
+		o = view.o if view.x.id == view.b.user.id else view.x
+		content = f"It's now your turn {o.mention}\nYou have 30 seconds to respond."
+		winner = view.check_board_winner()
+		if winner is not None:
+			if (winner == view.X and view.x.id == view.b.user.id) or (
+			    winner == view.O and view.o.id == view.b.user.id):
+				content = f'I won!'
+			elif winner == view.Tie:
+				content = "It's a tie!"
+			else:
+				content = "You won!"
+
+			for child in view.children:
+				child.disabled = True
+			#view.stop()
+			view.current_player = None
+			view.add_item(RestartButton(bb=True))
+			return await interaction.response.edit_message(content=content,
+			                                               view=view)
+		row, col = view.my_turn()
+		view.board[row][
+		    col] = view.X if view.b.user.id == view.x.id else view.O
+		if col == 0:
+			button, r = view.children[row], row
+		elif col == 1:
+			button, r = view.children[row + 3], row + 3
+		else:
+			button, r = view.children[row + 6], row + 6
+		button.style = discord.ButtonStyle.danger if view.b.user.id == view.x.id else discord.ButtonStyle.success
+		button.label = 'O' if view.b.user.id != view.x.id else "X"
+		button.disabled = True
+		winner = view.check_board_winner()
+		if winner is not None:
+			if (winner == view.X and view.x.id == view.b.user.id) or (
+			    winner == view.O and view.o.id == view.b.user.id):
+				content = f'I won!'
+			elif winner == view.Tie:
+				content = "It's a tie!"
+			else:
+				content = "You won!"
+
+			for child in view.children:
+				child.disabled = True
+			#view.stop()
+			view.current_player = None
+			view.add_item(RestartButton(bb=True))
+			return await interaction.response.edit_message(content=content,
+			                                               view=view)
+		view.children[r] = button
+		return await interaction.response.edit_message(content=content,
+		                                               view=view)
+
 	async def callback(self, interaction: discord.Interaction):
 		assert self.view is not None
 		view: TicTacToe = self.view
@@ -50,6 +123,9 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
 		if state in (view.X, view.O):
 			return
 
+		if view.b.user.id in (view.x.id, view.o.id):
+			return await self.my_call(interaction)
+		print(list(i for i in view.children))
 		if view.current_player == view.X and interaction.user.id == view.x.id:
 			self.style = discord.ButtonStyle.danger
 			self.label = 'X'
@@ -65,12 +141,10 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
 			view.current_player = view.X
 			content = f"It is now {view.x.mention}'s turn\nYou have `30 seconds` to respond"
 		else:
-			content = "It's not your turn." if interaction.user.id in [
-			    view.x.id, view.o.id
-			] else "You are not playing!"
-			return await interaction.response.send_message(content,
+			content = "You are not in this game." if interaction.user.id not in (
+			    view.x.id, view.o.id) else "It's not your turn now!"
+			return await interaction.response.send_message(content=content,
 			                                               ephemeral=True)
-
 		winner = view.check_board_winner()
 		if winner is not None:
 			if winner == view.X:
@@ -153,20 +227,33 @@ class TicTacToe(discord.ui.View):
 
 		return None
 
+	def my_turn(self):
+		choices = []
+		for rowpos, row in enumerate(self.board):
+			for colpos, col in enumerate(row):
+				if col == 0:
+					choices.append((rowpos, colpos))
+
+		my_choice = random.choice(choices)
+		return my_choice
+
 	async def on_timeout(self):
-		for childre in self.children:
+		c = self.b.get_channel(self.m.channel.id)
+		v = self
+		for childre in v.children:
 			childre.disabled = True
 		if self.current_player is None:
-			self.m = await self.channel.fetch_message(self.m.id)
+			self.m = await self.c.fetch_message(self.m.id)
 
-			return await self.m.edit(content=f"{self.m.content}", view=self)
-		c = self.b.get_channel(self.m.channel.id)
+			return await self.m.edit(content=f"{self.m.content}", view=v)
+
 		if self.current_player == self.X:
 			co = f"{self.x.mention} didn't moved in `30 seconds` so {self.o.mention} won the game!"
 		else:
 			co = f"{self.o.mention} didn't moved in `30 seconds` so {self.x.mention} won the game!"
+		self.current_player = None
 		self.m = await c.fetch_message(self.m.id)
-		self.add_item(RestartButton())
+
 		await self.m.edit(content=f"{co}", view=self)
 
 		print("exp")
@@ -186,12 +273,16 @@ class tic(Cog, name="Tictactoe"):
 
 		if not user:
 			return await ctx.send(
-			    f"Uh oh\nYou missed member argument `{ctx.prefix}{ctx.command} @member`"
+			    f"Uh oh\nYou missed member argument `{ctx.prefix}{ctx.command} @member`\nare u alone?\nPlay with me by `{ctx.prefix}{ctx.command} ai`"
 			)
 		if user.id == ctx.author.id:
-			return await ctx.send("You can't play against yourself!")
+			return await ctx.send(
+			    f"You can't play against yourself!\nare u alone?\nPlay with me by `{ctx.prefix}{ctx.command} ai`"
+			)
 		if user.bot:
-			return await ctx.send("You can't play against bots!")
+			return await ctx.send(
+			    "You can't play against bots, and why do u wanna play with bots?? If u want to then u can play with me"
+			)
 		p2 = user
 		p1 = ctx.author
 		m = await ctx.send("Starting...")
@@ -215,6 +306,16 @@ class tic(Cog, name="Tictactoe"):
 		view = TicTacToe(p1, p2, m, self.bot)
 		await m.edit(f"it's {p1.mention}'s turn.", view=view)
 
+	@tictactoe.command(
+	    name="ai",
+	    aliases=["ui", "<@768680278604382238>", "<@!768680278604382238>"])
+	@commands.guild_only()
+	async def tictactoe_ai(self, ctx):
+		p1, p2 = ctx.author, self.bot.user
+		m = await ctx.send("Starting...")
+		view = TicTacToe(p1, p2, m, self.bot)
+		await m.edit(f"it's your' turn.", view=view)
+
 	@tictactoe.error
 	async def ttt_err(self, ctx, exc):
 		if isinstance(exc, commands.NoPrivateMessage):
@@ -226,6 +327,15 @@ class tic(Cog, name="Tictactoe"):
 		if isinstance(exc, commands.errors.MemberNotFound):
 			return await ctx.reply(
 			    "Try that command again and this time, use a real member!")
+		print(exc, file=sys.stderr)
+		traceback.print_exc()
+
+	@tictactoe_ai.error
+	async def tictactoe_ai_error(self, ctx, exc):
+		if isinstance(exc, commands.NoPrivateMessage):
+			return await ctx.send(
+			    "This command can't be used here,You can use this command in the servers only"
+			)
 		print(exc, file=sys.stderr)
 		traceback.print_exc()
 
