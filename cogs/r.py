@@ -81,10 +81,10 @@ class Reminder(commands.Cog):
 			)
 
 	async def get_active_timer(self, *, connection=None, days=7):
-		query = "SELECT * FROM reminders WHERE expires < (CURRENT_DATE + $1::interval) ORDER BY expires LIMIT 1;"
+		query = "SELECT * FROM reminders WHERE expires < ? ORDER BY expires LIMIT 1;"
 		con = connection or self.bot.pool
 
-		record = await con.fetchrow(query, datetime.timedelta(days=days))
+		record = await con.fetchrow(query, datetime.datetime.now()+datetime.timedelta(days=days))
 		return Timer(record=record) if record else None
 
 	async def wait_for_active_timers(self, *, connection=None, days=7):
@@ -193,12 +193,18 @@ class Reminder(commands.Cog):
                    VALUES ($1, $2::jsonb, $3, $4)
                    RETURNING id;
                 """
-
-		row = await connection.fetchrow(query, event, {
+		'''row = await connection.fetchrow(query, event, {
 		    'args': args,
 		    'kwargs': kwargs
-		}, when, now)
-		timer.id = row[0]
+		}, when, now)'''
+		row = await reminders.create(event="reminder",
+		                             extra={
+		                                 "args": args,
+		                                 "kwargs": kwargs
+		                             },
+		                             expires=when,
+		                             created=now)
+		timer.id = row.id
 
 		# only set the data check if it can be waited on
 		if delta <= (86400 * 40):  # 40 days
@@ -215,7 +221,9 @@ class Reminder(commands.Cog):
 	@commands.group(aliases=['remind'],
 	                usage='<when>',
 	                invoke_without_command=True)
-	async def reminder(self, ctx, *,when: time.UserFriendlyTime(commands.clean_content,default='\u2026')):
+	async def reminder(self, ctx, *,
+	                   when: time.UserFriendlyTime(commands.clean_content,
+	                                               default='\u2026')):
 		"""Reminds you of something after a certain amount of time.
 
         The input can be any direct date (e.g. YYYY-MM-DD) or a human
@@ -252,7 +260,10 @@ class Reminder(commands.Cog):
                 """
 
 		#records = await (await ctx.db.execute(query, (str(ctx.author.id)))).fetchall()
-		records = await reminders.filter(event="reminder", extra={"args": [str(ctx.author.id)]})
+		records = await reminders.filter(event="reminder",
+		                                 extra__contains={
+		                                     "args": [str(ctx.author.id)]
+		                                 }).order_by("expires").limit(10)
 		await ctx.send(records)
 		if len(records) == 0:
 			return await ctx.send('No currently running reminders.')
@@ -265,14 +276,17 @@ class Reminder(commands.Cog):
 			e.set_footer(
 			    text=f'{len(records)} reminder{"s" if len(records) > 1 else ""}'
 			)
-
-		for _id, expires, message in records:
-			shorten = textwrap.shorten(message, width=512)
-			e.add_field(name=f'{_id}: In {time.human_timedelta(expires)}',
-			            value=shorten,
-			            inline=False)
-
-		await ctx.send(embed=e)
+		j = {}
+		for record in records:
+			j[str(record.id)] = {}
+			for lst in record:
+				j[str(record.id)][lst[0]] = lst[1]
+				'''shorten = textwrap.shorten(message, width=512)
+				e.add_field(name=f'{_id}: In {time.human_timedelta(expires)}',
+				            value=shorten,
+				            inline=False)'''
+		await ctx.send(j)
+		#await ctx.send(embed=e)
 
 	@reminder.command(name='delete',
 	                  aliases=['remove', 'cancel'],
