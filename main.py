@@ -21,6 +21,10 @@ class Myh(Meh):
 		               command.short_doc))
 
 
+import web, asyncio
+
+
+
 class misc(Cog):
 	def __init__(self, bot):
 		self.bot = bot
@@ -48,6 +52,7 @@ bot = MtsBot(command_prefix=get_pre,
              intents=discord.Intents.all())
 bot.add_cog(misc(bot))
 sblpy.SBLCog(bot, env.get("sbl_tok"))
+
 
 
 @bot.event
