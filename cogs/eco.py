@@ -195,8 +195,9 @@ class eco(cog.SlashCog):
 			c = self.bot.get_channel(797336604045344788)
 			await c.send(exc)
 
-	@commands.command(name="dep", aliases=["deposit"])
-	async def dep(self, ctx, am):
+	@cog.command(name="deposit")
+	async def dep(self, ctx, amount: int):
+		am = amount
 		with open("data/bal.json", "r") as f:
 			kk = json.load(f)
 
@@ -204,47 +205,26 @@ class eco(cog.SlashCog):
 			a = "wallet"
 			b = "bank"
 			k = kk[str(ctx.author.id)]
-			if am == "all":
-				am = k["wallet"]
-				await self.take_money(a, ctx.author.id, am, ctx)
-				await self.give_money(b, ctx.author.id, am, ctx)
-				await ctx.send(
-				    f"Successfully deposited {am} coins to your bank")
+			am = int(am)
+			if am > k["wallet"]:
+				await ctx.reply("You don't have enough money in your wallet to deposit", ephemeral=True)
 			else:
-				try:
-					am = int(am)
-					if am > k["wallet"]:
-						await ctx.send(
-						    "You don't have enough money in your wallet to deposit"
-						)
-					else:
-						await self.take_money(a, ctx.author.id, am, ctx)
-						await self.give_money(b, ctx.author.id, am, ctx)
-						await ctx.send(
-						    f"Successfully deposited {am} coins to your bank")
-				except ValueError:
-					await ctx.send("This is not a value")
-					return
+				await ctx.reply(f'Depositing {am} coins in your bank...')
+				await self.take_money(self, a, ctx.author.id, am, ctx)
+				await self.give_money(self, b, ctx.author.id, am, ctx)
+				await ctx.edit(f"Successfully deposited {am} coins to your bank")
 		else:
-			await self.open_acc(ctx.author.id, ctx)
+			await self.open_acc(self, ctx.author.id, ctx)
 			a = "wallet"
 			b = "bank"
 			k = kk[str(ctx.author.id)]
-			if am == "all":
-				am = 500
-				await self.take_money(a, ctx.author.id, am, ctx)
-				await self.give_money(b, ctx.author.id, am, ctx)
-				await ctx.send(
-				    f"Successfully deposited {am} coins to your bank")
+			if am > 500:
+				await ctx.reply("you only have 500 coins in your wallet to deposit", ephemeral=True)
 			else:
-				if am > 500:
-					await ctx.send(
-					    "you only have 500 coins in your wallet to deposit")
-				else:
-					await self.take_money(a, ctx.author.id, am, ctx)
-					await self.give_money(b, ctx.author.id, am, ctx)
-					await ctx.send(
-					    f"Successfully deposited {am} coins to your bank")
+				await ctx.reply(f'Depositing {am} coins in your bank...')
+				await self.take_money(self, a, ctx.author.id, am, ctx)
+				await self.give_money(self, b, ctx.author.id, am, ctx)
+				await ctx.edit(f"Successfully deposited {am} coins to your bank")
 
 	@commands.command(name="with", aliases=["withdraw"])
 	async def with_cmd(self, ctx, am):
