@@ -27,7 +27,7 @@ class eco(cog.SlashCog):
 		with open("data/bal.json", "r") as f:
 			kk = json.load(f)
 		kk[str(id)] = {"wallet": 500, "bank": 0}
-		await self.up_usr(ctx, id, 0, 500)
+		await self.up_usr(self, ctx, id, 0, 500)
 		with open("data/bal.json", "w") as f:
 			json.dump(kk, f, indent=4)
 
@@ -125,7 +125,7 @@ class eco(cog.SlashCog):
 			await ctx.reply(embed=b)
 		else:
 			await ctx.reply("Opening account....")
-			await self.open_acc(u.id, ctx)
+			await self.open_acc(self, u.id, ctx)
 			b = discord.Embed(
 			    title=f"{u.name}'s balance",
 			    description=f"Wallet: `500 coins`\nBank: `0 coins`")
