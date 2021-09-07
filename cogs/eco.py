@@ -112,7 +112,7 @@ class eco(cog.SlashCog):
 
 	@cog.command(name="balance")
 	async def bal(self, ctx, user: discord.Member = None):
-		user or ctx.author
+		u=user or ctx.author
 		with open("data/bal.json", "r") as f:
 			kk = json.load(f)
 		if str(u.id) in kk:
@@ -125,7 +125,7 @@ class eco(cog.SlashCog):
 			await ctx.reply(embed=b)
 		else:
 			await ctx.reply("Opening account....")
-			await self.open_acc(u.id, ctx)
+			await self.open_acc(self, u.id, ctx)
 			b = discord.Embed(
 			    title=f"{u.name}'s balance",
 			    description=f"Wallet: `500 coins`\nBank: `0 coins`")
