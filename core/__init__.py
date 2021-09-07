@@ -113,11 +113,8 @@ class MtsBot(slash.AutoShardedBot):
 	async def on_ready(self):
 		self._author = await self.fetch_user(730454267533459568)
 		print("backend purahh")
-		self.loop.create_task(self.on_my_ev())
-		
-	async def on_my_ev(self):
 		import web
-		await web.run(self)
+		web.run(self)
 
 	@property
 	def pool(self):
