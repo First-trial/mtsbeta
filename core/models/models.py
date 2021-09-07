@@ -17,3 +17,10 @@ class reminders(Model):
 	def args(self):
 		return self.extra.get("args", ())
 
+class balance(Model):
+  class Meta:
+    table = 'bal'
+
+  uid = fields.TextField()
+  hand = fields.TextField()
+  bank = fields.TextField()
