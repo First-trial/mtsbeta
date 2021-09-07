@@ -1,5 +1,6 @@
 import discord, json
 from discord.ext import commands
+from slash import cog
 
 
 async def _ch(ctx):
@@ -14,7 +15,7 @@ async def _ch(ctx):
 	return True
 
 
-class eco(commands.Cog):
+class eco(cog.SlashCog):
 	def __init__(self, bot):
 		self.bot = bot
 
@@ -109,7 +110,7 @@ class eco(commands.Cog):
 		with open("data/bal.json", "w") as f:
 			json.dump(kk, f, indent=4)
 
-	@commands.command(name="bal", aliases=["balance"])
+	@cog.command(name="balance", aliases=["balance"])
 	async def bal(self, ctx, u: discord.Member = None):
 		if u == None:
 			u = ctx.author
@@ -126,13 +127,13 @@ class eco(commands.Cog):
 			b = discord.Embed(
 			    title=f"{u.name}'s balance",
 			    description=f"Wallet: `{wallet} coins`\nBank: `{bank} coins`")
-			await ctx.send(embed=b)
+			await ctx.reply(embed=b)
 		else:
 			await self.open_acc(u.id, ctx)
 			b = discord.Embed(
 			    title=f"{u.name}'s balance",
 			    description=f"Wallet: `500 coins`\nBank: `0 coins`")
-			await ctx.send(embed=b)
+			await ctx.reply(embed=b)
 
 	@commands.group(name="work", invoke_without_command=True)
 	@commands.check(_ch)
