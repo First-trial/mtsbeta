@@ -116,7 +116,7 @@ class MtsBot(AutoShardedBot):
 		
 	async def on_my_ev(self):
 		import web
-		await web.run(self.loop)
+		await web.run(self)
 
 	@property
 	def pool(self):

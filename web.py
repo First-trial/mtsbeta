@@ -1,4 +1,4 @@
-from quart import Quart
+from quart import Quart, request
 
 app = Quart(__name__)
 
@@ -9,8 +9,10 @@ async def index():
 
 @app.route("/topgg")
 async def dbl():
+  """"""
   pass
 
 
-async def run(leep):
+async def run(bot):
+  setattr(app,"bot",bot)
   await app.run_task("0.0.0.0", 8090)
