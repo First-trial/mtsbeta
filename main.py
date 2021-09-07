@@ -1,6 +1,7 @@
 from core import MtsBot
 import discord
 from os import environ as env
+import slash
 from discoutils import MinimalEmbedHelp as Meh
 from discord.ext.commands import Cog
 
@@ -53,7 +54,14 @@ intents=discord.Intents.all(),slashlog=True)
 bot.add_cog(misc(bot))
 sblpy.SBLCog(bot, env.get("sbl_tok"))
 
+@bot.slash(name='tests', cls=slash.models.SubCommand)
+async def testesss(ctx, u: discord.Member):
+  if u.author.id == bot.author_id:
+    await ctx.reply('hmm')
 
+@bot.slash(name='test', subcommands=[testesss])
+async def testttt(ctx):
+  await ctx.reply('hii')
 
 @bot.event
 async def on_guild_join(guild):
