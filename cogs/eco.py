@@ -50,25 +50,25 @@ class eco(cog.SlashCog):
         bank = k["bank"]
         money += w
         kk[str(id)] = {"wallet": money, "bank": bank}
-        await self.up_usr(ctx, id, bank, money)
+        await self.up_usr(self, ctx, id, bank, money)
       else:
         k = kk[str(id)]
         w = k["bank"]
         bank = k["wallet"]
         money += w
         kk[str(id)] = {"wallet": bank, "bank": money}
-        await self.up_usr(ctx, id, money, bank)
+        await self.up_usr(self, ctx, id, money, bank)
     else:
       if area == "wallet":
         bank = 0
         money += 500
         kk[str(id)] = {"wallet": money, "bank": bank}
-        await self.up_usr(ctx, id, bank, money)
+        await self.up_usr(self, ctx, id, bank, money)
       else:
         bank = money
         mon = 500
         kk[str(id)] = {"wallet": mon, "bank": bank}
-        await self.up_usr(ctx, id, bank, mon)
+        await self.up_usr(self, ctx, id, bank, mon)
     with open("data/bal.json", "w") as f:
       json.dump(kk, f, indent=4)
 
@@ -89,21 +89,21 @@ class eco(cog.SlashCog):
         bank = k["bank"]
         w -= money
         kk[str(id)] = {"wallet": w, "bank": bank}
-        await self.up_usr(ctx, id, bank, w)
+        await self.up_usr(self, ctx, id, bank, w)
       else:
         k = kk[str(id)]
         w = k["bank"]
         bank = k["wallet"]
         w -= money
         kk[str(id)] = {"wallet": bank, "bank": w}
-        await self.up_usr(ctx, id, w, bank)
+        await self.up_usr(self, ctx, id, w, bank)
 
     else:
       if area == "wallet":
         bank = 0
         money = 500 - money
         kk[str(id)] = {"wallet": money, "bank": bank}
-        await self.up_usr(ctx, id, bank, money)
+        await self.up_usr(self, ctx, id, bank, money)
       else:
         return
 
