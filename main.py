@@ -49,7 +49,7 @@ bot = MtsBot(command_prefix=get_pre,
              shard_ids=shards,
              shard_count=6,
              help_command=Myh(color=0x00ffff),
-             intents=discord.Intents.all())
+intents=discord.Intents.all(),slashlog=True)
 bot.add_cog(misc(bot))
 sblpy.SBLCog(bot, env.get("sbl_tok"))
 

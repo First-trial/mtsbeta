@@ -113,7 +113,7 @@ class eco(cog.SlashCog):
 	@cog.command(name="balance")
 	async def bal(self, ctx, u: discord.Member = None):
 		if u == None:
-			u = ctx.author
+			u = ctx.user
 		else:
 			u = u
 
