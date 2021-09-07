@@ -110,7 +110,7 @@ class eco(cog.SlashCog):
 		with open("data/bal.json", "w") as f:
 			json.dump(kk, f, indent=4)
 
-	@cog.command(name="balance", aliases=["balance"])
+	@cog.command(name="balance")
 	async def bal(self, ctx, u: discord.Member = None):
 		if u == None:
 			u = ctx.author
