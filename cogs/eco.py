@@ -125,7 +125,7 @@ class eco(cog.SlashCog):
 			await ctx.reply(embed=b)
 		else:
 			await ctx.reply("Opening account....")
-			await self.open_acc(self, u.id, ctx)
+			await self.open_acc(u.id, ctx)
 			b = discord.Embed(
 			    title=f"{u.name}'s balance",
 			    description=f"Wallet: `500 coins`\nBank: `0 coins`")
