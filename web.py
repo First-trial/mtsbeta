@@ -1,18 +1,22 @@
-from quart import Quart, request
+from flask import Flask as Quart
+from threading import Thread
 
 app = Quart(__name__)
 
 
 @app.route("/")
-async def index():
+def index():
 	return "hi"
 
 @app.route("/topgg")
-async def dbl():
+def dbl():
   """"""
   pass
 
 
-async def run(bot):
+def ru():
+  app.run("0.0.0.0", 8090)
+
+def run(bot):
   setattr(app,"bot",bot)
-  await app.run_task("0.0.0.0", 8090)
+  Thread(target=ru).start()

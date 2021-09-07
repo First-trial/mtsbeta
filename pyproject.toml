@@ -14,7 +14,6 @@ lru-dict = "^1.1.7"
 parsedatetime = "^2.6"
 tortoise-orm = "^0.17.5"
 jishaku = "^2.2.0"
-Quart = "^0.15.1"
 
 [tool.poetry.dev-dependencies]
 

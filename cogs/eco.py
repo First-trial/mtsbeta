@@ -226,7 +226,7 @@ class eco(cog.SlashCog):
         await self.give_money(self, b, ctx.author.id, am, ctx)
         await ctx.edit(f"Successfully deposited {am} coins to your bank")
 
-  @cog.command(name="withdraw", aliases=["withdraw"])
+  @cog.command(name="withdraw")
   async def with_cmd(self, ctx, amount: int):
     am = amount
     with open("data/bal.json", "r") as f:
