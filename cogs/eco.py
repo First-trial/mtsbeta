@@ -111,15 +111,10 @@ class eco(cog.SlashCog):
 			json.dump(kk, f, indent=4)
 
 	@cog.command(name="balance")
-	async def bal(self, ctx, u: discord.Member = None):
-		if u == None:
-			u = ctx.user
-		else:
-			u = u
-
+	async def bal(self, ctx, user: discord.Member = None):
+		user or ctx.author
 		with open("data/bal.json", "r") as f:
 			kk = json.load(f)
-
 		if str(u.id) in kk:
 			k = kk[str(u.id)]
 			wallet = k["wallet"]
@@ -129,11 +124,12 @@ class eco(cog.SlashCog):
 			    description=f"Wallet: `{wallet} coins`\nBank: `{bank} coins`")
 			await ctx.reply(embed=b)
 		else:
+			await ctx.reply("Opening account....")
 			await self.open_acc(u.id, ctx)
 			b = discord.Embed(
 			    title=f"{u.name}'s balance",
 			    description=f"Wallet: `500 coins`\nBank: `0 coins`")
-			await ctx.reply(embed=b)
+			await ctx.edit(embed=b)
 
 	@commands.group(name="work", invoke_without_command=True)
 	@commands.check(_ch)
