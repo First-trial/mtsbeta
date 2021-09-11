@@ -104,7 +104,8 @@ class MtsBot(slash.AutoShardedBot):
 
 	async def _on_ready(self):
 		print("lmaolmfaolmsao")
-		await Tortoise.init(db_url="sqlite://bin/eco.sqlite",modules={"models": ["core.models.models"]})
+		# await Tortoise.init(db_url="sqlite://bin/eco.sqlite",modules={"models": ["core.models.models"]})
+		await Tortoise.init(db_url=os.environ.get("mypsql"),modules={"models": ["core.models.models"]})
 		await Tortoise.generate_schemas(safe=True)
 		print("hbanekh")
 
@@ -118,7 +119,7 @@ class MtsBot(slash.AutoShardedBot):
 
 	@property
 	def pool(self):
-		return Tortoise.get_connection("default")._connection
+		return Tortoise.get_connection("default")._pool
 
 	@property
 	def author(self):
