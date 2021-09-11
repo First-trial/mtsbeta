@@ -1,3 +1,3 @@
 git+https://github.com/Rapptz/discord.py.git
 git+https://github.com/Rishiraj0100/discoutils.git
-git+https://github.com/Rishiraj0100/slash-commands@MtsBot
+git+https://github.com/Rishiraj0100/dpy-appcommands@renaming
