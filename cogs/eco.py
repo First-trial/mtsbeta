@@ -1,6 +1,7 @@
 import discord, json
 from discord.ext import commands
 from appcommands import cog
+from models import balance
 
 
 async def _ch(ctx):
@@ -73,10 +74,7 @@ class eco(cog.SlashCog):
       json.dump(kk, f, indent=4)
 
   async def up_usr(self, ctx, uid, bank, hand):
-    await ctx.db.execute(f"DELETE FROM bal WHERE uid = '{uid}'")
-    await ctx.db.execute(
-        f"INSERT INTO bal (uid, bank, hand) VALUES ('{uid}','{bank}','{hand}')"
-    )
+    await balance.filter(uid=str(uid)).update(bank=str(bank), hand=str(hand))
 
   async def take_money(self, area, id, money, ctx):
     with open("data/bal.json", "r") as f:
@@ -113,8 +111,9 @@ class eco(cog.SlashCog):
   @cog.command(name="balance")
   async def bal(self, ctx, user: discord.Member = None):
     u=user or ctx.author
-    with open("data/bal.json", "r") as f:
-      kk = json.load(f)
+    print(await balance.filter(uid=str(u.id))
+    with open('data/bal.json') as f:
+      kk=json.load(f)
     if str(u.id) in kk:
       k = kk[str(u.id)]
       wallet = k["wallet"]
