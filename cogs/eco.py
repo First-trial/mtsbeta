@@ -111,7 +111,7 @@ class eco(cog.SlashCog):
   @cog.command(name="balance")
   async def bal(self, ctx, user: discord.Member = None):
     u=user or ctx.author
-    print(await balance.filter(uid=str(u.id))
+    print(await balance.filter(uid=str(u.id)))
     with open('data/bal.json') as f:
       kk=json.load(f)
     if str(u.id) in kk:
