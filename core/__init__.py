@@ -15,7 +15,7 @@ import ipc
 from discord.ext.commands import CommandNotFound
 import inspect, os, time, traceback
 from core.gmemanager import GameManager
-import slash
+import appcommands
 
 MAX_MESSAGE_LENGTH = 1900
 import asyncio
@@ -23,7 +23,7 @@ import asyncio
 from core.generic import Scheduler
 
 
-class MtsBot(slash.AutoShardedBot):
+class MtsBot(appcommands.AutoShardedBot):
 	def __init__(self, *args, **kwargs):
 		super().__init__(**kwargs)  #, enable_debug_events=True)
 		#self.ipc = ipc.Server(self,secret_key=os.environ.get("ipc"),host="0.0.0.0")
