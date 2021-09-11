@@ -24,3 +24,27 @@ class balance(Model):
   uid = fields.TextField()
   hand = fields.TextField()
   bank = fields.TextField()
+
+class inv(Model):
+  uid = fields.TextField()
+  item = fields.TextField()
+  count = fields.TextField()
+
+class dukaan(Model):
+  class Meta:
+    table = 'shop'
+
+  uid = fields.TextField()
+  item = fields.TextField()
+  cost = fields.TextField()
+
+class snipes:
+  channel_id = fields.BigIntField(pk=True)
+  author_id = fields.BigIntField()
+  content = fields.TextField()
+  delete_time = fields.DatetimeField(auto_now=True)
+
+  @property
+  def author(self):
+      return self.bot.get_user(self.author_id)
+
