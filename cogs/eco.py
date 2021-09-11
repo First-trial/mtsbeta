@@ -1,6 +1,6 @@
 import discord, json
 from discord.ext import commands
-from slash import cog
+from appcommands import cog
 
 
 async def _ch(ctx):
@@ -27,7 +27,7 @@ class eco(cog.SlashCog):
     with open("data/bal.json", "r") as f:
       kk = json.load(f)
     kk[str(id)] = {"wallet": 500, "bank": 0}
-    await self.up_usr(self, ctx, id, 0, 500)
+    await self.up_usr(ctx, id, 0, 500)
     with open("data/bal.json", "w") as f:
       json.dump(kk, f, indent=4)
 
@@ -50,25 +50,25 @@ class eco(cog.SlashCog):
         bank = k["bank"]
         money += w
         kk[str(id)] = {"wallet": money, "bank": bank}
-        await self.up_usr(self, ctx, id, bank, money)
+        await self.up_usr(ctx, id, bank, money)
       else:
         k = kk[str(id)]
         w = k["bank"]
         bank = k["wallet"]
         money += w
         kk[str(id)] = {"wallet": bank, "bank": money}
-        await self.up_usr(self, ctx, id, money, bank)
+        await self.up_usr(ctx, id, money, bank)
     else:
       if area == "wallet":
         bank = 0
         money += 500
         kk[str(id)] = {"wallet": money, "bank": bank}
-        await self.up_usr(self, ctx, id, bank, money)
+        await self.up_usr(ctx, id, bank, money)
       else:
         bank = money
         mon = 500
         kk[str(id)] = {"wallet": mon, "bank": bank}
-        await self.up_usr(self, ctx, id, bank, mon)
+        await self.up_usr(ctx, id, bank, mon)
     with open("data/bal.json", "w") as f:
       json.dump(kk, f, indent=4)
 
@@ -89,21 +89,21 @@ class eco(cog.SlashCog):
         bank = k["bank"]
         w -= money
         kk[str(id)] = {"wallet": w, "bank": bank}
-        await self.up_usr(self, ctx, id, bank, w)
+        await self.up_usr(ctx, id, bank, w)
       else:
         k = kk[str(id)]
         w = k["bank"]
         bank = k["wallet"]
         w -= money
         kk[str(id)] = {"wallet": bank, "bank": w}
-        await self.up_usr(self, ctx, id, w, bank)
+        await self.up_usr(ctx, id, w, bank)
 
     else:
       if area == "wallet":
         bank = 0
         money = 500 - money
         kk[str(id)] = {"wallet": money, "bank": bank}
-        await self.up_usr(self, ctx, id, bank, money)
+        await self.up_usr(ctx, id, bank, money)
       else:
         return
 
@@ -125,7 +125,7 @@ class eco(cog.SlashCog):
       await ctx.reply(embed=b)
     else:
       await ctx.reply("Opening account....")
-      await self.open_acc(self, u.id, ctx)
+      await self.open_acc(u.id, ctx)
       b = discord.Embed(
           title=f"{u.name}'s balance",
           description=f"Wallet: `500 coins`\nBank: `0 coins`")
@@ -210,11 +210,11 @@ class eco(cog.SlashCog):
         await ctx.reply("You don't have enough money in your wallet to deposit", ephemeral=True)
       else:
         await ctx.reply(f'Depositing {am} coins in your bank...')
-        await self.take_money(self, a, ctx.author.id, am, ctx)
-        await self.give_money(self, b, ctx.author.id, am, ctx)
+        await self.take_money(a, ctx.author.id, am, ctx)
+        await self.give_money(b, ctx.author.id, am, ctx)
         await ctx.edit(f"Successfully deposited {am} coins to your bank")
     else:
-      await self.open_acc(self, ctx.author.id, ctx)
+      await self.open_acc(ctx.author.id, ctx)
       a = "wallet"
       b = "bank"
       k = kk[str(ctx.author.id)]
@@ -222,8 +222,8 @@ class eco(cog.SlashCog):
         await ctx.reply("you only have 500 coins in your wallet to deposit", ephemeral=True)
       else:
         await ctx.reply(f'Depositing {am} coins in your bank...')
-        await self.take_money(self, a, ctx.author.id, am, ctx)
-        await self.give_money(self, b, ctx.author.id, am, ctx)
+        await self.take_money(a, ctx.author.id, am, ctx)
+        await self.give_money(b, ctx.author.id, am, ctx)
         await ctx.edit(f"Successfully deposited {am} coins to your bank")
 
   @cog.command(name="withdraw")
@@ -241,12 +241,12 @@ class eco(cog.SlashCog):
         await ctx.reply("You don't have enough money in your bank to withdraw", ephemeral=True)
       else:
         await ctx.reply(f'Withdrawing {am} coins from your bank...')
-        await self.take_money(self, a, ctx.author.id, am, ctx)
-        await self.give_money(self, b, ctx.author.id, am, ctx)
+        await self.take_money(a, ctx.author.id, am, ctx)
+        await self.give_money(b, ctx.author.id, am, ctx)
         await ctx.edit(f"Successfully withdrawed {am} coins from your bank")
     else:
       await ctx.reply("You don't have any money in your bank to withdraw, go deposit it first", ephemeral=True)
-      await self.open_acc(self, ctx.author.id, ctx)
+      await self.open_acc(ctx.author.id, ctx)
 
   @commands.command(name="share", aliases=["givemoney"])
   async def share_cmd(self, ctx, u: discord.Member, am: int):
