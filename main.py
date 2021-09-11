@@ -1,7 +1,7 @@
 from core import MtsBot
 import discord
 from os import environ as env
-import slash
+import appcommands
 from discoutils import MinimalEmbedHelp as Meh
 from discord.ext.commands import Cog
 
