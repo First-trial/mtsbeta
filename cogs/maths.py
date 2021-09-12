@@ -20,7 +20,7 @@ class MathCog(cog.SlashCog):
 
   @cog.command()
   async def choose(self, ctx, opt: models.Option(name="thing", choices=c)):
-    await ctx.reply(f'You chose opt')
+    await ctx.reply(f'You chose {opt}', ephemeral=True)
 
 def setup(bot):
   bot.add_cog(MathCog(bot))
