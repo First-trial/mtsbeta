@@ -62,7 +62,7 @@ async def on_guild_join(guild):
 
 es = [
     "cogs.anim", "cogs.dbl", "cogs.eco", "cogs.games", "cogs.ipc",
-    "cogs.newfile", "cogs.r", "cogs.ttt", "jishaku"
+    "cogs.newfile", "cogs.r", "cogs.ttt", "jishaku", "cogs.maths"
 ]
 for e in es:
 	bot.load_extension(e)
