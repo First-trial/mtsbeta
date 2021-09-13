@@ -1,26 +1,33 @@
-from appcommands import cog, models
+from appcommands import cog
 import math
-c=[
-  models.Choice(name='red'),
-  models.Choice(name='green'),
-  models.Choice(name='blue')
-]
 
-class Mathcog(cog.SlashCog):
+class MathCog(cog.SlashCog):
   def __init__(self, bot):
     self.bot = bot
 
   @cog.command()
-  async def add(self, ctx, firstnumber: float, secondnumber: float):
-    await ctx.reply(f'Your answer is {firstnumber + secondnumber}', ephemeral=True)
+  async def add(self, ctx, number: float, to: float):
+    await ctx.reply(f'Your answer is {number + number}', ephemeral=True)
     
   @cog.command()
-  async def subtract(self, ctx, firstnumber: float, secondnumber: float):
-    await ctx.reply(f'Your answer is {firstnumber - secondnumber}', ephemeral=True)
+  async def subtract(self, ctx, by: float, number: float):
+    await ctx.reply(f'Your answer is {by - number}', ephemeral=True)
 
   @cog.command()
-  async def choose_test(self, ctx, opt: models.Option(name="thing", choices=c)):
-    await ctx.reply(f'You chose {opt}', ephemeral=True)
+  async def multiply(self, ctx, number: float, by: float):
+    await ctx.reply(f'Your answer is {number * by}', ephemeral=True)
+
+  @cog.command()
+  async def divide(self, ctx, number: float, by: float):
+    await ctx.reply(f'Your answer is {number/by}', ephemeral=True)
+
+  @cog.command()
+  async def square(self, ctx, number: float):
+    await ctx.reply(f'Your answer is {number * number}', ephemeral=True)
+
+  @cog.command()
+  async def square_root(self, ctx, number: float):
+    await ctx.reply(f'Your answer is {math.sqrt(number)}', ephemeral=True)
 
 def setup(bot):
-  bot.add_cog(Mathcog(bot))
+  bot.add_cog(MathCog(bot))
