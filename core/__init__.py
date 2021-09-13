@@ -312,7 +312,7 @@ class MtsBot(appcommands.AutoShardedBot):
 				os.remove(f_path)
 
 
-class Cog(Cog):
+class Cog(appcommands.SlashCog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.db = self.bot.pool
