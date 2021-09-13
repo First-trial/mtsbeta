@@ -36,6 +36,7 @@ class MtsBot(appcommands.AutoShardedBot):
 		self.scheduler = Scheduler()
 		self.ready = False
 		self._author = None
+		self.appclient.logging = True
 
 	async def process_commands(self, message):
 		ctx = await self.get_context(message, cls=context.Context)

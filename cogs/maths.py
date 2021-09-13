@@ -6,7 +6,7 @@ c=[
   models.Choice(name='blue')
 ]
 
-class MathCog(cog.SlashCog):
+class Mathcog(cog.SlashCog):
   def __init__(self, bot):
     self.bot = bot
 
@@ -19,8 +19,8 @@ class MathCog(cog.SlashCog):
     await ctx.reply(f'Your answer is {firstnumber - secondnumber}', ephemeral=True)
 
   @cog.command()
-  async def choose(self, ctx, opt: models.Option(name="thing", choices=c)):
+  async def choose_test(self, ctx, opt: models.Option(name="thing", choices=c)):
     await ctx.reply(f'You chose {opt}', ephemeral=True)
 
 def setup(bot):
-  bot.add_cog(MathCog(bot))
+  bot.add_cog(Mathcog(bot))
