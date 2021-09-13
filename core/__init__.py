@@ -21,7 +21,18 @@ MAX_MESSAGE_LENGTH = 1900
 import asyncio
 
 from core.generic import Scheduler
+class CustomCont(appcommands.InteractionContext):
+  def __init__(self, bot, clt):
+    super().__init__(bot, clt)
+    self.db = self.pool = bot.pool
 
+class MyApC(appcommands.AppClient):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.logging = True
+
+  def get_interaction_context(self):
+    return CustomCont(self.bot, self)
 
 class MtsBot(appcommands.AutoShardedBot):
 	def __init__(self, *args, **kwargs):
@@ -36,7 +47,9 @@ class MtsBot(appcommands.AutoShardedBot):
 		self.scheduler = Scheduler()
 		self.ready = False
 		self._author = None
-		self.appclient.logging = True
+
+	def get_app_client(self):
+	  return MyApC(self)
 
 	async def process_commands(self, message):
 		ctx = await self.get_context(message, cls=context.Context)
