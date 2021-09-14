@@ -16,7 +16,7 @@ from discord.ext.commands import CommandNotFound
 import inspect, os, time, traceback
 from core.gmemanager import GameManager
 import appcommands
-
+from tortoise.backends.base.config_generator import expand_db_url
 MAX_MESSAGE_LENGTH = 1900
 import asyncio
 
@@ -119,7 +119,11 @@ class MtsBot(appcommands.AutoShardedBot):
 	async def _on_ready(self):
 		print("lmaolmfaolmsao")
 		# await Tortoise.init(db_url="sqlite://bin/eco.sqlite",modules={"models": ["core.models.models"]})
-		await Tortoise.init(db_url=os.environ.get("mypsql"),modules={"models": ["core.models.models"]})
+		cfg = {"connections": {"default": expand_db_url(os.environ.get("mypsql"))},"apps": {"default": {"models": ["core.models.models"]}}}
+		cfg["connections"]["default"]["credentials"]["ssl"] = "prefer"
+  
+		#await Tortoise.init(db_url=os.environ.get("mypsql"),modules={"models": ["core.models.models"]},ssl="disable")
+		await Tortoise.init(config=cfg)
 		await Tortoise.generate_schemas(safe=True)
 		print("hbanekh")
 
@@ -311,8 +315,8 @@ class MtsBot(appcommands.AutoShardedBot):
 			    or filename.endswith(".png")) and f_created < dt:
 				os.remove(f_path)
 
-
-class Cog(appcommands.SlashCog):
+from appcommands import cog
+class Cog(cog.SlashCog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.db = self.bot.pool

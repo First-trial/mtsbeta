@@ -3,15 +3,19 @@ import asyncio
 from discord.ext import commands
 import random
 from typing import Optional
+import appcommands
+from core import Cog
+from appcommands import cog
+from typing import Union
 
-class anim(commands.Cog):
+class anim(Cog, name="animation"):
 	"""animated messages"""
 	def __init__(self, bot):
 		self.bot = bot
 
 	@commands.command()
-	async def cathi(self, ctx, *, text: str = "Hi..."):
-		m = await ctx.send("1 sec pls")
+	async def cathi(self, ctx: Union[appcommands.InteractionContext, commands.Context], *, text: str = "Hi..."):
+		ctx=await ctx.reply("starting")
 		#await asyncio.sleep(0.5)
 		list = (
 		    """ຸ 　　　＿＿_＿＿
@@ -28,12 +32,12 @@ class anim(commands.Cog):
 		)
 		for i in range(3):
 			for cat in list:
-			  await m.edit(content=cat)
+			  await ctx.edit(content=cat)
 			  await asyncio.sleep(1.5)
 				
 
 	@commands.command()
-	async def flop(self, ctx):
+	async def flop(self, ctx: commands.Context):
 		m = await ctx.send("Ok")
 		#await asyncio.sleep(0.5)
 		list = (
