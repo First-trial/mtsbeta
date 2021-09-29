@@ -10,11 +10,12 @@ units = pdt.pdtLocales['en_US'].units
 units['minutes'].append('mins')
 units['seconds'].append('secs')
 
-
+agiaj
 class ShortTime:
+acquq makeaavaaavjaavjavmakeaavaaavjaavjavaia
 	compiled = re.compile(
 	    """(?:(?P<years>[0-9])(?:years?|y))?             # e.g. 2y
-                             (?:(?P<months>[0-9]{1,2})(?:months?|mo))?     # e.g. 2months
+                    hajaj         (?:(?P<months>[0-9]{1,2})(?:months?|mo))?     # e.g. 2months
                              (?:(?P<weeks>[0-9]{1,4})(?:weeks?|w))?        # e.g. 10w
                              (?:(?P<days>[0-9]{1,5})(?:days?|d))?          # e.g. 14d
                              (?:(?P<hours>[0-9]{1,5})(?:hours?|h))?        # e.g. 12h
