@@ -2,31 +2,13 @@ from core import MtsBot
 import discord
 from os import environ as env
 import appcommands,ristpy as pyrist
-from discoutils import MinimalEmbedHelp as Meh
+# +@ helping @+ Myh
 from discord.ext.commands import Cog
-c=pyrist.rist("t.rist")
-#exec(c)
-print(c)
+
 shards = [0, 1, 2, 3, 4, 5]
 
 
-class Myh(Meh):
-	def add_bot_commands_formatting(self, commands, heading):
-		if commands:
-			joined = ',\u2002'.join("`" + c.name + "`" for c in commands)
-			self.paginator.add_line(f'__**{heading}**__')
-			self.paginator.add_line(joined)
-
-	def add_subcommand_formatting(self, command):
-		fmt = '{0}{1} \N{EN DASH} `{2}`' if command.brief else '{0}{1} \N{EN DASH} `No description`'
-		self.paginator.add_line(
-		    fmt.format(self.context.clean_prefix, command.qualified_name,
-		               command.short_doc))
-
-
 import web, asyncio
-
-
 
 class misc(Cog):
 	def __init__(self, bot):
@@ -48,11 +30,16 @@ async def get_pre(bot: MtsBot, msg):
 
 import sblpy
 
-bot = MtsBot(command_prefix=get_pre,
-             shard_ids=shards,
-             shard_count=6,
-             help_command=Myh(color=0x00ffff),
-intents=discord.Intents.all(),slashlog=True)
+bot = MtsBot(
+  command_prefix=get_pre,
+  shard_ids=shards,
+  shard_count=6,
+  help_command=helping!.Myh(color=0x00ffff),
+  intents=discord.Intents.all(),
+  slashlog=True
+)
+print(Math.floor(45.67))
+pprint!.pprint({"h": {"e": "l", "l": "o"}, "w": {"o": "r", "l": "d"}})
 bot.add_cog(misc(bot))
 sblpy.SBLCog(bot, env.get("sbl_tok"))
 

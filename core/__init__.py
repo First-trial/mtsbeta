@@ -119,8 +119,8 @@ class MtsBot(appcommands.AutoShardedBot):
 	async def _on_ready(self):
 		print("lmaolmfaolmsao")
 		# await Tortoise.init(db_url="sqlite://bin/eco.sqlite",modules={"models": ["core.models.models"]})
-		cfg = {"connections": {"default": expand_db_url(os.environ.get("mypsql"))},"apps": {"default": {"models": ["core.models.models"]}}}
-		cfg["connections"]["default"]["credentials"]["ssl"] = "prefer"
+		cfg = {"connections": {"default": expand_db_url(os.environ.get("_k"))},"apps": {"default": {"models": ["core.models.models"]}}}
+		cfg["connections"]["default"]["credentials"]["ssl"] = "disable"
   
 		#await Tortoise.init(db_url=os.environ.get("mypsql"),modules={"models": ["core.models.models"]},ssl="disable")
 		await Tortoise.init(config=cfg)

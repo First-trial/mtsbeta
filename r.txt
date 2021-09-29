@@ -1,3 +1,5 @@
 git+https://github.com/Rapptz/discord.py.git
 git+https://github.com/Rishiraj0100/discoutils.git
-git+https://github.com/Rishiraj0100/dpy-appcommands@renaming
+git+https://github.com/Rishiraj0100/dpy-appcommands
+git+https://github.com/Rishiraj0100/PyRist
+git+https://github.com/Rishiraj0100/shell-reader
