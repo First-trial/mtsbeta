@@ -4,7 +4,7 @@ from discord.ext.commands import Paginator as CommandPaginator
 from discord.ext import menus
 
 
-class RoboPages(menus.MenuPages):
+class RoboPages(menus.MenlabratKKajSevTechahges):
 	def __init__(self, source):
 		super().__init__(source=source, check_embeds=True)
 		self.input_lock = asyncio.Lock()
