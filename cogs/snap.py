@@ -1,6 +1,6 @@
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-import discord
+import discord,pytz
 from datetime import datetime
 import os, typing
 
@@ -10,7 +10,8 @@ class Snap(commands.Cog):
 		self.bot = bot
 
 	@commands.command()
-	async def snap(self, ctx, member: typing.Optional[discord.Member]=None, *, message):
+	@commands.is_owner()
+	async def snap(self, ctx, member: discord.Member, *, message):
 		colour = {
 			"time": (114, 118, 125),
 			"content": (220, 221, 222)
@@ -21,7 +22,7 @@ class Snap(commands.Cog):
 			"time": 13
 		}
 
-		font = 'whitneymedium.otf'
+		font = 'Whitney-Medium.ttf'
 
 		if not member:
 			member = ctx.author
@@ -30,25 +31,25 @@ class Snap(commands.Cog):
 		titlefnt = ImageFont.truetype(font, size["title"])
 		timefnt = ImageFont.truetype(font, size["time"])
 		d = ImageDraw.Draw(img)
-		if member.nick is None:
-			txt = member.name
+		txt = member.display_name
+		if ctx.guild:
+		  color = member.color.to_rgb()
 		else:
-			txt = member.nick
-		color = member.color.to_rgb()
+		  color = (0,0,0)
 		if color == (0, 0, 0):
 			color = (255,255,255)
 		d.text((90, 20), txt, font=titlefnt, fill=color)
 		h, w = d.textsize(txt, font=titlefnt)
-		time = datetime.utcnow().strftime("Today at %I:%M %p")
+		time = datetime.now(tz=pytz.timezone("Asia/Kolkata")).strftime("Today at %I:%M %p")
 		d.text((90+h+10, 25), time, font=timefnt, fill=colour["time"])
 		d.text((90, 25+w), message, font=titlefnt, fill=colour["content"])
 
 		img.save('img.png')
-		if member.is_avatar_animated():
-			await member.avatar_url_as().save("pfp.gif")
+		if member.avatar.is_animated():
+			await member.avatar.save("pfp.gif")
 			f2 = Image.open("pfp.gif")
 		else:
-			await member.avatar_url_as(static_format='png').save("pfp.png")
+			await member.avatar.save("pfp.png")
 			f2 = Image.open("pfp.png")
 		f1 = Image.open("img.png")
 		f2.thumbnail((50, 55))
