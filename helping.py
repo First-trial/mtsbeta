@@ -12,3 +12,5 @@ class Myh(Meh):
 		self.paginator.add_line(
 		    fmt.format(self.context.clean_prefix, command.qualified_name,
 		               command.short_doc))
+
+My =Myh(color=0x00ffff)

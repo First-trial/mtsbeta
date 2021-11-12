@@ -2,7 +2,7 @@ from core import MtsBot
 import discord
 from os import environ as env
 import appcommands,ristpy as pyrist
-# +@ helping @+ Myh
+import helping
 from discord.ext.commands import Cog
 
 shards = [0, 1, 2, 3, 4, 5]
@@ -34,12 +34,10 @@ bot = MtsBot(
   command_prefix=get_pre,
   shard_ids=shards,
   shard_count=6,
-  help_command=helping!.Myh(color=0x00ffff),
+  help_command=helping.My,
   intents=discord.Intents.all(),
   slashlog=True
 )
-print(Math.floor(45.67))
-pprint!.pprint({"h": {"e": "l", "l": "o"}, "w": {"o": "r", "l": "d"}})
 bot.add_cog(misc(bot))
 sblpy.SBLCog(bot, env.get("sbl_tok"))
 
