@@ -15,6 +15,16 @@ async def check_work(ctx):
 OWNER_SALARY = 5000000
 OTHER_SALARY = 1500
 WORK_COOLDOWN = 60 * 30
+WORKS = [
+  "youtuber",
+  "coder",
+  "housewife",
+  "cosplayer",
+  "memer",
+  "farmer",
+  "engineer",
+  "ghost"
+]
 
 class eco(Cog):
   def __init__(self, bot):
