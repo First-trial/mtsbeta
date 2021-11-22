@@ -18,7 +18,7 @@ WORK_COOLDOWN = 60 * 30
 
 class eco(Cog):
   def __init__(self, bot):
-    self.bot = bot
+    super().__init__(bot)
     self.buckets = {}
     self._tasks = []
 
