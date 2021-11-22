@@ -1,18 +1,15 @@
-import discord, json
+import discord
 from discord.ext import commands
 from appcommands import cog
-from models import balance
+from models import balance, workers
 
 
-async def _ch(ctx):
-  with open("data/workers.json", "r") as f:
-    kk = json.load(f)
-
-  if not str(ctx.author.id) in kk:
+async def check_work(ctx):
+  if not await workers.filter(uid=str(ctx.author.id)):
     await ctx.send(
-        "you are not working\n pls choose your work by `mts work as <work>`"
+        f"you are not working\n pls choose your work by `{ctx.clean_prefix}work as <work>`"
     )
-    raise ValueError("uhuh")
+    return False
   return True
 
 
@@ -24,62 +21,44 @@ class eco(cog.SlashCog):
   async def on_ready(self):
     print("A wild economy system appeared")
 
-  async def open_acc(self, id, ctx):
-    with open("data/bal.json", "r") as f:
-      kk = json.load(f)
-    kk[str(id)] = {"wallet": 500, "bank": 0}
-    await self.up_usr(ctx, id, 0, 500)
-    with open("data/bal.json", "w") as f:
-      json.dump(kk, f, indent=4)
+  async def open_acc(self, id):
+    await self.up_usr(id, 0, 500)
 
   async def give_work(self, id, work):
-    with open("data/workers.json", "r") as f:
-      kk = json.load(f)
-    kk[str(id)] = work
+    await workers.create(uid=str(id), work=work)
 
-    with open("data/workers.json", "w") as f:
-      json.dump(kk, f, indent=4)
-
-  async def give_money(self, area, id, money, ctx):
-    with open("data/bal.json", "r") as f:
-      kk = json.load(f)
-
-    if str(id) in kk:
+  async def give_money(self, area, id, money,):
+    id = str(id)
+    u = await balance.get_or_nine(uid=id)
+    if u:
       if area == "wallet":
-        k = kk[str(id)]
-        w = k["wallet"]
-        bank = k["bank"]
+        w = u.hand
+        bank = u.bank
         money += w
-        kk[str(id)] = {"wallet": money, "bank": bank}
-        await self.up_usr(ctx, id, bank, money)
+        await self.up_usr(id, bank, money)
       else:
-        k = kk[str(id)]
-        w = k["bank"]
-        bank = k["wallet"]
+        w = u.bank
+        bank = u.hand
         money += w
-        kk[str(id)] = {"wallet": bank, "bank": money}
-        await self.up_usr(ctx, id, money, bank)
+        await self.up_usr(id, money, bank)
     else:
       if area == "wallet":
         bank = 0
         money += 500
-        kk[str(id)] = {"wallet": money, "bank": bank}
-        await self.up_usr(ctx, id, bank, money)
+        await self.up_usr(id, bank, money)
       else:
         bank = money
         mon = 500
-        kk[str(id)] = {"wallet": mon, "bank": bank}
-        await self.up_usr(ctx, id, bank, mon)
-    with open("data/bal.json", "w") as f:
-      json.dump(kk, f, indent=4)
+        await self.up_usr(id, bank, mon)
 
-  async def up_usr(self, ctx, uid, bank, hand):
-    await balance.filter(uid=str(uid)).update(bank=str(bank), hand=str(hand))
+  async def up_usr(self, uid, bank, hand):
+    r=await balance.get_or_none(uid=str(uid))
+    if r is None:
+      await balance.create(uid=str(uid), bank=str(bank), hand=str(hand))
+    else:
+      await r.update(bank=str(bank), hand=str(hand))
 
   async def take_money(self, area, id, money, ctx):
-    with open("data/bal.json", "r") as f:
-      kk = json.load(f)
-
     if str(id) in kk:
       if area == "wallet":
         k = kk[str(id)]
@@ -105,8 +84,6 @@ class eco(cog.SlashCog):
       else:
         return
 
-    with open("data/bal.json", "w") as f:
-      json.dump(kk, f, indent=4)
 
   @cog.command(name="balance")
   async def bal(self, ctx, user: discord.Member = None):
