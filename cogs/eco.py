@@ -2,20 +2,40 @@ import discord
 from discord.ext import commands
 from appcommands import cog
 from models import balance, workers
-
+from core import Cog
 
 async def check_work(ctx):
-  if not await workers.filter(uid=str(ctx.author.id)):
+  if not await workers.get_or_none(uid=str(ctx.author.id)):
     await ctx.send(
         f"you are not working\n pls choose your work by `{ctx.clean_prefix}work as <work>`"
     )
     return False
   return True
 
+OWNER_SALARY = 5000000
+OTHER_SALARY = 1500
+WORK_COOLDOWN = 60 * 30
 
-class eco(cog.SlashCog):
+class eco(Cog):
   def __init__(self, bot):
     self.bot = bot
+    self.buckets = {}
+    self._tasks = []
+
+  async def do_bucket_(self, id, t):
+    self.buckets[id] = t
+    while self.buckets[id] > 0:
+      await asyncio.sleep(1)
+      self.buckets[id] -= 1
+    del self.buckets[id]
+
+  def do_bucket(self,i,t):
+    ta=self.bot.loop.create_task(do_bucket_(i,t))
+    self.tasks.append(ta) and
+
+  def cog_unload(self,):
+    for task in self._tasks:
+      task.cancel()
 
   @commands.Cog.listener()
   async def on_ready(self):
@@ -29,18 +49,18 @@ class eco(cog.SlashCog):
 
   async def give_money(self, area, id, money,):
     id = str(id)
-    u = await balance.get_or_nine(uid=id)
+    u = await balance.get_or_none(uid=id)
     if u:
       if area == "wallet":
-        w = u.hand
-        bank = u.bank
+        w = int(u.hand)
+        bank = int(u.bank)
         money += w
         await self.up_usr(id, bank, money)
       else:
-        w = u.bank
-        bank = u.hand
-        money += w
-        await self.up_usr(id, money, bank)
+        w = int(u.hand)
+        bank = int(u.bank)
+        bank += money
+        await self.up_usr(id, bank, w)
     else:
       if area == "wallet":
         bank = 0
@@ -48,8 +68,8 @@ class eco(cog.SlashCog):
         await self.up_usr(id, bank, money)
       else:
         bank = money
-        mon = 500
-        await self.up_usr(id, bank, mon)
+        money = 500
+        await self.up_usr(id, bank, money)
 
   async def up_usr(self, uid, bank, hand):
     r=await balance.get_or_none(uid=str(uid))
@@ -59,290 +79,161 @@ class eco(cog.SlashCog):
       await r.update(bank=str(bank), hand=str(hand))
 
   async def take_money(self, area, id, money, ctx):
-    if str(id) in kk:
+    id = str(id)
+    u = await balance.get_or_none(uid=id)
+    if u:
       if area == "wallet":
-        k = kk[str(id)]
-        w = k["wallet"]
-        bank = k["bank"]
-        w -= money
-        kk[str(id)] = {"wallet": w, "bank": bank}
-        await self.up_usr(ctx, id, bank, w)
+        w = int(u.hand)
+        bank = int(u.bank)
+        money -= w
+        await self.up_usr(id, bank, money)
       else:
-        k = kk[str(id)]
-        w = k["bank"]
-        bank = k["wallet"]
-        w -= money
-        kk[str(id)] = {"wallet": bank, "bank": w}
-        await self.up_usr(ctx, id, w, bank)
-
+        w = int(u.hand)
+        bank = int(u.bank)
+        bank -= money
+        await self.up_usr(id, bank, w)
     else:
       if area == "wallet":
         bank = 0
-        money = 500 - money
-        kk[str(id)] = {"wallet": money, "bank": bank}
-        await self.up_usr(ctx, id, bank, money)
+        money -= 500
+        await self.up_usr(id, bank, money)
       else:
-        return
+        await self.open_acc(id)
 
-
-  @cog.command(name="balance")
+  @appcommands.command(name="balance")
   async def bal(self, ctx, user: discord.Member = None):
     u=user or ctx.author
-    print(await balance.filter(uid=str(u.id)))
-    with open('data/bal.json') as f:
-      kk=json.load(f)
-    if str(u.id) in kk:
-      k = kk[str(u.id)]
-      wallet = k["wallet"]
-      bank = k["bank"]
+    u = await balance.filter(uid=str(u.id))
+    if u:
+      wallet = u.wallet
+      bank = u.bank
       b = discord.Embed(
           title=f"{u.name}'s balance",
           description=f"Wallet: `{wallet} coins`\nBank: `{bank} coins`")
       await ctx.reply(embed=b)
     else:
       await ctx.reply("Opening account....")
-      await self.open_acc(u.id, ctx)
+      await self.open_acc(u.id,)
       b = discord.Embed(
           title=f"{u.name}'s balance",
           description=f"Wallet: `500 coins`\nBank: `0 coins`")
       await ctx.edit(embed=b)
 
-  @commands.group(name="work", invoke_without_command=True)
-  @commands.check(_ch)
-  @commands.cooldown(1, 1800, commands.BucketType.user)
-  async def work(self, ctx):
-    with open("data/workers.json", "r") as f:
-      kk = json.load(f)
+  work = appcommands.slashgroup(name="work",)
 
-    if ctx.author.id == 730454267533459568:
-      we = 50000000
-      pass
+  @work.subcommand(name="now", description="Do some work")
+  async def work_now(self, ctx):
+    if not await check_work(ctx):
+      return
+
+    if ctx.author.id not in self.buckets:
+      self.do_bucket(ctx.author.id, WORK_COOLDOWN)
     else:
-      we = 1500
-      pass
+      c = round(self.buckets[ctx.author.id])
+      if c > 60:
+        c = round(c / 60)
+      else:
+        c = 1
+     return await ctx.send(f"you have already worked\nTry again in {c} minutes")
 
-    if str(ctx.author.id) in kk:
-      w = kk[str(ctx.author.id)]
-
-      await ctx.send(f"you got {we} coins after working as {w}")
-      w = "wallet"
-      await self.give_money(w, ctx.author.id, we, ctx)
+    if ctx.author.id == self.owner_id:
+      salary = OWNER_SALARY
     else:
-      await ctx.send(
-          "you are not working\nChoose your work by `Mts work as <work>`"
-      )
+      we = OTHER_SALARY
 
-  @work.command(name="as", pass_context=True)
-  @commands.cooldown(0, 0, commands.BucketType.user)
-  async def work_as(self, ctx, *, work):
-    with open("assets/works.json", "r") as f:
-      ch = json.load(f)
+    w = await workers.get(uid=str(ctx.author.id)).work
+    await ctx.send(f"you got {salary} coins after working as {w}")
+    w = "wallet"
+    await self.give_money(w, ctx.author.id, salary,)
 
-    if work.lower() in ch["works"]:
+
+  @work.subcommand(name="as",)
+  async def work_as(self, ctx, work):
+    if work.lower() in WORKS:
       ch[str(ctx.author.id)] = work
       await ctx.send(f"You are working as {work} now")
       await self.give_work(ctx.author.id, work)
     else:
       await ctx.send(
-          "this is not valid work.\nSee a list of work by `Mts work list`"
+          f"this is not valid work.\nSee a list of work by `{ctx.clean_prefix}work list`"
       )
 
-  @work.command(name="list")
+  @work.subcommand(name="list")
   @commands.cooldown(0, 0, commands.BucketType.user)
   async def works_list(self, ctx):
     w = discord.Embed(
-        description=
-        f"youtuber\ncoder\nhousewife\ncosplayer\nmemer\nfarmer\nengineer")
-    w.set_footer(text="choose a work by `Mts work as <work>`")
+      description="\n".join(list(w.title() for w in WORKS))
+    )
+    w.set_footer(text=f"choose a work by `{ctx.clean_prefix}work as <work>`")
     await ctx.send(embed=w)
 
-  @work.error
-  async def work_error(self, ctx, exc):
-    if isinstance(exc, commands.CommandOnCooldown):
-      c = round(exc.retry_after)
-      if c > 60:
-        c = round(c / 60)
-      else:
-        c = 1
-      await ctx.send(f"you have already worked\nTry again in {c} minutes"
-                     )
-    else:
-      print(exc)
-      c = self.bot.get_channel(797336604045344788)
-      await c.send(exc)
 
-  @cog.command(name="deposit")
+  @appcommands.command(name="deposit")
   async def dep(self, ctx, amount: int):
     am = amount
-    with open("data/bal.json", "r") as f:
-      kk = json.load(f)
-
-    if str(ctx.author.id) in kk:
+    u = await balance.get_or_none(uid=str(ctx.author.id))
+    if u:
       a = "wallet"
       b = "bank"
-      k = kk[str(ctx.author.id)]
       am = int(am)
-      if am > k["wallet"]:
+      if am > int(u.hand):
         await ctx.reply("You don't have enough money in your wallet to deposit", ephemeral=True)
       else:
         await ctx.reply(f'Depositing {am} coins in your bank...')
-        await self.take_money(a, ctx.author.id, am, ctx)
-        await self.give_money(b, ctx.author.id, am, ctx)
+        await self.take_money(a, ctx.author.id, am,)
+        await self.give_money(b, ctx.author.id, am,)
         await ctx.edit(f"Successfully deposited {am} coins to your bank")
     else:
-      await self.open_acc(ctx.author.id, ctx)
+      await self.open_acc(ctx.author.id,)
       a = "wallet"
       b = "bank"
-      k = kk[str(ctx.author.id)]
+      k = kk
       if am > 500:
         await ctx.reply("you only have 500 coins in your wallet to deposit", ephemeral=True)
       else:
         await ctx.reply(f'Depositing {am} coins in your bank...')
-        await self.take_money(a, ctx.author.id, am, ctx)
-        await self.give_money(b, ctx.author.id, am, ctx)
+        await self.take_money(a, ctx.author.id, am,)
+        await self.give_money(b, ctx.author.id, am,)
         await ctx.edit(f"Successfully deposited {am} coins to your bank")
 
-  @cog.command(name="withdraw")
+  @appcommands.command(name="withdraw")
   async def with_cmd(self, ctx, amount: int):
     am = amount
-    with open("data/bal.json", "r") as f:
-      kk = json.load(f)
-
-    if str(ctx.author.id) in kk:
+    u = await balance.get_or_none(uid=str(ctx.author.id))
+    if u:
       b = "wallet"
       a = "bank"
-      k = kk[str(ctx.author.id)]
       am = int(am)
-      if am > k[a]:
+      if am > int(k.bank):
         await ctx.reply("You don't have enough money in your bank to withdraw", ephemeral=True)
       else:
         await ctx.reply(f'Withdrawing {am} coins from your bank...')
-        await self.take_money(a, ctx.author.id, am, ctx)
-        await self.give_money(b, ctx.author.id, am, ctx)
+        await self.take_money(a, ctx.author.id, am,)
+        await self.give_money(b, ctx.author.id, am,)
         await ctx.edit(f"Successfully withdrawed {am} coins from your bank")
     else:
       await ctx.reply("You don't have any money in your bank to withdraw, go deposit it first", ephemeral=True)
-      await self.open_acc(ctx.author.id, ctx)
+      await self.open_acc(ctx.author.id,)
 
-  @commands.command(name="share", aliases=["givemoney"])
-  async def share_cmd(self, ctx, u: discord.Member, am: int):
-    with open("data/bal.json", "r") as f:
-      kk = json.load(f)
+  @appcommands.command(name="share",)
+  async def share_cmd(self, ctx, user: discord.Member, amount: int):
+    am=amount
+    u = await balance.get_or_none(uid=str(ctx.author.id))
+    if u:
 
-    if str(ctx.author.id) in kk:
-      h = kk[str(ctx.author.id)]
-
-      if am > h["wallet"]:
-        await ctx.send(
-            "you don't have enough money in your wallet to share")
+      if am > int(u.hand):
+        await ctx.send("you don't have enough money in your wallet to share", ephemeral=True)
         return
       else:
         pass
 
       w = "wallet"
-      await self.take_money(w, ctx.author.id, am, ctx)
-      await self.give_money(w, u.id, am, ctx)
-      await ctx.send(f"you gave {am} coins to {u.mention}")
+      await self.take_money(w, ctx.author.id, am,)
+      await self.give_money(w, user.id, am,)
+      await ctx.send(f"you gave {am} coins to {user.mention}")
     else:
-      await self.open_acc(ctx.author.id, ctx)
-      await ctx.send("I just opened your account so please now try again"
-                     )
-
-  @commands.command()
-  async def shop(self, ctx):
-    e = discord.Embed(
-        title="Mts bot shop",
-        description=
-        "**1** :apple: Apple [**40 coins**](https://discord.gg/zdrSUu98BP)\n**2** :banana: Banana [**20 coins**](https://discord.gg/zdrSUu98BP)\n**3** :pizza: Pizza [**200 coins**](https://discord.gg/zdrSUu98BP)\n**4** :milk: Milk [**40 coins**](https://discord.gg/zdrSUu98BP)\n**5** :computer: Laptop [**3000 coins**](https://discord.gg/zdrSUu98BP)\n",
-        url="https://discord.gg/zdrSUu98BP")
-    await ctx.send(embed=e)
-
-  @commands.command()
-  async def buy(self, ctx, item, count: int = 1):
-    try:
-      item = int(item)
-    except:
-      item = item
-    if count <= 0:
-      return await ctx.send("You can't buy this much thing")
-    if isinstance(item, int):
-      if item > 5 or item <= 0:
-        return await ctx.send("item not found")
-      it = {
-          "1": "apple",
-          "2": "banana",
-          "3": "pizza",
-          "4": "milk",
-          "5": "laptop"
-      }
-      item = it[str(item)]
-    else:
-      if item.lower() not in [
-          "apple", "banana", "pizza", "milk", "laptop"
-      ]:
-        return await ctx.send("item not found")
-      item = item.lower()
-    with open("data/bal.json", "r") as f:
-      k = json.load(f)
-    if str(ctx.author.id) not in k:
-      await self.open_acc(ctx.author.id, ctx)
-    k = k[str(ctx.author.id)]
-    cost = {
-        "apple": 40,
-        "banana": 20,
-        "pizza": 200,
-        "milk": 40,
-        "laptop": 3000
-    }
-    cost = cost[item]
-    if k["wallet"] < cost * count:
-      return await ctx.send(
-          f"you don't have enough money in your wallet to buy {items}")
-    await self.take_money("wallet", ctx.author.id, cost * count, ctx)
-    await ctx.send(f"You bought {count} {item} for {cost*count} coins")
-    lst = await ctx.db.fetch(
-        f"SELECT * FROM inv WHERE uid='{ctx.author.id}' AND item='{item}'")
-    _l = []
-    c = count
-    for i in lst:
-      _l.append(dict(i))
-    for i in _l:
-      c = int(i["count"]) + count
-    await ctx.db.execute(
-        f"DELETE FROM inv WHERE uid = '{ctx.author.id}' AND item = '{item}'"
-    )
-    await ctx.db.execute(
-        f"INSERT INTO inv (uid, item, count) VALUES ('{ctx.author.id}', '{item}','{c}')"
-    )
-
-  @commands.command(aliases=["inv"])
-  async def inventory(self, ctx, user: discord.Member = None):
-    user = user or ctx.author
-    lst = await ctx.db.fetch(f"SELECT * FROM inv WHERE uid='{user.id}'")
-    lst = list(dict(i) for i in lst)
-    shop = {"apple": 1, "banana": 2, "pizza": 3, "milk": 4}
-    t = ""
-    apples, bananas, pizzas, milks, laptops = 0, 0, 0, 0, 0
-    for i in lst:
-      if i["item"] == "apple":
-        apples = int(i["count"])
-        t += f"**1** :apple: Apple -> {apples}\n"
-      if i["item"] == "banana":
-        bananas = int(i["count"])
-        t += f"**2** :banana: Banana -> {bananas}\n"
-      if i["item"] == "pizza":
-        pizzas = int(i["count"])
-        t += f"**3** :pizza: Pizza -> {pizzas}\n"
-      if i["item"] == "milk":
-        milks = int(i["count"])
-        t += f"**4** :milk: Milk -> {milks}\n"
-      if i["item"] == "laptop":
-        laptops = int(i["count"])
-        t += f"**5** :computer: Laptop -> {laptops}\n"
-    e = discord.Embed(title=f"{user.display_name}'s Inventory",
-                      description=t or "Nothing In Inventory",
-                      url="https://discord.gg/zdrSUu98BP")
-    await ctx.send(embed=e)
+      await self.open_acc(ctx.author.id,)
+      await ctx.send("I just opened your account so please now try again", ephemeral=True)
 
 
 def setup(bot):
