@@ -1,31 +1,34 @@
-from appcommands import cog
+from core import Cog
+import appcommands
 import math
 
-class MathCog(cog.SlashCog):
+class MathCog(Cog):
   def __init__(self, bot):
     self.bot = bot
 
-  @cog.command()
-  async def add(self, ctx, number: float, to: float):
-    await ctx.reply(f'Your answer is {number + number}', ephemeral=True)
-    
-  @cog.command()
-  async def subtract(self, ctx, by: float, number: float):
-    await ctx.reply(f'Your answer is {by - number}', ephemeral=True)
+  square = appcommands.slashgroup(name="sqaure",)
 
-  @cog.command()
+  @appcommands.command(description="Add two numbers")
+  async def add(self, ctx, number: float, into: float):
+    await ctx.reply(f'Your answer is {number + into}', ephemeral=True)
+    
+  @appcommands.command(description="Subtract two numbers")
+  async def subtract(self, ctx, number: float, by: float):
+    await ctx.reply(f'Your answer is {number - by}', ephemeral=True)
+
+  @appcommands.command(description="Multiply Two numbers")
   async def multiply(self, ctx, number: float, by: float):
     await ctx.reply(f'Your answer is {number * by}', ephemeral=True)
 
-  @cog.command()
+  @appcommands.command(description="Divide two numbers")
   async def divide(self, ctx, number: float, by: float):
     await ctx.reply(f'Your answer is {number/by}', ephemeral=True)
 
-  @cog.command()
-  async def square(self, ctx, number: float):
+  @square.subcommand(name="of", description="Square of a number")
+  async def square_of(self, ctx, number: float):
     await ctx.reply(f'Your answer is {number * number}', ephemeral=True)
 
-  @cog.command()
+  @square.subcommand(name="root", description="Square root of a number")
   async def square_root(self, ctx, number: float):
     await ctx.reply(f'Your answer is {math.sqrt(number)}', ephemeral=True)
 
