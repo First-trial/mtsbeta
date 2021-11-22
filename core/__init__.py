@@ -25,6 +25,7 @@ class CustomCont(appcommands.InteractionContext):
   def __init__(self, b, i):
     super().__init__(b,i)
     self.db = self.pool = b.pool
+    self.prefix = self.clean_prefix = "/"
 
 
 class MtsBot(appcommands.AutoShardedBot):
