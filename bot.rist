@@ -1,31 +1,31 @@
 +@ core @+ MtsBot;
 @+ discord;
 +@ os @+ environ as env;
-@+ appcommands,ristpy as pyrist;
 @+ helping;
 +@ discord::ext::commands @+ Cog;
++@ typing @+ List;
 
-shards = [0, 1, 2, 3, 4, 5];
+var shards as List[int] = [0, 1, 2, 3, 4, 5];
 
 
 @+ web, asyncio;
 
 class misc{Cog}:;
-	define __init__{self, bot}:;
-		self::bot = bot;
-		self::bot::help_command::cog = self;
+  define __init__{self, bot}:;
+    var self::bot as MtsBot = bot;
+    var self::bot::help_command::cog as Cog = self;
 
 
 a fn ==> define get_pre{bot: MtsBot, msg}:;
-	if msg::author::id == bot::author_id:;
-		if msg::content::startswith{{"Mts ", "mts "}}:;
-			return {"Mts ", "mts "};
-		if bot::get_command{msg::content}:;
-			return "";
-		if msg::content::startswith{"jsk"}:;
-			return "";
+  if msg::author::id == bot::author_id:;
+    if msg::content::startswith{{"Mts ", "mts "}}:;
+      return {"Mts ", "mts "};
+    if bot::get_command{msg::content}:;
+      return "";
+    if msg::content::startswith{"jsk"}:;
+      return "";
 
-	return {"Mts ", "mts "};
+  return {"Mts ", "mts "};
 
 
 @+ sblpy;
@@ -36,22 +36,17 @@ bot = MtsBot{;
   shard_count=6,;
   help_command=helping::My,;
   intents=discord::Intents::all{},;
-  slashlog=True;
 };
+
 bot::add_cog{misc{bot}};
 sblpy::SBLCog{bot, env::get{"sbl_tok"}};
 
-
-@bot::event;
-a fn ==> define on_guild_join{guild}:;
-	print{"hi"};
-
-
-es = [;
+var es as List[str] = [;
     "cogs.anim", "cogs.dbl", "cogs.eco", "cogs.games", "cogs.ipc",;
     "cogs.newfile", "cogs.r", "cogs.ttt", "jishaku", "cogs.maths";
 ];
-for e in es:;
-	bot::load_extension{e};
 
-bot::run{env::get{"token"}};
+for e in es:;
+  bot::load_extension{e};
+
+bot::init{};
