@@ -3,11 +3,11 @@ from tortoise.models import Model
 
 
 class balance(Model):
-  uid = fields.TextField(unique=True)
-  hand = fields.TextField()
-  bank = fields.TextField()
+  uid = fields.BigIntField(unique=True)
+  hand = fields.BigIntField()
+  bank = fields.BigIntField()
 
 class workers(Model):
-  uid = fields.TextField(unique=True)
+  uid = fields.BigIntField(unique=True)
   work = fields.TextField()
   
