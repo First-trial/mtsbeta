@@ -8,7 +8,7 @@ from typing import List
 shards: List[int] = [0, 1, 2, 3, 4, 5]
 
 
-import web, asyncio
+import asyncio
 
 class misc(Cog):
   def __init__(self, bot):

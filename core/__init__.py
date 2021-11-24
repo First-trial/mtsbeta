@@ -1,22 +1,18 @@
-import discord
+import discord, config
 from discord.ext import commands
-from discord.ext.commands import AutoShardedBot, Cog, command
-from discord import utils
-from core.models.models import *
+from discord import Permissions
 from tortoise import Tortoise
 from core.cmd import Command
-from typing import Coroutine, Callable, Any
 from cogs.utils import context
 from core.private import DISCORD
 from core.msgmanager import MessageManager
 from core.dbmanager import DatabaseManager
 import importlib
-import ipc
+
 from discord.ext.commands import CommandNotFound
 import inspect, os, time, traceback
 from core.gmemanager import GameManager
 import appcommands
-from tortoise.backends.base.config_generator import expand_db_url
 MAX_MESSAGE_LENGTH = 1900
 import asyncio
 
@@ -70,9 +66,7 @@ class MtsBot(appcommands.AutoShardedBot):
     return 730454267533459568
 
   async def _init(self):
-    cfg = {"connections": {"default": expand_db_url(os.environ.get("_k"))},"apps": {"default": {"models": ["core.models.models"]}}}
-    cfg["connections"]["default"]["credentials"]["ssl"] = "disable"
-    await Tortoise.init(config=cfg)
+    await Tortoise.init(config=config.tortoise)
     await Tortoise.generate_schemas(safe=True)
 
   async def on_ready(self):

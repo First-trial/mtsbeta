@@ -8,7 +8,7 @@
 var shards as List[int] = [0, 1, 2, 3, 4, 5];
 
 
-@+ web, asyncio;
+@+ asyncio;
 
 class misc{Cog}:;
   define __init__{self, bot}:;
@@ -28,7 +28,7 @@ a fn ==> define get_pre{bot: MtsBot, msg}:;
   return {"Mts ", "mts "};
 
 
-@+ sblpy;
+@+ sblpy, config;
 
 bot = MtsBot{;
   command_prefix=get_pre,;
@@ -39,7 +39,7 @@ bot = MtsBot{;
 };
 
 bot::add_cog{misc{bot}};
-sblpy::SBLCog{bot, env::get{"sbl_tok"}};
+sblpy::SBLCog{bot, config.sbl};
 
 var es as List[str] = [;
     "cogs.anim", "cogs.dbl", "cogs.eco",;
