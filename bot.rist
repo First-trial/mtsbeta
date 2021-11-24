@@ -42,8 +42,8 @@ bot::add_cog{misc{bot}};
 sblpy::SBLCog{bot, env::get{"sbl_tok"}};
 
 var es as List[str] = [;
-    "cogs.anim", "cogs.dbl", "cogs.eco", "cogs.games", "cogs.ipc",;
-    "cogs.newfile", "cogs.r", "cogs.ttt", "jishaku", "cogs.maths";
+    "cogs.anim", "cogs.dbl", "cogs.eco",;
+    "cogs.newfile", "cogs.snap", "jishaku", "cogs.maths";
 ];
 
 for e in es:;

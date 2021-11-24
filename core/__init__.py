@@ -84,7 +84,7 @@ class MtsBot(appcommands.AutoShardedBot):
 
   @property
   def author(self):
-  return self._author
+    return self._author
 
   def get_modules(self, path, module):
     modules = []
@@ -219,7 +219,7 @@ class MtsBot(appcommands.AutoShardedBot):
     if isinstance(original_error, discord.Forbidden):
       await self.send_missing_permissions(context, self.get_missing_permissions(context))
       error = "Time: {0}\n\nIgnoring exception in command {1}:\n\nException: \n\n{2}"\
-      .format(time.strftime("%b %d %Y %H:%M:%S"), context.command, ''.join(traceback.format_exception(type(exception), exception, exception.__traceback__))
+      .format(time.strftime("%b %d %Y %H:%M:%S"), context.command, ''.join(traceback.format_exception(type(exception), exception, exception.__traceback__)))
       await self.send_error(error)
 
   def remove_old_binaries(self):

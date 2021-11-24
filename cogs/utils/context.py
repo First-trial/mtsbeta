@@ -28,9 +28,6 @@ class Context(commands.Context):
 		self.pool = self.bot.pool
 		self._db = None
 
-	async def send(self, *args, **kwargs):
-	  a=Mesle(self.bot._connection, self.channel)
-	  return await a.send(*args, **kwargs)
 	
 	async def entry_to_code(self, entries):
 		width = max(len(a) for a, b in entries)
