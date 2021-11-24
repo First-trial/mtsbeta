@@ -14,7 +14,8 @@ class misc(Cog):
   def __init__(self, bot):
     self.bot: MtsBot = bot
     self.bot.help_command.cog: Cog = self
-
+class Games(Cog):
+  pass
 
 async def get_pre(bot: MtsBot, msg):
   if msg.author.id == bot.author_id:
@@ -28,7 +29,7 @@ async def get_pre(bot: MtsBot, msg):
   return ("Mts ", "mts ")
 
 
-import sblpy
+import sblpy, config
 
 bot = MtsBot(
   command_prefix=get_pre,
@@ -39,11 +40,12 @@ bot = MtsBot(
 )
 
 bot.add_cog(misc(bot))
-sblpy.SBLCog(bot, env.get("sbl_tok"))
+bot.add_cog(Games(bot))
+sblpy.SBLCog(bot, config.sbl)
 
 es: List[str] = [
     "cogs.anim", "cogs.dbl", "cogs.eco",
-    "cogs.newfile", "cogs.snap", "jishaku", "cogs.maths"
+    "cogs.snap", "jishaku", "cogs.maths"
 ]
 
 for e in es:

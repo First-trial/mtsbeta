@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from appcommands import cog
+import appcommands
 from models import balance, workers
 from core import Cog
 
@@ -41,7 +41,7 @@ class eco(Cog):
 
   def do_bucket(self,i,t):
     ta=self.bot.loop.create_task(do_bucket_(i,t))
-    self.tasks.append(ta) and
+    self.tasks.append(ta)
 
   def cog_unload(self,):
     for task in self._tasks:
@@ -144,7 +144,7 @@ class eco(Cog):
         c = round(c / 60)
       else:
         c = 1
-     return await ctx.send(f"you have already worked\nTry again in {c} minutes")
+      return await ctx.send(f"you have already worked\nTry again in {c} minutes", ephemeral=True)
 
     if ctx.author.id == self.owner_id:
       salary = OWNER_SALARY

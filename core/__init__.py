@@ -48,7 +48,7 @@ class MtsBot(appcommands.AutoShardedBot):
       await ctx.release()
 
   def init(self, *args, **kwargs):
-    self.loop.run_until_complete(self._on_ready())
+    self.loop.run_until_complete(self._init())
     self.load_commands()
     import hoster
     hoster.host(self, os.environ.get("token"))
@@ -74,7 +74,10 @@ class MtsBot(appcommands.AutoShardedBot):
 
   @property
   def pool(self):
-    return Tortoise.get_connection("default")._pool
+    try:
+      return Tortoise.get_connection("default")._pool
+    except:
+      return None
 
   @property
   def author(self):

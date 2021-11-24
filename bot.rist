@@ -14,7 +14,8 @@ class misc{Cog}:;
   define __init__{self, bot}:;
     var self::bot as MtsBot = bot;
     var self::bot::help_command::cog as Cog = self;
-
+class Games{Cog}:;
+  pass;
 
 a fn ==> define get_pre{bot: MtsBot, msg}:;
   if msg::author::id == bot::author_id:;
@@ -39,11 +40,12 @@ bot = MtsBot{;
 };
 
 bot::add_cog{misc{bot}};
-sblpy::SBLCog{bot, config.sbl};
+bot::add_cog{Games{bot}};
+sblpy::SBLCog{bot, config::sbl};
 
 var es as List[str] = [;
     "cogs.anim", "cogs.dbl", "cogs.eco",;
-    "cogs.newfile", "cogs.snap", "jishaku", "cogs.maths";
+    "cogs.snap", "jishaku", "cogs.maths";
 ];
 
 for e in es:;

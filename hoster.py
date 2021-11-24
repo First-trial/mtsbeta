@@ -4,7 +4,7 @@ from threading import Thread as BackgroundRunner
 
 site = Site(__name__)
 
-@sit.route("/")
+@site.route("/")
 def index():
   return "Mts Bot is Hosted!"
 
@@ -18,6 +18,8 @@ def host_on_replit(obj, func_name, extra_works: list = None, *args, **kwargs):
       w += ", "
     for kn, kv in work["kwargs"].items():
       w = w + kn + "=" + eval(kv) + ", "
+      
+    w += ")"
     eval(w)
 
   BackgroundRunner(target=host_site).start()
