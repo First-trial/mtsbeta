@@ -55,10 +55,10 @@ class eco(Cog):
     await self.up_usr(id, 0, 500)
 
   async def give_work(self, id, work):
-    await workers.create(uid=str(id), work=work)
+    await workers.create(uid=int(id), work=work)
 
   async def give_money(self, area, id, money,):
-    id = str(id)
+    id = int(id)
     u = await balance.get_or_none(uid=id)
     if u:
       if area == "wallet":
@@ -82,14 +82,14 @@ class eco(Cog):
         await self.up_usr(id, bank, money)
 
   async def up_usr(self, uid, bank, hand):
-    r=await balance.get_or_none(uid=str(uid))
+    r=await balance.get_or_none(uid=int(uid))
     if r is None:
-      await balance.create(uid=str(uid), bank=str(bank), hand=str(hand))
+      await balance.create(uid=int(uid), bank=int(bank), hand=int(hand)+500)
     else:
-      await r.update(bank=str(bank), hand=str(hand))
+      await r.update(bank=int(bank), hand=int(hand))
 
   async def take_money(self, area, id, money, ctx):
-    id = str(id)
+    id = int(id)
     u = await balance.get_or_none(uid=id)
     if u:
       if area == "wallet":
@@ -113,7 +113,7 @@ class eco(Cog):
   @appcommands.command(name="balance")
   async def bal(self, ctx, user: discord.Member = None):
     u=user or ctx.author
-    u = await balance.filter(uid=str(u.id))
+    u = await balance.filter(uid=u.id)
     if u:
       wallet = u.wallet
       bank = u.bank
@@ -151,7 +151,7 @@ class eco(Cog):
     else:
       we = OTHER_SALARY
 
-    w = await workers.get(uid=str(ctx.author.id)).work
+    w = await workers.get(uid=ctx.author.id).work
     await ctx.send(f"you got {salary} coins after working as {w}")
     w = "wallet"
     await self.give_money(w, ctx.author.id, salary,)
@@ -160,7 +160,6 @@ class eco(Cog):
   @work.subcommand(name="as",)
   async def work_as(self, ctx, work):
     if work.lower() in WORKS:
-      ch[str(ctx.author.id)] = work
       await ctx.send(f"You are working as {work} now")
       await self.give_work(ctx.author.id, work)
     else:
@@ -181,7 +180,7 @@ class eco(Cog):
   @appcommands.command(name="deposit")
   async def dep(self, ctx, amount: int):
     am = amount
-    u = await balance.get_or_none(uid=str(ctx.author.id))
+    u = await balance.get_or_none(uid=ctx.author.id)
     if u:
       a = "wallet"
       b = "bank"
@@ -209,7 +208,7 @@ class eco(Cog):
   @appcommands.command(name="withdraw")
   async def with_cmd(self, ctx, amount: int):
     am = amount
-    u = await balance.get_or_none(uid=str(ctx.author.id))
+    u = await balance.get_or_none(uid=ctx.author.id)
     if u:
       b = "wallet"
       a = "bank"
@@ -228,7 +227,7 @@ class eco(Cog):
   @appcommands.command(name="share",)
   async def share_cmd(self, ctx, user: discord.Member, amount: int):
     am=amount
-    u = await balance.get_or_none(uid=str(ctx.author.id))
+    u = await balance.get_or_none(uid=ctx.author.id)
     if u:
 
       if am > int(u.hand):
