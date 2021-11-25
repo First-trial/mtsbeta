@@ -52,7 +52,7 @@ class eco(Cog):
     print("A wild economy system appeared")
 
   async def open_acc(self, id):
-    await self.up_usr(id, 0, 500)
+    await balance.create(uid=int(id), bank=0, hand=500)
 
   async def give_work(self, id, work):
     await workers.create(uid=int(id), work=work)
@@ -83,8 +83,8 @@ class eco(Cog):
 
   async def up_usr(self, uid, bank, hand):
     r=balance.get_or_none(uid=int(uid))
-    if r is None:
-      await balance.create(uid=int(uid), bank=int(bank), hand=int(hand)+500)
+    if await r is None:
+      await self.open_acc(uid)
     else:
       await r.update(bank=int(bank), hand=int(hand))
 
