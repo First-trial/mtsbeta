@@ -113,7 +113,7 @@ class eco(Cog):
   @appcommands.command(name="balance")
   async def bal(self, ctx, user: discord.Member = None):
     u=user or ctx.author
-    u = await balance.filter(uid=u.id)
+    u = await balance.get_or_none(uid=u.id)
     if u:
       wallet = u.wallet
       bank = u.bank
@@ -196,7 +196,6 @@ class eco(Cog):
       await self.open_acc(ctx.author.id,)
       a = "wallet"
       b = "bank"
-      k = kk
       if am > 500:
         await ctx.reply("you only have 500 coins in your wallet to deposit", ephemeral=True)
       else:
