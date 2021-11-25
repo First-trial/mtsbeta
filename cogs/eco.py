@@ -82,7 +82,7 @@ class eco(Cog):
         await self.up_usr(id, bank, money)
 
   async def up_usr(self, uid, bank, hand):
-    r=await balance.get_or_none(uid=int(uid))
+    r=balance.get_or_none(uid=int(uid))
     if r is None:
       await balance.create(uid=int(uid), bank=int(bank), hand=int(hand)+500)
     else:
