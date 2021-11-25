@@ -25,6 +25,7 @@ WORKS = [
   "engineer",
   "ghost"
 ]
+WORKS = [appcommands.Choice(work) for work in WORKS]
 
 class eco(Cog):
   def __init__(self, bot):
@@ -40,7 +41,7 @@ class eco(Cog):
     del self.buckets[id]
 
   def do_bucket(self,i,t):
-    ta=self.bot.loop.create_task(do_bucket_(i,t))
+    ta=self.bot.loop.create_task(self.do_bucket_(i,t))
     self.tasks.append(ta)
 
   def cog_unload(self,):
@@ -52,10 +53,10 @@ class eco(Cog):
     print("A wild economy system appeared")
 
   async def open_acc(self, id):
-    await balance.create(uid=int(id), bank=0, hand=500)
+    await balance.create(uid=int(id), bank=0, hand=500); return True
 
   async def give_work(self, id, work):
-    await workers.create(uid=int(id), work=work)
+    await workers.create(uid=int(id), work=work); return True
 
   async def give_money(self, area, id, money,):
     id = int(id)
@@ -85,8 +86,9 @@ class eco(Cog):
     r=balance.get_or_none(uid=int(uid))
     if await r is None:
       await self.open_acc(uid)
-    else:
-      await r.update(bank=int(bank), hand=int(hand))
+      r=balance.get_or_none(uid=int(uid))
+
+    await r.update(bank=int(bank), hand=int(hand))
 
   async def take_money(self, area, id, money,):
     id = int(id)
@@ -110,7 +112,7 @@ class eco(Cog):
       else:
         await self.open_acc(id)
 
-  @appcommands.command(name="balance")
+  @appcommands.command(name="balance",)
   async def bal(self, ctx, user: discord.Member = None):
     u=user or ctx.author
     u = await balance.get_or_none(uid=u.id)
@@ -158,20 +160,21 @@ class eco(Cog):
 
 
   @work.subcommand(name="as",)
-  async def work_as(self, ctx, work):
+  async def work_as(self, ctx, work: Option("-", "Chosen work", choices=WORKS, required=True)):
     if work.lower() in WORKS:
       await ctx.send(f"You are working as {work} now")
       await self.give_work(ctx.author.id, work)
     else:
       await ctx.send(
-          f"this is not valid work.\nSee a list of work by `{ctx.clean_prefix}work list`"
+          f"This is not valid work.\nSee a list of work by `{ctx.clean_prefix}work list`"
       )
 
   @work.subcommand(name="list")
   @commands.cooldown(0, 0, commands.BucketType.user)
   async def works_list(self, ctx):
     w = discord.Embed(
-      description="\n".join(list(w.title() for w in WORKS))
+      title="**__Available works__**",
+      description="\n".join(list(w.value.title() for w in WORKS))
     )
     w.set_footer(text=f"choose a work by `{ctx.clean_prefix}work as <work>`")
     await ctx.send(embed=w)
