@@ -88,7 +88,7 @@ class eco(Cog):
     else:
       await r.update(bank=int(bank), hand=int(hand))
 
-  async def take_money(self, area, id, money, ctx):
+  async def take_money(self, area, id, money,):
     id = int(id)
     u = await balance.get_or_none(uid=id)
     if u:
@@ -180,6 +180,8 @@ class eco(Cog):
   @appcommands.command(name="deposit")
   async def dep(self, ctx, amount: int):
     am = amount
+    if amount <= 0:
+        return await ctx.send("Amount should must be greater than 0, not {am}", ephemeral=True)
     u = await balance.get_or_none(uid=ctx.author.id)
     if u:
       a = "wallet"
@@ -207,6 +209,8 @@ class eco(Cog):
   @appcommands.command(name="withdraw")
   async def with_cmd(self, ctx, amount: int):
     am = amount
+    if amount <= 0:
+        return await ctx.send("Amount should must be greater than 0, not {am}", ephemeral=True)
     u = await balance.get_or_none(uid=ctx.author.id)
     if u:
       b = "wallet"
@@ -226,6 +230,8 @@ class eco(Cog):
   @appcommands.command(name="share",)
   async def share_cmd(self, ctx, user: discord.Member, amount: int):
     am=amount
+    if amount <= 0:
+        return await ctx.send("Amount should must be greater than 0, not {am}", ephemeral=True)
     u = await balance.get_or_none(uid=ctx.author.id)
     if u:
 
