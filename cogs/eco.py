@@ -1,4 +1,4 @@
-import discord
+import discord, asyncio
 from discord.ext import commands
 import appcommands
 from models import balance, workers
@@ -8,7 +8,8 @@ from appcommands import Option
 async def check_work(ctx):
   if not await workers.get_or_none(uid=str(ctx.author.id)):
     await ctx.send(
-        f"you are not working\n pls choose your work by `{ctx.clean_prefix}work as <work>`"
+        f"You are not working\nPls choose your work by `{ctx.clean_prefix}work as <work>`",
+        ephemeral=True
     )
     return False
   return True
@@ -43,7 +44,7 @@ class eco(Cog):
 
   def do_bucket(self,i,t):
     ta=self.bot.loop.create_task(self.do_bucket_(i,t))
-    self.tasks.append(ta)
+    self._tasks.append(ta)
 
   def cog_unload(self,):
     for task in self._tasks:
@@ -115,10 +116,10 @@ class eco(Cog):
 
   @appcommands.command(name="balance", description="Check balance of your or someone other")
   async def bal(self, ctx, user: discord.Member = None):
-    u=user or ctx.author
-    u = await balance.get_or_none(uid=u.id)
+    usr=user or ctx.author
+    u = await balance.get_or_none(uid=usr.id)
     if u:
-      wallet = u.wallet
+      wallet = u.hand
       bank = u.bank
       b = discord.Embed(
           title=f"{u.name}'s balance",
@@ -126,7 +127,7 @@ class eco(Cog):
       await ctx.reply(embed=b)
     else:
       await ctx.reply("Opening account....")
-      await self.open_acc(u.id,)
+      await self.open_acc(usr.id,)
       b = discord.Embed(
           title=f"{u.name}'s balance",
           description=f"Wallet: `500 coins`\nBank: `0 coins`")
@@ -147,12 +148,12 @@ class eco(Cog):
         c = round(c / 60)
       else:
         c = 1
-      return await ctx.send(f"you have already worked\nTry again in {c} minutes", ephemeral=True)
+      return await ctx.send(f"You have already worked\nTry again in {c} minutes", ephemeral=True)
 
     if ctx.author.id == self.owner_id:
       salary = OWNER_SALARY
     else:
-      we = OTHER_SALARY
+      salary = OTHER_SALARY
 
     w = await workers.get(uid=ctx.author.id).work
     await ctx.send(f"you got {salary} coins after working as {w}")
