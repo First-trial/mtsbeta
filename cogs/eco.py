@@ -3,6 +3,7 @@ from discord.ext import commands
 import appcommands
 from models import balance, workers
 from core import Cog
+from appcommands import Option
 
 async def check_work(ctx):
   if not await workers.get_or_none(uid=str(ctx.author.id)):
@@ -112,7 +113,7 @@ class eco(Cog):
       else:
         await self.open_acc(id)
 
-  @appcommands.command(name="balance",)
+  @appcommands.command(name="balance", description="Check balance of your or someone other")
   async def bal(self, ctx, user: discord.Member = None):
     u=user or ctx.author
     u = await balance.get_or_none(uid=u.id)
@@ -159,28 +160,29 @@ class eco(Cog):
     await self.give_money(w, ctx.author.id, salary,)
 
 
-  @work.subcommand(name="as",)
+  @work.subcommand(name="as", description="Choose your work")
   async def work_as(self, ctx, work: Option("-", "Chosen work", choices=WORKS, required=True)):
     if work.lower() in WORKS:
-      await ctx.send(f"You are working as {work} now")
+      await ctx.send(f"You are working as {work} now!")
       await self.give_work(ctx.author.id, work)
     else:
       await ctx.send(
-          f"This is not valid work.\nSee a list of work by `{ctx.clean_prefix}work list`"
+        f"This is not valid work.\nSee a list of work by `{ctx.clean_prefix}work list`",
+        ephemeral=True
       )
 
-  @work.subcommand(name="list")
+  @work.subcommand(name="list", description="List of available jobs.")
   @commands.cooldown(0, 0, commands.BucketType.user)
   async def works_list(self, ctx):
     w = discord.Embed(
-      title="**__Available works__**",
+      title="**__Available Jobs__**",
       description="\n".join(list(w.value.title() for w in WORKS))
     )
     w.set_footer(text=f"choose a work by `{ctx.clean_prefix}work as <work>`")
     await ctx.send(embed=w)
 
 
-  @appcommands.command(name="deposit")
+  @appcommands.command(name="deposit", description="Deposit some money in your bank.")
   async def dep(self, ctx, amount: int):
     am = amount
     if amount <= 0:
@@ -209,7 +211,7 @@ class eco(Cog):
         await self.give_money(b, ctx.author.id, am,)
         await ctx.edit(f"Successfully deposited {am} coins to your bank")
 
-  @appcommands.command(name="withdraw")
+  @appcommands.command(name="withdraw", description="Withdraw some money from your bank")
   async def with_cmd(self, ctx, amount: int):
     am = amount
     if amount <= 0:
@@ -227,10 +229,10 @@ class eco(Cog):
         await self.give_money(b, ctx.author.id, am,)
         await ctx.edit(f"Successfully withdrawed {am} coins from your bank")
     else:
-      await ctx.reply("You don't have any money in your bank to withdraw, go deposit it first", ephemeral=True)
+      await ctx.reply("You don't have any money in your bank to withdraw, go deposit some first", ephemeral=True)
       await self.open_acc(ctx.author.id,)
 
-  @appcommands.command(name="share",)
+  @appcommands.command(name="share", description="Share your money to someone else")
   async def share_cmd(self, ctx, user: discord.Member, amount: int):
     am=amount
     if amount <= 0:
@@ -239,10 +241,7 @@ class eco(Cog):
     if u:
 
       if am > int(u.hand):
-        await ctx.send("you don't have enough money in your wallet to share", ephemeral=True)
-        return
-      else:
-        pass
+        return await ctx.send("you don't have enough money in your wallet to share", ephemeral=True)
 
       w = "wallet"
       await self.take_money(w, ctx.author.id, am,)
