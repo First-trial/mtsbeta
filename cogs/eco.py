@@ -122,14 +122,14 @@ class eco(Cog):
       wallet = u.hand
       bank = u.bank
       b = discord.Embed(
-          title=f"{u.name}'s balance",
+          title=f"{usr.name}'s balance",
           description=f"Wallet: `{wallet} coins`\nBank: `{bank} coins`")
       await ctx.reply(embed=b)
     else:
       await ctx.reply("Opening account....")
       await self.open_acc(usr.id,)
       b = discord.Embed(
-          title=f"{u.name}'s balance",
+          title=f"{usr.name}'s balance",
           description=f"Wallet: `500 coins`\nBank: `0 coins`")
       await ctx.edit(embed=b)
 
@@ -150,7 +150,7 @@ class eco(Cog):
         c = 1
       return await ctx.send(f"You have already worked\nTry again in {c} minutes", ephemeral=True)
 
-    if ctx.author.id == self.owner_id:
+    if ctx.author.id == self.author_id:
       salary = OWNER_SALARY
     else:
       salary = OTHER_SALARY
