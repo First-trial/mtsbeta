@@ -27,9 +27,57 @@ WORKS = [
   "engineer",
   "ghost"
 ]
+
 WORKS = [appcommands.Choice(work) for work in WORKS]
 
-class eco(Cog):
+class Task(object):
+  def __init__(self, id, task):
+    self.id, self.task, self.cancelled = id, task, False
+
+  def cancel(self):
+    if not self.cancelled:
+      self.task.cancel()
+      self.cancelled = True
+
+class CooldownBucket(dict):
+  def __init__(self, loop, **kwargs):
+    self.__loop = loop
+    self.__tasks = []
+    self.__index = 0
+    self.__ftask = self.__loop.create_task(self.__clearer())
+    super().__init__(**kwargs)
+
+  def __clearer(self):
+    while True:
+      for k, v in self.items():
+        if v <= 0:
+          del self[k]
+      await asyncio.sleep(1)
+
+  async def __do_bucket(self, k, v):
+    while self.buckets[id] > 0:
+      await asyncio.sleep(1)
+      self.buckets[id] -= 1
+
+  def __setitem__(self, k, v):
+    if k not in self:
+      super().__setitem__(k, {"item": v, "id": self.index})
+    else:
+      self.__tasks[super().__getitem__(k)["id"]].cancel()
+      super().__setitem__(k, {"item": v, "id": self.index})
+
+    task = Task(self.index, self.__loop.create_task(self.__do_bucket(k,v)))
+    self.__tasks.append(task)
+    self.index += 1
+
+  def __getitem__(self, k):
+    return super()[k]["item"]
+
+  def __delitem__(self, k):
+    self.__tasks[super()[k]["id"]].cancel()
+    super().__delitem__(k)
+
+class Economy(Cog):
   def __init__(self, bot):
     super().__init__(bot)
     self.buckets = {}
@@ -102,8 +150,8 @@ class eco(Cog):
       if area == "wallet":
         w = int(u.hand)
         bank = int(u.bank)
-        money -= w
-        await self.up_usr(id, bank, money)
+        w -= money
+        await self.up_usr(id, bank, w)
       else:
         w = int(u.hand)
         bank = int(u.bank)
@@ -112,7 +160,7 @@ class eco(Cog):
     else:
       if area == "wallet":
         bank = 0
-        money -= 500
+        money = 500 - money
         await self.up_usr(id, bank, money)
       else:
         await self.open_acc(id)
@@ -134,7 +182,7 @@ class eco(Cog):
       b = discord.Embed(
           title=f"{usr.name}'s balance",
           description=f"Wallet: `500 coins`\nBank: `0 coins`")
-      await ctx.edit(None, embed=b)
+      await ctx.edit(content=None, embed=b)
 
   work = appcommands.slashgroup(name="work",)
 
@@ -159,7 +207,7 @@ class eco(Cog):
       salary = OTHER_SALARY
 
     w = (await workers.get(uid=ctx.author.id)).work
-    await ctx.send(f"you got {salary} coins after working as {w}")
+    await ctx.send(f"you got `{salary}` coins after working as `{w}`")
     w = "wallet"
     await self.give_money(w, ctx.author.id, salary,)
 
@@ -175,16 +223,16 @@ class eco(Cog):
       await ctx.send("You are already doing a job, pls resign from it before taking a new job\n" \
 f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
     else:
-      await ctx.send(f"You are working as {work} now!")
+      await ctx.send(f"You are working as `{work}` now!")
 
   @work.subcommand(name="resign", description="Resign from your work")
   async def work_resign(self, ctx):
     worker = workers.get_or_none(uid=ctx.author.id)
     if not await worker:
-      await ctx.send(f"You aren't working, pls choose a job (`{ctx.prefix}work as [work]`)", ephemeral=True)
+      await ctx.send(f"You aren't working, pls choose a job (`{ctx.prefix}work as <work>`)", ephemeral=True)
     else:
-      await worker.delete()
-      await ctx.send(f"Successfully resigned from the job of {worker.work}")
+      worker = await worker.delete()
+      await ctx.send(f"Successfully resigned from the job of `{worker.work}`")
 
   @work.subcommand(name="list", description="List of available jobs.")
   async def works_list(self, ctx):
@@ -212,7 +260,7 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
         await ctx.reply(f'Depositing {am} coins in your bank...')
         await self.take_money(a, ctx.author.id, am,)
         await self.give_money(b, ctx.author.id, am,)
-        await ctx.edit(f"Successfully deposited {am} coins to your bank")
+        await ctx.edit(content=f"Successfully deposited {am} coins to your bank")
     else:
       await self.open_acc(ctx.author.id,)
       a = "wallet"
@@ -235,13 +283,13 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
       b = "wallet"
       a = "bank"
       am = int(am)
-      if am > int(k.bank):
+      if am > int(u.bank):
         await ctx.reply("You don't have enough money in your bank to withdraw", ephemeral=True)
       else:
         await ctx.reply(f'Withdrawing {am} coins from your bank...')
         await self.take_money(a, ctx.author.id, am,)
         await self.give_money(b, ctx.author.id, am,)
-        await ctx.edit(f"Successfully withdrawed {am} coins from your bank")
+        await ctx.edit(content=f"Successfully withdrawed {am} coins from your bank")
     else:
       await ctx.reply("You don't have any money in your bank to withdraw, go deposit some first", ephemeral=True)
       await self.open_acc(ctx.author.id,)
@@ -255,16 +303,16 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
     if u:
 
       if am > int(u.hand):
-        return await ctx.send("you don't have enough money in your wallet to share", ephemeral=True)
+        return await ctx.send("You don't have enough money in your wallet to share", ephemeral=True)
 
       w = "wallet"
       await self.take_money(w, ctx.author.id, am,)
       await self.give_money(w, user.id, am,)
-      await ctx.send(f"you gave {am} coins to {user.mention}")
+      await ctx.send(f"You gave {am} coins to {user.mention}")
     else:
       await self.open_acc(ctx.author.id,)
       await ctx.send("I just opened your account so please now try again", ephemeral=True)
 
 
 def setup(bot):
-  bot.add_cog(eco(bot))
+  bot.add_cog(Economy(bot))
