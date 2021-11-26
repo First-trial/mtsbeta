@@ -131,7 +131,7 @@ class eco(Cog):
       b = discord.Embed(
           title=f"{usr.name}'s balance",
           description=f"Wallet: `500 coins`\nBank: `0 coins`")
-      await ctx.edit(embed=b)
+      await ctx.edit(None, embed=b)
 
   work = appcommands.slashgroup(name="work",)
 
@@ -155,7 +155,7 @@ class eco(Cog):
     else:
       salary = OTHER_SALARY
 
-    w = await workers.get(uid=ctx.author.id).work
+    w = (await workers.get(uid=ctx.author.id)).work
     await ctx.send(f"you got {salary} coins after working as {w}")
     w = "wallet"
     await self.give_money(w, ctx.author.id, salary,)
