@@ -58,7 +58,10 @@ class eco(Cog):
     await balance.create(uid=int(id), bank=0, hand=500); return True
 
   async def give_work(self, id, work):
-    await workers.create(uid=int(id), work=work); return True
+    try:
+      await workers.create(uid=int(id), work=work); return True
+    except:
+      return False
 
   async def give_money(self, area, id, money,):
     id = int(id)
@@ -163,17 +166,27 @@ class eco(Cog):
 
   @work.subcommand(name="as", description="Choose your work")
   async def work_as(self, ctx, work: Option("-", "Chosen work", choices=WORKS, required=True)):
-    if work.lower() in list(w.value for w in WORKS):
-      await ctx.send(f"You are working as {work} now!")
-      await self.give_work(ctx.author.id, work)
-    else:
+    if work.lower() not in list(w.value for w in WORKS):
       await ctx.send(
         f"This is not valid work.\nSee a list of work by `{ctx.clean_prefix}work list`",
         ephemeral=True
       )
+    elif not await self.give_work(ctx.author.id, work):
+      await ctx.send("You are already doing a job, pls resign from it before taking a new job\n" \
+f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
+    else:
+      await ctx.send(f"You are working as {work} now!")
+
+  @work.subcommand(name="resign", description="Resign from your work")
+  async def work_resign(self, ctx):
+    worker = workers.get_or_none(uid=ctx.author.id)
+    if not await worker:
+      await ctx.send(f"You aren't working, pls choose a job (`{ctx.prefix}work as [work]`)", ephemeral=True)
+    else:
+      await worker.delete()
+      await ctx.send(f"Successfully resigned from the job of {worker.work}")
 
   @work.subcommand(name="list", description="List of available jobs.")
-  @commands.cooldown(0, 0, commands.BucketType.user)
   async def works_list(self, ctx):
     w = discord.Embed(
       title="**__Available Jobs__**",
