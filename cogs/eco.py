@@ -45,16 +45,6 @@ class CooldownBucket(dict):
     self.__loop = loop
     self.__tasks = []
     self.index = 0
-    self.__ftask = Task(-1, self.__loop.create_task(self.__clearer()))
-
-  async def __clearer(self):
-    while True:
-      for k, v in self.items():
-        if not isinstance(v, int):
-          del self[k]
-        if v <= 0:
-          del self[k]
-      await asyncio.sleep(1)
 
   async def __do_bucket(self, k, v):
     while self[k] > 0:
@@ -66,6 +56,7 @@ class CooldownBucket(dict):
           "item": self[k] - 1
         }
       )
+    super().__delitem__(k)
 
   def __setitem__(self, k, v):
     assert isinstance(v, int), "value should must be int"
@@ -94,9 +85,9 @@ class CooldownBucket(dict):
 
   def destroy(self):
     self.clear_tasks()
-    self.__ftask.cancel()
-    for k in self:
-      del self[k]
+    _=[k for k in self]
+    for k in _:
+      del self[_]
 
     def N(*args, **kwargs):
       pass
