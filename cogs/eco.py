@@ -163,7 +163,7 @@ class eco(Cog):
 
   @work.subcommand(name="as", description="Choose your work")
   async def work_as(self, ctx, work: Option("-", "Chosen work", choices=WORKS, required=True)):
-    if work.lower() in WORKS:
+    if work.lower() in list(w.value for w in WORKS):
       await ctx.send(f"You are working as {work} now!")
       await self.give_work(ctx.author.id, work)
     else:
