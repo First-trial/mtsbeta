@@ -44,31 +44,36 @@ class CooldownBucket(dict):
     self.__loop = loop
     self.__tasks = []
     self.__index = 0
-    self.__ftask = self.__loop.create_task(self.__clearer())
+    self.__ftask = Task(-1, self.__loop.create_task(self.__clearer()))
     super().__init__(**kwargs)
 
   def __clearer(self):
     while True:
       for k, v in self.items():
+        if not isinstance(v, int):
+          del self[k]
         if v <= 0:
           del self[k]
       await asyncio.sleep(1)
 
   async def __do_bucket(self, k, v):
-    while self.buckets[id] > 0:
+    while self[id] > 0:
       await asyncio.sleep(1)
-      self.buckets[id] -= 1
+      self[id] -= 1
 
   def __setitem__(self, k, v):
-    if k not in self:
-      super().__setitem__(k, {"item": v, "id": self.index})
-    else:
+    assert isinstance(v, int), "value should must be int"
+
+    if k in self:
       self.__tasks[super().__getitem__(k)["id"]].cancel()
-      super().__setitem__(k, {"item": v, "id": self.index})
+    super().__setitem__(k, {"item": v, "id": self.index})
 
     task = Task(self.index, self.__loop.create_task(self.__do_bucket(k,v)))
     self.__tasks.append(task)
     self.index += 1
+
+  def items(self,):
+    return ((k, v["item"],) for k, v in super().items())
 
   def __getitem__(self, k):
     return super()[k]["item"]
@@ -77,26 +82,40 @@ class CooldownBucket(dict):
     self.__tasks[super()[k]["id"]].cancel()
     super().__delitem__(k)
 
+  def clear_tasks(self,):
+    for task in self.__tasks:
+      task.cancel()
+
+  def destroy(self):
+    self.clear_tasks()
+    self.__ftask.cancel()
+    for k in self:
+      del self[k]
+
+    def N(*args, **kwargs):
+      pass
+
+    self.__getitem__ = N
+    self.__setitem__ = N
+    self.__delitem__ = N
+    self.__del__ = N
+    self.destroy = N
+    self.clear_tasks = N
+
+  def __del__(self, *args, **kwargs):
+    self.destroy()
+    super().__del__(*args, **kwargs)
+
 class Economy(Cog):
   def __init__(self, bot):
     super().__init__(bot)
-    self.buckets = {}
-    self._tasks = []
-
-  async def do_bucket_(self, id, t):
-    self.buckets[id] = t
-    while self.buckets[id] > 0:
-      await asyncio.sleep(1)
-      self.buckets[id] -= 1
-    del self.buckets[id]
+    self.buckets = CooldownBucket(bot.loop)
 
   def do_bucket(self,i,t):
-    ta=self.bot.loop.create_task(self.do_bucket_(i,t))
-    self._tasks.append(ta)
+    self.buckets[i] = t
 
   def cog_unload(self,):
-    for task in self._tasks:
-      task.cancel()
+    self.buckets.destroy()
 
   @commands.Cog.listener()
   async def on_ready(self):
