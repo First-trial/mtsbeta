@@ -212,10 +212,10 @@ class Economy(Cog):
     else:
       c = round(self.buckets[ctx.author.id])
       if c > 60:
-        c = round(c / 60)
+        c = str(round(c / 60))+" minutes"
       else:
-        c = 1
-      return await ctx.send(f"You have already worked\nTry again in {c} minutes", ephemeral=True)
+        c = str(c)+" second"+("c" if int(c)>1 else "")
+      return await ctx.send(f"You have already worked\nTry again in `{c}`", ephemeral=True)
 
     if ctx.author.id == self.author_id:
       salary = OWNER_SALARY
@@ -244,11 +244,12 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
   @work.subcommand(name="resign", description="Resign from your work")
   async def work_resign(self, ctx):
     worker = workers.get_or_none(uid=ctx.author.id)
-    if not await worker:
+    work = await worker
+    if not work:
       await ctx.send(f"You aren't working, pls choose a job (`{ctx.prefix}work as <work>`)", ephemeral=True)
     else:
-      worker = await worker.delete()
-      await ctx.send(f"Successfully resigned from the job of `{worker.work}`")
+      await worker.delete()
+      await ctx.send(f"Successfully resigned from the job of `{work.work}`")
 
   @work.subcommand(name="list", description="List of available jobs.")
   async def works_list(self, ctx):
