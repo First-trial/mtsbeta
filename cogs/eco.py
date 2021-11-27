@@ -4,6 +4,71 @@ import appcommands
 from models import balance, workers
 from core import Cog
 from appcommands import Option
+from typing import List
+
+class Item:
+  def __init__(self,id:int,name:str,price:float,emoji:str=""):
+    self.id,self.name,self.price,self.emoji=id,name,price,emoji
+
+  def json(self):
+    return {"id":self.id,"name":self.name,"price":self.price,"emoji":self.emoji}
+
+  def __repr__(self):
+    id=self.id
+    if id == 1:
+      fmt="st"
+    elif id == 2:
+      fmt="nd"
+    elif id == 3:
+      fmt="rd"
+    else:
+      fmt="th"
+
+    return f"{fmt} Item, {self.name} at {self.price} coins"
+
+class Shop:
+  def __init__(self):
+    self.items: List[Item] = []
+
+  def add_item(self, item: Item):
+    assert isinstance(item, Item)
+    if item in self.items:
+      self.items.remove(item)
+
+    self.items.append(item)
+
+  def remove_item(self, item: Item):
+    assert isinstance(item, Item)
+    if item in self.items:
+      self.items.remove(item)
+
+  def get_item(self, k):
+    for item in self.items:
+      if item.name==k or item==k or item.id==k:
+        return item
+
+    return None
+
+  def get(self, k):
+    return self.get_item(k)
+
+  def filter_items(self, price=1):
+    assert isinstance(price, int) and price > 0
+    resp=[]
+    for item in self.items:
+      if item.price==price:
+        resp.append(item)
+
+    return resp
+
+  def filter(self, price=1):
+    return self.filter_items()
+
+  def json(self):
+    return [item.json() for item in self.items]
+
+  def __repr__(self):
+    return "A cool MtsBot's shop"
 
 async def check_work(ctx):
   if not await workers.get_or_none(uid=str(ctx.author.id)):
@@ -14,10 +79,10 @@ async def check_work(ctx):
     return False
   return True
 
-OWNER_SALARY = 5000000
-OTHER_SALARY = 1500
-WORK_COOLDOWN = 60 * 30
-WORKS = [
+OWNER_SALARY: int = 5000000
+OTHER_SALARY: int = 1500
+WORK_COOLDOWN: int = 60 * 30
+WORKS: List[str] = [
   "youtuber",
   "coder",
   "housewife",
@@ -28,7 +93,16 @@ WORKS = [
   "ghost"
 ]
 
-WORKS = [appcommands.Choice(work) for work in WORKS]
+SHOP: Shop = Shop();i=1
+SHOP.add_item(Item(i, "Popcorn", 20, ":popcorn:"));i+=1
+SHOP.add_item(Item(i, "Milk", 40, ":milk:"));i+=1
+SHOP.add_item(Item(i, "Apple", 80, ":apple:"));i+=1
+SHOP.add_item(Item(i, "Cupcake", 100, ":cupcake:"));i+=1
+SHOP.add_item(Item(i, "Banana", 120, ":banana:"));i+=1
+SHOP.add_item(Item(i, "Computer", 35000, ":desktop:"));i+=1
+SHOP.add_item(Item(i, "Laptop", 40000, ":computer:"))
+
+WORKS: List[appcommands.Choice] = [appcommands.Choice(work.title()) for work in WORKS]
 
 class Task(object):
   def __init__(self, id, task):
@@ -190,14 +264,14 @@ class Economy(Cog):
       bank = u.bank
       b = discord.Embed(
           title=f"{usr.name}'s balance",
-          description=f"Wallet: `{wallet} coins`\nBank: `{bank} coins`")
+          description=f"Wallet: `{wallet} coins`\nBank: `{bank} coins`",color=0x00ffff)
       await ctx.reply(embed=b)
     else:
       await ctx.reply("Opening account....")
       await self.open_acc(usr.id,)
       b = discord.Embed(
           title=f"{usr.name}'s balance",
-          description=f"Wallet: `500 coins`\nBank: `0 coins`")
+          description=f"Wallet: `500 coins`\nBank: `0 coins`",color=0x00ffff)
       await ctx.edit(content=None, embed=b)
 
   work = appcommands.slashgroup(name="work",)
@@ -230,7 +304,7 @@ class Economy(Cog):
 
   @work.subcommand(name="as", description="Choose your work")
   async def work_as(self, ctx, work: Option("-", "Chosen work", choices=WORKS, required=True)):
-    if work.lower() not in list(w.value for w in WORKS):
+    if work.lower() not in list(w.value.lower() for w in WORKS):
       await ctx.send(
         f"This is not valid work.\nSee a list of work by `{ctx.clean_prefix}work list`",
         ephemeral=True
@@ -255,7 +329,8 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
   async def works_list(self, ctx):
     w = discord.Embed(
       title="**__Available Jobs__**",
-      description="\n".join(list(w.value.title() for w in WORKS))
+      description="\n".join(list(w.value.title() for w in WORKS)),
+      color=0x00ffff
     )
     w.set_footer(text=f"choose a work by `{ctx.clean_prefix}work as <work>`")
     await ctx.send(embed=w)
@@ -265,7 +340,7 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
   async def dep(self, ctx, amount: int):
     am = amount
     if amount <= 0:
-        return await ctx.send("Amount should must be greater than 0, not {am}", ephemeral=True)
+        return await ctx.send(f"Amount should must be greater than 0, not {am}", ephemeral=True)
     u = await balance.get_or_none(uid=ctx.author.id)
     if u:
       a = "wallet"
@@ -294,7 +369,7 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
   async def with_cmd(self, ctx, amount: int):
     am = amount
     if amount <= 0:
-        return await ctx.send("Amount should must be greater than 0, not {am}", ephemeral=True)
+        return await ctx.send(f"Amount should must be greater than 0, not {am}", ephemeral=True)
     u = await balance.get_or_none(uid=ctx.author.id)
     if u:
       b = "wallet"
@@ -315,7 +390,7 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
   async def share_cmd(self, ctx, user: discord.Member, amount: int):
     am=amount
     if amount <= 0:
-        return await ctx.send("Amount should must be greater than 0, not {am}", ephemeral=True)
+        return await ctx.send(f"Amount should must be greater than 0, not {am}", ephemeral=True)
     u = await balance.get_or_none(uid=ctx.author.id)
     if u:
 
@@ -330,6 +405,11 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
       await self.open_acc(ctx.author.id,)
       await ctx.send("I just opened your account so please now try again", ephemeral=True)
 
+  @appcommands.command(name="shop",description="Get items of shop.")
+  async def shop(self, ctx):
+    d=""
+    d+="\n".join([f"**{item.id}: {item.emoji} __{item.name}__** @ `{item.price}coins`" for item in SHOP.items])
+    await ctx.send(embed=discord.Embed(title="**__Available Shop items__**",description=d,color=0x00ffff))
 
 def setup(bot):
   bot.add_cog(Economy(bot))
