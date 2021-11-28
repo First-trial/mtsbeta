@@ -18,7 +18,8 @@ cns = [
   "23456789=",
   "+/",
 ]
-def decode(item_uid: int):
+
+def decode(item_uid: int, seperator: str):
   c,_="",0
   item_uid=str(item_uid)[1:]
 
@@ -29,9 +30,13 @@ def decode(item_uid: int):
     else:
      c+=fmt[int(i)]
      _=0
-  cnt=_decode(bytes(c)).decode("utf-8")
-  return [int(cnt.split(".")[0]), int(cnt.split(".")[1])]
-  
+  cnt=_decode(bytes(c, encoding="utf-8")).decode("utf-8")
+  assert seperator in cnt
+  uid, item = cnt.split(seperator)
+  return [int(uid), int(item)]
+
+def encode(uid: int, item: int, seperator: str):
+  return "Soon™"
 
 class Item:
   def __init__(self,id:int,name:str,price:float,emoji:str=""):
