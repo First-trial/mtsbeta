@@ -5,6 +5,33 @@ from models import balance, workers
 from core import Cog
 from appcommands import Option
 from typing import List
+from base64 import b64decode as _decode, b64encode as _encode
+
+
+cns = [
+  "abcdefghi",
+  "jklmnopqr",
+  "stuvwxyzA",
+  "BCDEFGHIJ",
+  "KLMNOPQRS",
+  "TUVWXYZ01",
+  "23456789=",
+  "+/",
+]
+def decode(item_uid: int):
+  c,_="",0
+  item_uid=str(item_uid)[1:]
+
+  for i in item_uid:
+    if _==0:
+     fmt=cns[int(i)]
+     _=1
+    else:
+     c+=fmt[int(i)]
+     _=0
+  cnt=_decode(bytes(c)).decode("utf-8")
+  return [int(cnt.split(".")[0]), int(cnt.split(".")[1])]
+  
 
 class Item:
   def __init__(self,id:int,name:str,price:float,emoji:str=""):
