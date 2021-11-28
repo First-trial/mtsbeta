@@ -36,14 +36,14 @@ def decode(item_uid: int, seperator: str = "."):
   return [int(uid), int(item)]
 
 def encode(uid: int, item: int, seperator: str = "."):
-  resp = ""
+  resp = "1"
   enc = _encode(bytes(str(uid)+"."+str(item), encoding="utf-8")).decode("utf-8")
   for c in enc:
     for n, cn in enumerate(cns):
       if c in cn:
         resp += str(n)+str(cn.index(c))
 
-  return resp
+  return int(resp)
 
 class Item:
   def __init__(self,id:int,name:str,price:float,emoji:str=""):
