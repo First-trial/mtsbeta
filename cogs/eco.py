@@ -19,7 +19,7 @@ cns = [
   "+/",
 ]
 
-def decode(item_uid: int, seperator: str):
+def decode(item_uid: int, seperator: str = "."):
   c,_="",0
   item_uid=str(item_uid)[1:]
 
@@ -35,8 +35,15 @@ def decode(item_uid: int, seperator: str):
   uid, item = cnt.split(seperator)
   return [int(uid), int(item)]
 
-def encode(uid: int, item: int, seperator: str):
-  return "Soon™"
+def encode(uid: int, item: int, seperator: str = "."):
+  resp = ""
+  enc = _encode(bytes(str(uid)+"."+str(item), encoding="utf-8")).decode("utf-8")
+  for c in enc:
+    for n, cn in enumerate(cns):
+      if c in cn:
+        resp += str(n)+str(cn.index(c))
+
+  return resp
 
 class Item:
   def __init__(self,id:int,name:str,price:float,emoji:str=""):
