@@ -63,7 +63,7 @@ class Item:
     else:
       fmt="th"
 
-    return f"{fmt} Item, {self.name} at {self.price} coins"
+    return f"{self.id}{fmt} Item, {self.name} at {self.price} coins"
 
 class Shop:
   def __init__(self):
@@ -128,8 +128,12 @@ class Shop:
         if temp == resplen:
           _resp.append(self.get(item["id"]))
         temp = 0
+    else:
+      _resp.extend(self.items)
     for item in _resp:
-      _item=object()
+      class _Item(object):
+        __slots__=tuple(i for i in attrs)
+      _item=_Item()
       if len(include)>0:
         for i in include:
           setattr(_item, i, getattr(item, i, None))
@@ -495,9 +499,9 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
     user = user or ctx.author
     id_lookup=SHOP.filter_by(include=["id"])
     fmt = []
-    for id in id_lookup:
-      item=await inventory.get_or_none(item_uid=encode(user.id, id))
-      r_item = SHOP.get(id)
+    for iid in id_lookup:
+      item=await inventory.get_or_none(item_uid=encode(user.id, iid.id))
+      r_item = SHOP.get(iid.id)
       if item and r_item:
         fmt.append(f"{r_item.emoji} {r_item.name} — {item.count}")
 
