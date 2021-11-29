@@ -12,5 +12,5 @@ class workers(Model):
   work = fields.TextField()
 
 class inventory(Model):
-  item_uid = fields.TextField(pk=True)
+  item_uid = fields.TextField()
   count = fields.BigIntField()
