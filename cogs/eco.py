@@ -1,7 +1,7 @@
 import discord, asyncio
 from discord.ext import commands
 import appcommands
-from models import balance, workers
+from models import balance, workers, inventory
 from core import Cog
 from appcommands import Option
 from typing import List
@@ -100,8 +100,48 @@ class Shop:
 
     return resp
 
-  def filter(self, price=1):
+  def filter(self,price=1):
     return self.filter_items()
+
+  def filter_by(self,**kwargs):
+    item_lookup°self.json()
+    _resp,include,exclude,resp=[],[],[],[]
+    attrs = ["id","name","price","emoji"]
+
+    if "include" in kwargs:
+      include.extend(kwargs["include"])
+      del kwargs["include"]
+    else:
+      include=attrs
+
+    if "exclude" in kwargs:
+      exclude.extend(kwargs["exclude"])
+      del kwargs["exclude"]
+
+    resplen = len(list(kwargs.keys()))
+    temp = 0
+    if kwargs:
+      for item in item_lookup:
+        for k, v in kwargs.items():
+          if item.get(k,) == v:
+            temp += 1
+        if temp == resplen:
+          _resp.append(self.get(item["id"]))
+        temp = 0
+    for item in _resp:
+      _item=object()
+      if len(include)>0:
+        for i in include:
+          setattr(_item, i, getattr(item, i, None))
+      if len(exclude)>0:
+        for i in exclude:
+          delattr(_item, i,)
+      if include==attrs and len(exclude)==0:
+        resp.append(item)
+      else:
+        resp.append(_item)
+
+    return resp
 
   def json(self):
     return [item.json() for item in self.items]
@@ -450,5 +490,8 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
     d+="\n".join([f"**{item.id}: {item.emoji} __{item.name}__** @ `{item.price}coins`" for item in SHOP.items])
     await ctx.send(embed=discord.Embed(title="**__Available Shop items__**",description=d,color=0x00ffff))
 
+  @appcommands.command(name="inventory")
+  async def get_inv(self, ctx):
+    pass
 def setup(bot):
   bot.add_cog(Economy(bot))
