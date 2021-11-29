@@ -19,7 +19,7 @@ cns = [
   "+/",
 ]
 
-def decode(item_uid: int, seperator: str = "."):
+def decode(item_uid: str, seperator: str = "."):
   c,_="",0
   item_uid=str(item_uid)[1:]
 
@@ -43,7 +43,7 @@ def encode(uid: int, item: int, seperator: str = "."):
       if c in cn:
         resp += str(n)+str(cn.index(c))
 
-  return int(resp)
+  return resp
 
 class Item:
   def __init__(self,id:int,name:str,price:float,emoji:str=""):
