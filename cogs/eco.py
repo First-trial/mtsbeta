@@ -104,7 +104,7 @@ class Shop:
     return self.filter_items()
 
   def filter_by(self,**kwargs):
-    item_lookup°self.json()
+    item_lookup=self.json()
     _resp,include,exclude,resp=[],[],[],[]
     attrs = ["id","name","price","emoji"]
 
