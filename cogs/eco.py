@@ -491,7 +491,29 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
     await ctx.send(embed=discord.Embed(title="**__Available Shop items__**",description=d,color=0x00ffff))
 
   @appcommands.command(name="inventory")
-  async def get_inv(self, ctx):
-    pass
+  async def get_inv(self, ctx, user: discord.Member = None):
+    user = user or ctx.author
+    id_lookup=SHOP.filter_by(include=["id"])
+    fmt = []
+    for id in id_lookup:
+      item=await inventory.get_or_none(item_uid=encode(user.id, id))
+      r_item = SHOP.get(id)
+      if item and r_item:
+        fmt.append(f"{r_item.emoji} {r_item.name} — {item.count}")
+
+    if not fmt:
+      fmt = ["Nothing in inventory"]
+
+    if not await balance.get_or_none(uid=user.id):
+      await self.open_acc(user.id)
+
+    await ctx.send(
+      embed=discord.Embed(
+        title=user.display_name+"'s Inventory",
+        description="\n".join(fmt),
+        color=0x00ffff
+      )
+    )
+    
 def setup(bot):
   bot.add_cog(Economy(bot))
