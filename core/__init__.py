@@ -17,23 +17,45 @@ MAX_MESSAGE_LENGTH = 1900
 import asyncio
 
 from core.generic import Scheduler
+
+
+नन = None
+
 class CustomCont(appcommands.InteractionContext):
   def __init__(self, b, i):
     super().__init__(b,i)
     self.db = self.pool = b.pool
     self.prefix = self.clean_prefix = "/"
 
+class यूजर(discord.ClientUser):
+  __डाटा={"आईडी": "id", "नाम": "name","नेम": "name","डिस्क्रिमिनेटर": "discriminator"}
+  __slots__=tuple([*["टैग"], *[k for k in __डाटा.keys()]])
+
+  @classmethod
+  def इनिट(क्लास, बोट):
+    सेल्फ = क्लास(
+      state=बोट._connection,
+      data={"username": बोट.user.name,"id": बोट.user.id,"discriminator": बोट.यूजर.डिस्क्रिमिनेटर,"bot": True,"avatar": None}
+    )
+    for k,v in सेल्फ.__डाटा.items():
+      setattr(सेल्फ,k, getattr (सेल्फ,v))
+
+    सेल्फ.टैग = सेल्फ.नेम+"#"+सेल्फ.डिस्क्रिमिनेटर
+
+  def __repr__(सेल्फ):
+    return f"<Mtsबोट आईडी={सेल्फ.आईडी} नेम='{सेल्फ.नेम}' डिस्क्रिमिनेटर='{सेल्फ.डिस्क्रिमिनेटर}'>"
 
 class MtsBot(appcommands.AutoShardedBot):
-  def __init__(self, *args, **kwargs):
+  def __init__(सेल्फ, *args, **kwargs):
     super().__init__(**kwargs)
-    DatabaseManager.on_startup(self)
-    MessageManager.on_startup(self)
+    DatabaseManager.on_startup(सेल्फ)
+    MessageManager.on_startup(सेल्फ)
     Lexicon.on_startup()
-    self.game_manager = GameManager()
-    self.scheduler = Scheduler()
-    self.ready = False
-    self._author = None
+    सेल्फ.game_manager = GameManager()
+    सेल्फ.scheduler = Scheduler()
+    सेल्फ.ready = False
+    सेल्फ._author = नन
+    सेल्फ.यूजर = नन
 
   def get_interaction_context(self, interaction):
     return CustomCont(self, interaction)
@@ -47,41 +69,45 @@ class MtsBot(appcommands.AutoShardedBot):
     finally:
       await ctx.release()
 
-  def init(self, *args, **kwargs):
-    self.loop.run_until_complete(self._init())
-    self.load_commands()
+  def init(सेल्फ, *args, **kwargs):
+    सेल्फ.loop.run_until_complete(सेल्फ._init())
+    सेल्फ.load_commands()
     import hoster
-    hoster.host(self, os.environ.get("token"))
+    hoster.host(सेल्फ, os.environ.get("token"))
 
   @property
-  def discord(self):
+  def discord(सेल्फ):
     return "https://discord.gg/zdrSUu98BP"
 
   @property
-  def guild(self):
+  def guild(सेल्फ):
     return self.get_guild(731072681688039444)
 
   @property
-  def author_id(self):
+  def author_id(सेल्फ):
     return 730454267533459568
 
-  async def _init(self):
+  async def _init(सेल्फ):
     await Tortoise.init(config=config.tortoise)
     await Tortoise.generate_schemas(safe=True)
 
-  async def on_ready(self):
-    self._author = await self.fetch_user(self.author_id)
+
+  async def on_connect(सेल्फ):
+    सेल्फ.यूजर = यूजर.यूनिट(सेल्फ)
+
+  async def on_ready(सेल्फ):
+    self._author = await सेल्फ.fetch_user(सेल्फ.author_id)
 
   @property
-  def pool(self):
+  def pool(सेल्फ):
     try:
       return Tortoise.get_connection("default")._pool
     except:
       return None
 
   @property
-  def author(self):
-    return self._author
+  def author(सेल्फ):
+    return सेल्फ._author
 
   def get_modules(self, path, module):
     modules = []
