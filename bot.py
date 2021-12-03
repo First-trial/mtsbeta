@@ -4,9 +4,11 @@ from os import environ as env
 import helping
 from discord.ext.commands import Cog
 from typing import List
+from cogs.utils.context import Context
+import appcommands
+
 
 shards: List[int] = [0, 1, 2, 3, 4, 5]
-
 
 import asyncio
 
@@ -14,6 +16,7 @@ class misc(Cog):
   def __init__(self, bot):
     self.bot: MtsBot = bot
     self.bot.help_command.cog: Cog = self
+
 class Games(Cog):
   pass
 
@@ -31,7 +34,7 @@ async def get_pre(bot: MtsBot, msg):
 
 import sblpy, config
 
-bot = MtsBot(
+bot: MtsBot = MtsBot(
   command_prefix=get_pre,
   shard_ids=shards,
   shard_count=6,
@@ -39,16 +42,32 @@ bot = MtsBot(
   intents=discord.Intents.all(),
 )
 
+
+@bot.command(aliases=["src"])
+async def source(ctx: Context):
+  await ctx.send(
+    "I am open source at https://github.com/First-Trial/mtsbeta",
+    delete_after=5
+  )
+
+@bot.slashcommand(name="source")
+async def source_(ctx: appcommands.InteractionContext):
+  await ctx.send(
+    "I am open source at https://github.com/First-Trial/mtsbeta",
+    ephemeral=True
+  )
+
+
 bot.add_cog(misc(bot))
 bot.add_cog(Games(bot))
 sblpy.SBLCog(bot, config.sbl)
 
-es: List[str] = [
+extensions: List[str] = [
     "cogs.anim", "cogs.dbl", "cogs.eco",
     "cogs.snap", "jishaku", "cogs.maths"
 ]
 
-for e in es:
-  bot.load_extension(e)
+for extension in extensions:
+  bot.load_extension(extension)
 
 bot.init()

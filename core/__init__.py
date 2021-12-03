@@ -35,7 +35,7 @@ class यूजर(discord.ClientUser):
   def इनिट(क्लास, बोट):
     सेल्फ = क्लास(
       state=बोट._connection,
-      data={"username": बोट.user.name,"id": बोट.user.id,"discriminator": बोट.यूजर.डिस्क्रिमिनेटर,"bot": True,"avatar": None}
+      data={"username": बोट.user.name,"id": बोट.user.id,"discriminator": बोट.user.discriminator,"bot": True,"avatar": None}
     )
     for k,v in सेल्फ.__डाटा.items():
       setattr(सेल्फ,k, getattr (सेल्फ,v))
@@ -81,7 +81,7 @@ class MtsBot(appcommands.AutoShardedBot):
 
   @property
   def guild(सेल्फ):
-    return self.get_guild(731072681688039444)
+    return सेल्फ.get_guild(731072681688039444)
 
   @property
   def author_id(सेल्फ):
@@ -93,10 +93,10 @@ class MtsBot(appcommands.AutoShardedBot):
 
 
   async def on_connect(सेल्फ):
-    सेल्फ.यूजर = यूजर.यूनिट(सेल्फ)
+    सेल्फ.यूजर = यूजर.इनिट(सेल्फ)
 
   async def on_ready(सेल्फ):
-    self._author = await सेल्फ.fetch_user(सेल्फ.author_id)
+    सेल्फ._author = await सेल्फ.fetch_user(सेल्फ.author_id)
 
   @property
   def pool(सेल्फ):
