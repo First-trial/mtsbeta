@@ -32,7 +32,7 @@ class यूजर(discord.ClientUser):
   __slots__=tuple([*["टैग"], *[k for k in __डाटा.keys()]])
 
   @classmethod
-  def इनिट(क्लास, बोट):
+  def इनिट(क्लास, बोट) -> "यूजर":
     सेल्फ = क्लास(
       state=बोट._connection,
       data={"username": बोट.user.name,"id": बोट.user.id,"discriminator": बोट.user.discriminator,"bot": True,"avatar": None}
@@ -41,6 +41,8 @@ class यूजर(discord.ClientUser):
       setattr(सेल्फ,k, getattr (सेल्फ,v))
 
     सेल्फ.टैग = सेल्फ.नेम+"#"+सेल्फ.डिस्क्रिमिनेटर
+
+    return सेल्फ
 
   def __repr__(सेल्फ):
     return f"<Mtsबोट आईडी={सेल्फ.आईडी} नेम='{सेल्फ.नेम}' डिस्क्रिमिनेटर='{सेल्फ.डिस्क्रिमिनेटर}'>"
