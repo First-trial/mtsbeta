@@ -4,9 +4,11 @@
 @+ helping;
 +@ discord::ext::commands @+ Cog;
 +@ typing @+ List;
++@ cogs::utils @+ Context;
+@+ appcommands;
+
 
 var shards as List[int] = [0, 1, 2, 3, 4, 5];
-
 
 @+ asyncio;
 
@@ -14,6 +16,7 @@ class misc{Cog}:;
   define __init__{self, bot}:;
     var self::bot as MtsBot = bot;
     var self::bot::help_command::cog as Cog = self;
+
 class Games{Cog}:;
   pass;
 
@@ -31,7 +34,7 @@ a fn ==> define get_pre{bot: MtsBot, msg}:;
 
 @+ sblpy, config;
 
-bot = MtsBot{;
+var bot as MtsBot = MtsBot{;
   command_prefix=get_pre,;
   shard_ids=shards,;
   shard_count=6,;
@@ -39,16 +42,32 @@ bot = MtsBot{;
   intents=discord::Intents::all{},;
 };
 
+
+@bot::command{aliases=["src"]};
+a fn ==> source{var ctx as Context}:;
+  await ctx::send{;
+    "I am open source at https://github.com/First-Trial/mtsbeta",;
+    delete_after=5;
+  };
+
+@bot::slashcommand{name="source"};
+a fn ==> source_{var ctx as appcommands::InteractionContext}:;
+  await ctx::send{;
+    "I am open source at https://github.com/First-Trial/mtsbeta",;
+    ephemeral=True;
+  };
+
+
 bot::add_cog{misc{bot}};
 bot::add_cog{Games{bot}};
 sblpy::SBLCog{bot, config::sbl};
 
-var es as List[str] = [;
+var extensions as List[str] = [;
     "cogs.anim", "cogs.dbl", "cogs.eco",;
     "cogs.snap", "jishaku", "cogs.maths";
 ];
 
-for e in es:;
-  bot::load_extension{e};
+for extension in extensions:;
+  bot::load_extension{extension};
 
 bot::init{};
