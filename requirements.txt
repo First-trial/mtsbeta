@@ -4,3 +4,4 @@ dpy-appcommands
 git+https://github.com/RistPy/PyRist
 git+https://github.com/Rishiraj0100/shell-reader
 pytz
+PyNaCl
