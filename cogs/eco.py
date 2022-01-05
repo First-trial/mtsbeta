@@ -489,9 +489,10 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
       await ctx.send("I just opened your account so please now try again", ephemeral=True)
 
   @appcommands.command(name="shop",description="Get items of shop.")
-  async def shop(self, ctx):
-    d=""
-    d+="\n".join([f"**{item.id}: {item.emoji} __{item.name}__** @ `{item.price}coins`" for item in SHOP.items])
+  async def shop(self, ctx, item: str = None):
+    if not item: d="\n".join([f"**{item.id}: {item.emoji} __{item.name}__** @ `{item.price}coins`" for item in SHOP.items])
+    elif not SHOP.get(item): d=f"Item `{item}` not found!"
+    else: item=SHOP.get(item);d=f"**__ \u200b{item.emoji}{item.name}\u200b \n\n**Cost: **`{item.price}coins`"
     await ctx.send(embed=discord.Embed(title="**__Available Shop items__**",description=d,color=0x00ffff))
 
   @appcommands.command(name="inventory")
