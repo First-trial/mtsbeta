@@ -9,9 +9,10 @@ class BaseCont:
   def __init__(self, *args, **kwargs):
     super().__init__(self, *args, **kwargs)
 
-  async def confirm(self, *args, **kwargs):
+  async def confirm(self, *args, switch_color: bool = False, **kwargs):
     msg = await self.send(*args, **kwargs)
     view = ConfirmV(self.author, msg)
+    if switch_color: view.switch_color()
     await msg.edit(view=view)
     await view.wait()
     return view.confirmed
