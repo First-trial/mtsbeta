@@ -6,7 +6,7 @@ from discord.ext.commands import Cog
 from typing import List
 from cogs.utils.context import Context
 import appcommands
-
+import plugins
 
 shards: List[int] = [0, 1, 2, 3, 4, 5]
 
@@ -60,14 +60,13 @@ async def source_(ctx: appcommands.InteractionContext):
 
 bot.add_cog(misc(bot))
 bot.add_cog(Games(bot))
-sblpy.SBLCog(bot, config.sbl)
 
-extensions: List[str] = [
-    "cogs.anim", "cogs.dbl", "cogs.eco",
-    "cogs.snap", "jishaku", "cogs.maths"
-]
+if requests.get("https://smartbots.tk/").status_code==200: # check whether site's alive or dead
+  sblpy.SBLCog(bot, config.sbl) # smartbots.tk
 
-for extension in extensions:
-  bot.load_extension(extension)
+
+for plugin in plugins.all(bot=bot):
+  assert isinstance(plugin, plugins.Plugin)
+  plugin.load()
 
 bot.init()
