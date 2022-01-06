@@ -1,4 +1,6 @@
 import discord
+from config import Emote
+
 
 class ConfirmV(discord.ui.View):
   def __init__(self, user: discord.User, message: discord.Message):
@@ -14,7 +16,7 @@ class ConfirmV(discord.ui.View):
     await interaction.response.edit_message(view=discord.ui.View())
 
 
-  @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey,emoji=Emote.cross)
+  @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger, emoji=Emote.cross)
   async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
     self.confirmed=False
     await interaction.response.edit_message(view=discord.ui.View())
@@ -27,6 +29,9 @@ class ConfirmV(discord.ui.View):
     self.stop()
     await self.m.edit(view=self)
 
+  def switch_color(self):
+    for child in self.children:
+      child.style = discord.ButtonStyle.green if child.style is discord.ButtonStyle.green else discord.ButtonStyle.danger
 
   async def interaction_check(self, interaction: discord.Interaction):
     if self.user.id!=interaction.user.id:
