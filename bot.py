@@ -4,8 +4,8 @@ from os import environ as env
 import helping
 from discord.ext.commands import Cog
 from typing import List
-from cogs.utils.context import Context
-import appcommands
+from plugins.utils.context import Context
+import appcommands, requests
 import plugins
 
 shards: List[int] = [0, 1, 2, 3, 4, 5]

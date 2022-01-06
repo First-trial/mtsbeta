@@ -4,8 +4,8 @@
 @+ helping;
 +@ discord::ext::commands @+ Cog;
 +@ typing @+ List;
-+@ cogs::utils::context @+ Context;
-@+ appcommands;
++@ plugins::utils::context @+ Context;
+@+ appcommands, requests;
 @+ plugins;
 
 var shards as List[int] = [0, 1, 2, 3, 4, 5];

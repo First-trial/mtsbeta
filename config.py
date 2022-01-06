@@ -25,13 +25,13 @@ tortoise["connections"]["default"]["credentials"]["ssl"] = "disable"
 sbl = env.get("sbl") # token for https://smartbots.tk
 
 
-_emoji_data = json.load(open("emojis.json"))
+_emoji_data: dict = json.load(open("emojis.json"))
 emoji_data  = {}
 
 del json
 del env
 
-for emoji, data in _emoji_data.values():
+for emoji, data in _emoji_data.items():
   _=[]
   for alias in data.get("aliases",[emoji]) or [emoji]:
     _.append(alias)
@@ -41,15 +41,14 @@ for emoji, data in _emoji_data.values():
 
   if "aliases" in data: del data["aliases"]
   if emoji not in _: emoji_data[emoji] = data
-
 del _emoji_data
 
 class Emoji(str):
-  def __init__(self, name: str, id: int, *, animated: bool = False):
+  __slots__ = ("name","id","animated")
+  def __init__(self, name, id, *, animated: bool = False):
     self.name, self.id, self.animated = name, id, animated
-    em="<{a}{name}:{id}>".format(name=self.name,id=str(self.id))
-    em = em.format(a=("a:" if animated else ""))
-    super().__init__(em)
+    em="<{a}{name}:{id}>".format(name=self.name,id=str(self.id),a=("a:" if animated else ""))
+    super().__init__(em); return self
 
   def json(self):
     return {
@@ -62,9 +61,9 @@ class _Emote:
   def __init__(self):
     self.__emojis = []
 
-  def add_emoji(self, emoji):
-    self.__emojis.append(emoji)
-    setattr(self, emoji.name, emoji)
+  def add_emoji(self, n, emoji):
+    if emoji not in self.__emojis: self.__emojis.append(emoji)
+    setattr(self, n, emoji)
     
   def json(self):
     r={}
@@ -72,8 +71,8 @@ class _Emote:
     return r
 
 Emote = _Emote()
-for emoji, data in emoji_data.values():
-  Emote.add_emoji(Emoji(**data))
+for emoji, data in emoji_data.items():
+  Emote.add_emoji(emoji, Emoji.__init__(Emoji,**data))
 
 del emoji_data
 del _Emote
