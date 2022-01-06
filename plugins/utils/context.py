@@ -2,6 +2,18 @@ from discord.ext import commands
 import asyncio
 import discord
 import io
+from plugins.utils import ConfirmV
+
+
+class BaseCont:
+  def __init__(self, *args, **kwargs):
+    super().__init__(self, *args, **kwargs)
+
+  async def confirm(self, *args, **kwargs):
+    view = ConfirmV()
+    await self.send(*args, view=view, **kwargs)
+    await view.wait()
+    return view.confirmed
 
 class _ContextDBAcquire:
   __slots__ = ('ctx', 'timeout')
@@ -21,7 +33,7 @@ class _ContextDBAcquire:
     await self.ctx.release()
 
 
-class Context(commands.Context):
+class Context(BaseCont, commands.Context):
   def __init__(self,*args, **kwargs):
     super().__init__(*args, **kwargs)
     self.pool = self.bot.pool
