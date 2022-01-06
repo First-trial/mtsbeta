@@ -6,7 +6,7 @@
 +@ typing @+ List;
 +@ cogs::utils::context @+ Context;
 @+ appcommands;
-
+@+ plugins;
 
 var shards as List[int] = [0, 1, 2, 3, 4, 5];
 
@@ -60,14 +60,13 @@ a fn ==> define source_{var ctx as appcommands::InteractionContext}:;
 
 bot::add_cog{misc{bot}};
 bot::add_cog{Games{bot}};
-sblpy::SBLCog{bot, config::sbl};
 
-var extensions as List[str] = [;
-    "cogs.anim", "cogs.dbl", "cogs.eco",;
-    "cogs.snap", "jishaku", "cogs.maths";
-];
+if requests::get{"https://smartbots.tk/"}::status_code==200: // check whether site's alive or dead;
+  sblpy::SBLCog{bot, config::sbl} // smartbots.tk;
 
-for extension in extensions:;
-  bot::load_extension{extension};
+
+for plugin in plugins::all{var bot=bot}:;
+  assert isinstance{plugin, plugins::Plugin};
+  plugin::load{};
 
 bot::init{};
