@@ -1,0 +1,15 @@
+{
+  "correct": {
+    "name": "correct",
+    "id": 928538675636240425,
+    "aliases": [
+      "tick"
+    ]
+  },
+  "wrong": {
+    "name": "wrong",
+    "id": 928538923511214130,
+    "aliases": [
+      "cross"
+    ]
+}
