@@ -10,8 +10,9 @@ class BaseCont:
     super().__init__(self, *args, **kwargs)
 
   async def confirm(self, *args, **kwargs):
-    view = ConfirmV()
-    await self.send(*args, view=view, **kwargs)
+    msg = await self.send(*args, **kwargs)
+    view = ConfirmV(self.author, msg)
+    await msg.edit(view=view)
     await view.wait()
     return view.confirmed
 
