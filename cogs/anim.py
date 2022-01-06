@@ -1,3 +1,4 @@
+# plugin: loadable: True
 import discord
 import asyncio
 from discord.ext import commands
@@ -8,7 +9,7 @@ from core import Cog
 from appcommands import cog
 from typing import Union
 
-class anim(Cog, name="animation"):
+class animations(Cog, name="animation"):
 	"""animated messages"""
 	def __init__(self, bot):
 		self.bot = bot
@@ -16,7 +17,6 @@ class anim(Cog, name="animation"):
 	@commands.command()
 	async def cathi(self, ctx: Union[appcommands.InteractionContext, commands.Context], *, text: str = "Hi..."):
 		ctx=await ctx.reply("starting")
-		#await asyncio.sleep(0.5)
 		list = (
 		    """ຸ 　　　＿＿_＿＿
 　　／　／　  ／|"
@@ -38,8 +38,7 @@ class anim(Cog, name="animation"):
 
 	@commands.command()
 	async def flop(self, ctx: commands.Context):
-		m = await ctx.send("Ok")
-		#await asyncio.sleep(0.5)
+		m = await ctx.send("Starting...")
 		list = (
 		    "(   ° - °) (' - '   )",
 		    "(\\\° - °)\ (' - '   )",
