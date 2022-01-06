@@ -1,3 +1,5 @@
+# plugin: loadable: True
+
 from core import Cog
 import appcommands
 import math
