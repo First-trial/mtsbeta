@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord import Permissions
 from tortoise import Tortoise
 from core.cmd import Command
-from cogs.utils import context
+from plugins.utils import context
 from core.private import DISCORD
 from core.msgmanager import MessageManager
 from core.dbmanager import DatabaseManager
@@ -21,43 +21,22 @@ from core.generic import Scheduler
 
 नन = None
 
-class CustomCont(appcommands.InteractionContext):
+class CustomCont(context.BaseCont, appcommands.InteractionContext):
   def __init__(self, b, i):
     super().__init__(b,i)
     self.db = self.pool = b.pool
     self.prefix = self.clean_prefix = "/"
 
-class यूजर(discord.ClientUser):
-  __डाटा={"आईडी": "id", "नाम": "name","नेम": "name","डिस्क्रिमिनेटर": "discriminator"}
-  __slots__=tuple([*["टैग"], *[k for k in __डाटा.keys()]])
-
-  @classmethod
-  def इनिट(क्लास, बोट) -> "यूजर":
-    सेल्फ = क्लास(
-      state=बोट._connection,
-      data={"username": बोट.user.name,"id": बोट.user.id,"discriminator": बोट.user.discriminator,"bot": True,"avatar": None}
-    )
-    for k,v in सेल्फ.__डाटा.items():
-      setattr(सेल्फ,k, getattr (सेल्फ,v))
-
-    सेल्फ.टैग = सेल्फ.नेम+"#"+सेल्फ.डिस्क्रिमिनेटर
-
-    return सेल्फ
-
-  def __repr__(सेल्फ):
-    return f"<Mtsबोट आईडी={सेल्फ.आईडी} नेम='{सेल्फ.नेम}' डिस्क्रिमिनेटर='{सेल्फ.डिस्क्रिमिनेटर}'>"
-
 class MtsBot(appcommands.AutoShardedBot):
-  def __init__(सेल्फ, *args, **kwargs):
+  def __init__(self, *args, **kwargs):
     super().__init__(**kwargs)
-    DatabaseManager.on_startup(सेल्फ)
-    MessageManager.on_startup(सेल्फ)
+    DatabaseManager.on_startup(self)
+    MessageManager.on_startup(self)
     Lexicon.on_startup()
-    सेल्फ.game_manager = GameManager()
-    सेल्फ.scheduler = Scheduler()
-    सेल्फ.ready = False
-    सेल्फ._author = नन
-    सेल्फ.यूजर = नन
+    self.game_manager = GameManager()
+    self.scheduler = Scheduler()
+    self.ready = False
+    self._author = None
 
   def get_interaction_context(self, interaction):
     return CustomCont(self, interaction)
@@ -71,45 +50,41 @@ class MtsBot(appcommands.AutoShardedBot):
     finally:
       await ctx.release()
 
-  def init(सेल्फ, *args, **kwargs):
-    सेल्फ.loop.run_until_complete(सेल्फ._init())
-    सेल्फ.load_commands()
+  def init(self, *args, **kwargs):
+    self.loop.run_until_complete(self._init())
+    self.load_commands()
     import hoster
-    hoster.host(सेल्फ, os.environ.get("token"))
+    hoster.host(self, os.environ.get("token"))
 
   @property
-  def discord(सेल्फ):
+  def discord(self):
     return "https://discord.gg/zdrSUu98BP"
 
   @property
-  def guild(सेल्फ):
-    return सेल्फ.get_guild(731072681688039444)
+  def guild(self):
+    return self.get_guild(731072681688039444)
 
   @property
-  def author_id(सेल्फ):
+  def author_id(self):
     return 730454267533459568
 
-  async def _init(सेल्फ):
+  async def _init(self):
     await Tortoise.init(config=config.tortoise)
     await Tortoise.generate_schemas(safe=True)
 
-
-  async def on_connect(सेल्फ):
-    सेल्फ.यूजर = यूजर.इनिट(सेल्फ)
-
-  async def on_ready(सेल्फ):
-    सेल्फ._author = await सेल्फ.fetch_user(सेल्फ.author_id)
+  async def on_ready(self):
+    self._author = await self.fetch_user(self.author_id)
 
   @property
-  def pool(सेल्फ):
+  def pool(self):
     try:
       return Tortoise.get_connection("default")._pool
     except:
       return None
 
   @property
-  def author(सेल्फ):
-    return सेल्फ._author
+  def author(self):
+    return self._author
 
   def get_modules(self, path, module):
     modules = []
