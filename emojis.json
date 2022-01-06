@@ -2,6 +2,7 @@
   "correct": {
     "name": "correct",
     "id": 928538675636240425,
+    "animated": false,
     "aliases": [
       "tick"
     ]
@@ -9,6 +10,7 @@
   "wrong": {
     "name": "wrong",
     "id": 928538923511214130,
+    "animated": false,
     "aliases": [
       "cross"
     ]
