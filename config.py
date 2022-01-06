@@ -46,12 +46,29 @@ class Emoji(str):
     em = em.format(a=("a:" if animated else ""))
     super().__init__(em)
 
-class _Emote(object):
-  __slots__ = tuple(i for i in emoji_data.keys())
+  def json(self):
+    return {
+      "name": self.name,
+      "id": int(self.id),
+      "animated": self.animated
+    }
+
+class _Emote:
+  def __init__(self):
+    self.__emojis = []
+
+  def add_emoji(self, emoji):
+    self.__emojis.append(emoji)
+    setattr(self, emoji.name, emoji)
+    
+  def json(self):
+    r={}
+    for i in self.__emojis: r[i.name] = i.json()
+    return r
 
 Emote = _Emote()
 for emoji, data in emoji_data.values():
-  setattr(Emote, emoji, Emoji(**data))
+  Emote.add_emoji(Emoji(**data))
 
 del emoji_data
 del _Emote
