@@ -483,9 +483,12 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
         return await ctx.send("You don't have enough money in your wallet to share", ephemeral=True)
 
       w = "wallet"
+      if not await ctx.confirm(f"Are you sure to give {amount} coins to {user.mention}?"):
+        return # user cancelled or didn't reacted within 15 seconds
+
       await self.take_money(w, ctx.author.id, am,)
       await self.give_money(w, user.id, am,)
-      await ctx.send(f"You gave {am} coins to {user.mention}")
+      await ctx.edit(f"You gave {am} coins to {user.mention}")
     else:
       await self.open_acc(ctx.author.id,)
       await ctx.send("I just opened your account so please now try again", ephemeral=True)
