@@ -1,3 +1,4 @@
+import json
 from os import environ as env
 
 top_gg = env.get("top_gg")
@@ -24,8 +25,12 @@ tortoise["connections"]["default"]["credentials"]["ssl"] = "disable"
 sbl = env.get("sbl") # token for https://smartbots.tk
 
 
-_emoji_data = open("emojis.json")
+_emoji_data = json.load(open("emojis.json"))
 emoji_data  = {}
+
+del json
+del env
+
 for emoji, data in _emoji_data.values():
   _=[]
   for alias in data.get("aliases",[emoji]) or [emoji]:
