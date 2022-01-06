@@ -1,3 +1,5 @@
+# plugin: loadable: True
+
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import discord,pytz
