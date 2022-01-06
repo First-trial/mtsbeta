@@ -24,7 +24,7 @@ class Snap(commands.Cog):
       "time": 13
     }
 
-    font = 'Whitney-Medium.ttf'
+    font = 'assets/fonts/Whitney-Medium.ttf'
 
     if not member:
       member = ctx.author
