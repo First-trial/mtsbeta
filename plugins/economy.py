@@ -281,7 +281,9 @@ class Economy(Cog):
   async def open_acc(self, id):
     await balance.create(uid=int(id), bank=0, hand=500); return True
 
-  async def get_lang(self, gid: int):
+  async def get_lang(self, ctx):
+    gid=(ctx.guild.id if ctx.guild else ctx.channel.id)
+
     sett = await GLanguage.get_or_none(gid=gid)
     if sett: return languages.get(sett.language)
     await GLanguage.create(gid=gid)
@@ -350,27 +352,28 @@ class Economy(Cog):
   @appcommands.command(name="balance", description="Check balance of your or someone other")
   async def bal(self, ctx, user: discord.Member = None):
     usr=user or ctx.author
+    language = (await self.get_lang(ctx)).economy.balance
     u = await balance.get_or_none(uid=usr.id)
     if u:
       wallet = u.hand
       bank = u.bank
       b = discord.Embed(
-          title=f"{usr.name}'s balance",
-          description=f"Wallet: `{wallet} coins`\nBank: `{bank} coins`",color=0x00ffff)
+          title=f"{usr.name}{language.balance}",
+          description=f"{language.wallet}: `{wallet} coins`\n{language.bank}: `{bank} coins`",color=0x00ffff)
       await ctx.reply(embed=b)
     else:
-      await ctx.reply("Opening account....")
+      await ctx.reply(language.new_acc)
       await self.open_acc(usr.id,)
       b = discord.Embed(
-          title=f"{usr.name}'s balance",
-          description=f"Wallet: `500 coins`\nBank: `0 coins`",color=0x00ffff)
+          title=f"{usr.name}{language.balance}",
+          description=f"{language.wallet}: `500 coins`\n{language.bank}: `0 coins`",color=0x00ffff)
       await ctx.edit(content=None, embed=b)
 
   work = appcommands.slashgroup(name="work",)
 
   @work.subcommand(name="now", description="Do some work")
   async def work_now(self, ctx):
-    language = (await self.get_lang(ctx.guild.id)).economy.work.now
+    language = (await self.get_lang(ctx)).economy.work.now
     if not await check_work(ctx):
       return
 
@@ -390,33 +393,38 @@ class Economy(Cog):
       salary = OTHER_SALARY
 
     w = (await workers.get(uid=ctx.author.id)).work
-    await ctx.send(language.success.format(salary=str(salary)),work=w)
+    await ctx.send(language.success.format(salary=str(salary),work=w))
     w = "wallet"
     await self.give_money(w, ctx.author.id, salary,)
 
 
   @work.subcommand(name="as", description="Choose your work")
-  async def work_as(self, ctx, work: Option("-", "Chosen work", choices=WORKS, required=True)):
+  async def work_as(self, ctx, work: Option("-", "Chosee work", choices=WORKS, required=True)):
+    language = (await self.get_lang(ctx)).economy.work.as_
     if work.lower() not in list(w.value.lower() for w in WORKS):
       await ctx.send(
-        f"This is not valid work.\nSee a list of work by `{ctx.clean_prefix}work list`",
+        language.err.not_found.format(prefix=ctx.clean_prefix),
         ephemeral=True
       )
     elif not await self.give_work(ctx.author.id, work):
-      await ctx.send("You are already doing a job, pls resign from it before taking a new job\n" \
-f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
+      await ctx.send(language.err.resign.format(prefix=ctx.prefix), ephemeral=True)
     else:
-      await ctx.send(f"You are working as `{work}` now!")
+      # TODO: Add Confirmations & confirmation language
+      await ctx.send(language.success.format(work=work))
 
   @work.subcommand(name="resign", description="Resign from your work")
   async def work_resign(self, ctx):
+    language = (await self.get_lang(ctx)).economy.work.resign
     worker = workers.get_or_none(uid=ctx.author.id)
     work = await worker
     if not work:
-      await ctx.send(f"You aren't working, pls choose a job (`{ctx.prefix}work as <work>`)", ephemeral=True)
+      await ctx.send(language.err.choose.format(prefix=ctx.prefix), ephemeral=True)
     else:
       await worker.delete()
-      await ctx.send(f"Successfully resigned from the job of `{work.work}`")
+      await ctx.send(language.success.format(work=work.work))
+
+
+# Will do these later #IAmTiredNow #GTGSleep
 
   @work.subcommand(name="list", description="List of available jobs.")
   async def works_list(self, ctx):
