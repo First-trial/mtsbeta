@@ -27,6 +27,10 @@ class CustomCont(context.BaseCont, appcommands.InteractionContext):
     self.db = self.pool = b.pool
     self.prefix = self.clean_prefix = "/"
 
+  def respond(self,*a,**kw):
+    self.message = super().respond(*a,**kw)
+    return self.message
+
 class MtsBot(appcommands.AutoShardedBot):
   def __init__(self, *args, **kwargs):
     super().__init__(**kwargs)
@@ -54,19 +58,23 @@ class MtsBot(appcommands.AutoShardedBot):
     self.loop.run_until_complete(self._init())
     self.load_commands()
     import hoster
-    hoster.host(self, os.environ.get("token"))
+    hoster.host(self, config.token)
 
   @property
   def discord(self):
-    return "https://discord.gg/zdrSUu98BP"
+    return config.DISCORD_JOIN_URL
 
   @property
   def guild(self):
-    return self.get_guild(731072681688039444)
+    return self.get_guild(self.guild_id)
 
   @property
   def author_id(self):
-    return 730454267533459568
+    return config.AUTHOR_ID
+
+  @property
+  def guild_id(self):
+    return config.DISCORD_GUILD_ID
 
   async def _init(self):
     await Tortoise.init(config=config.tortoise)
