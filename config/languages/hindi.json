@@ -3,14 +3,14 @@
   "work": {
    "now": {
     "err": {
-     "cooldown": "\nPlease try again in `{time}`"
+     "cooldown": "आप पहले ही काम कर चुके हैं\nकृपया `{time}` के बाद प्रयास करें।"
     },
-    "success": "You got `{salary}` coins after working as `{work}`"
+    "success": "आप `{work}` के रूप में काम करके `{salary}` सिक्के पाए"
    },
    "as_": {
     "err": {
-     "not_found": "This is not valid work.\nSee a list of work by `{prefix}work list`",
-     "resign": "You are already doing a job, pls resign from it before taking a new job\n(`{prefix} work resign`)"
+     "not_found": "यह कोई उपलब्ध कार्य नही है\nआप उपलब्ध नौकरियों की सूची `{prefix}work list` के द्वारा देख सकते हैं।",
+     "resign": "आप पहले से ही एक काम कर रहें हैं, कृपया नई नौकरी चुनने से पहले अपने काम से रिजाइन करलें\n(`{prefix} work resign`)"
     },
     "success": "अब आप `{work}` की नौकरी के रहें हैं!"
    },
