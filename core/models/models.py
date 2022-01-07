@@ -14,3 +14,10 @@ class workers(Model):
 class inventory(Model):
   item_uid = fields.CharField(110, unique=True)
   count = fields.BigIntField()
+
+class GLanguage(Model):
+  class Meta:
+    table = "guild_language"
+
+  gid = fields.BigIntField(unique=True)
+  language = fields.TextField(default="english")
