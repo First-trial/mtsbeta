@@ -44,12 +44,8 @@ for emoji, data in _emoji_data.items():
 del _emoji_data
 
 class Emoji(str):
-  __slots__ = ("name","id","animated")
-  def __init__(self, name, id, *, animated: bool = False):
-    self.name, self.id, self.animated = name, id, animated
-    em="<{a}{name}:{id}>".format(name=self.name,id=str(self.id),a=("a:" if animated else ""))
-    super().__init__(em); return self
-
+  __slots__ = ("name","id","animated",)
+  full = ""
   def json(self):
     return {
       "name": self.name,
@@ -57,22 +53,22 @@ class Emoji(str):
       "animated": self.animated
     }
 
-class _Emote:
-  def __init__(self):
-    self.__emojis = []
+def _emote():
+  class _M(type):
+    def __new__(meta, clsname, bases, attributes: dict):
+      cls_attrs = attributes.copy()
+      del cls_attrs["emojis"]
+      cls = super().__new__(meta, clsname, bases, cls_attrs)
+      for emoji in attributes["emojis"]:
+        n = list(emoji.value())[0]
+        if         r_emoji = Emoji()
+        for r_emoin ji
+  cl.__slots__:
+          setattr(r_emoji,slot,list(emoji.values())[0][slot])ass _Emote(metaclass=_M):
+    pass
 
-  def add_emoji(self, n, emoji):
-    if emoji not in self.__emojis: self.__emojis.append(emoji)
-    setattr(self, n, emoji)
-    
-  def json(self):
-    r={}
-    for i in self.__emojis: r[i.name] = i.json()
-    return r
-
-Emote = _Emote()
 for emoji, data in emoji_data.items():
-  Emote.add_emoji(emoji, Emoji.__init__(Emoji,**data))
+  Emote.add_emoji(emoji, Emoji(**data))
 
 del emoji_data
 del _Emote

@@ -61,9 +61,11 @@ a fn ==> define source_{var ctx as appcommands::InteractionContext}:;
 bot::add_cog{misc{bot}};
 bot::add_cog{Games{bot}};
 
-if requests::get{"https://smartbots.tk/"}::status_code==200: // check whether site's alive or dead;
-  sblpy::SBLCog{bot, config::sbl} // smartbots.tk;
-
+try:;
+  if requests::get{"https://smartbots.tk/"}::status_code==200: // check whether site's alive or dead;
+    sblpy::SBLCog{bot, config::sbl} // smartbots.tk;
+except:;
+  pass;
 
 for plugin in plugins::all{var bot=bot}:;
   assert isinstance{plugin, plugins::Plugin};

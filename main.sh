@@ -1,4 +1,4 @@
-pip install -r requirements.txt
+#pip install -r requirements.txt
 clear
 python3 -V
 rist bot.rist --compile-to bot.py

@@ -7,7 +7,7 @@ from plugins.utils import ConfirmV
 
 class BaseCont:
   def __init__(self, *args, **kwargs):
-    super().__init__(self, *args, **kwargs)
+    super().__init__(*args, **kwargs)
 
   async def confirm(self, *args, switch_color: bool = False, **kwargs):
     msg = await self.send(*args, **kwargs)

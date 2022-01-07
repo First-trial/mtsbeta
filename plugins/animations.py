@@ -155,4 +155,4 @@ class _:
             await ctx.message.edit(content=i)
 
 def setup(bot):
-  bot.add_cog(anim(bot))
+  bot.add_cog(animations(bot))
