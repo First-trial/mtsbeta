@@ -3,11 +3,12 @@
 import discord, asyncio
 from discord.ext import commands
 import appcommands
-from models import balance, workers, inventory
+from models import balance, workers, inventory, GLanguage
 from core import Cog
 from appcommands import Option
 from typing import List
 from base64 import b64decode as _decode, b64encode as _encode
+from config import languages
 
 
 cns = [
@@ -280,6 +281,12 @@ class Economy(Cog):
   async def open_acc(self, id):
     await balance.create(uid=int(id), bank=0, hand=500); return True
 
+  async def get_lang(self, gid: int):
+    sett = await GLanguage.get_or_none(gid=gid)
+    if sett: return languages.get(sett.language)
+    await GLanguage.create(gid=gid)
+    return languages.get("english")
+
   async def give_work(self, id, work):
     try:
       await workers.create(uid=int(id), work=work); return True
@@ -363,6 +370,7 @@ class Economy(Cog):
 
   @work.subcommand(name="now", description="Do some work")
   async def work_now(self, ctx):
+    language = await self.get_lang(ctx.guild.id).economy.work.now
     if not await check_work(ctx):
       return
 
@@ -374,7 +382,7 @@ class Economy(Cog):
         c = str(round(c / 60))+" minutes"
       else:
         c = str(c)+" second"+("c" if int(c)>1 else "")
-      return await ctx.send(f"You have already worked\nTry again in `{c}`", ephemeral=True)
+      return await ctx.send(language.err.cooldown.format(time=c), ephemeral=True)
 
     if ctx.author.id == self.author_id:
       salary = OWNER_SALARY
@@ -382,7 +390,7 @@ class Economy(Cog):
       salary = OTHER_SALARY
 
     w = (await workers.get(uid=ctx.author.id)).work
-    await ctx.send(f"you got `{salary}` coins after working as `{w}`")
+    await ctx.send(language.success.format(salary=str(salary),work=w)
     w = "wallet"
     await self.give_money(w, ctx.author.id, salary,)
 
