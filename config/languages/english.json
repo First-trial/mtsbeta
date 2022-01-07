@@ -48,7 +48,7 @@
   "balance": {
    "bank": "bank",
    "wallet": "wallet",
-   "balance": "'s balance"
+   "balance": "'s balance",
    "new_acc": "Opening account..."
   },
   "deposit": {

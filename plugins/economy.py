@@ -370,7 +370,7 @@ class Economy(Cog):
 
   @work.subcommand(name="now", description="Do some work")
   async def work_now(self, ctx):
-    language = await self.get_lang(ctx.guild.id).economy.work.now
+    language = (await self.get_lang(ctx.guild.id)).economy.work.now
     if not await check_work(ctx):
       return
 
@@ -390,7 +390,7 @@ class Economy(Cog):
       salary = OTHER_SALARY
 
     w = (await workers.get(uid=ctx.author.id)).work
-    await ctx.send(language.success.format(salary=str(salary),work=w)
+    await ctx.send(language.success.format(salary=str(salary)),work=w)
     w = "wallet"
     await self.give_money(w, ctx.author.id, salary,)
 

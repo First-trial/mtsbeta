@@ -40,20 +40,21 @@ AUTHOR_IDS = [] # all developers
 BOT_ID = "" # will self-generate
 BOT_INVITE_URL = "" # will self-generate if not given
 
-def generate(bot):
-  change = lambda k,v: globals()[k]=v
+async def generate(bot):
+  owner = (await bot.application_info()).owner.id
+  def change(k,v): globals()[k]=v
   change("BOT_ID",bot.user.id)
 
   if not OWNER_ID:
-    change("OWNER_ID",bot.owner_id)
+    change("OWNER_ID",owner)
   else:
     bot.owner_id = OWNER_ID
 
   if not AUTHOR_ID:
-    change("AUTHOR_ID",bot.owner_id)
+    change("AUTHOR_ID",owner)
 
   if not AUTHOR_IDS:
-    change("AUTHOR_IDS",[bot.owner_id])
+    change("AUTHOR_IDS",[owner])
 
   if not BOT_INVITE_URL:
     change(
@@ -73,6 +74,6 @@ flags = [
   "jishaku_no_dm traceback",
 ]
 
-for flag in flags: env.get]flags.upper().replace(" ","_")] = "t"
+for flag in flags: env[flag.upper().replace(" ","_")] = "t"
 del flags
 
