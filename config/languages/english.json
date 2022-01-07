@@ -7,7 +7,7 @@
     },
     "success": "You got `{salary}` coins after working as `{work}`"
    },
-   "as": {
+   "as_": {
     "err": {
      "not_found": "This is not valid work.\nSee a list of work by `{prefix}work list`",
      "resign": "You are already doing a job, pls resign from it before taking a new job\n(`{prefix} work resign`)"
