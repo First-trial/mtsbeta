@@ -21,3 +21,6 @@ def generate():
 
 generate()
 del generate()
+
+def get(lang: str):
+  return globals().get(lang)
