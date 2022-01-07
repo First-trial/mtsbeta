@@ -1,0 +1,49 @@
+{
+ "economy": {
+  "work": {
+   "now": {
+    "err": {
+     "cooldown": "\nPlease try again in `{time}`"
+    },
+    "success": "You got `{salary}` coins after working as `{work}`"
+   },
+   "as_": {
+    "err": {
+     "not_found": "This is not valid work.\nSee a list of work by `{prefix}work list`",
+     "resign": "You are already doing a job, pls resign from it before taking a new job\n(`{prefix} work resign`)"
+    },
+    "success": "अब आप `{work}` की नौकरी के रहें हैं!"
+   },
+   "resign": {
+    "err": {
+     "choose": "आप नौकरी नहीं कर रहे हैं, कृपया एक नौकरी कर लें (`{prefix}work as <work>`)"
+    },
+    "success": "आपने सफलतापूर्वक `{work}` के काम से रिजाइन कर दिया है।"
+   },
+   "list_": {
+    "success": "__उपलब्ध नौकरियाँ__"
+   }
+  },
+  "share": {
+   "err": {
+    "same": "आप अपने आप को कैसे पैसे देंगे?!!!",
+    "insufficient": "आपके बटुए में इतना पैसा नही है की आप किसी को दे सकें।",
+    "try_again": "मैने बैंक में आपका अकाउंट अभी अभी खोला है इसलिए कृपया दुबारा प्रयास करें।"
+   },
+   "confirm": "क्या आप {user} को `{amount}` सिक्के देना चाहते हैं?",
+   "success": "आपने {user} को `{amount}` सिक्के दिए।"
+  },
+  "shop": {
+   "err": {
+    "not_found": "आइटम `{item}` नहीं मिला।"
+   },
+   "success": "दुकान के उपलब्ध आइटम्स"
+  },
+  "inventory": {
+   "err": {
+    "nothing": "इन्वेंटरी में कुछ नहीं है!"
+   },
+   "success": " की इन्वेंटरी"
+  }
+ }
+}
