@@ -15,7 +15,9 @@ class BaseCont:
     if switch_color: view.switch_color()
     await msg.edit(view=view)
     await view.wait()
-    return view.confirmed
+    confirmed = view.confirmed
+    if confirmed is False: await msg.edit(content="Request Cancelled!")
+    return confirmed
 
 
 class Context(BaseCont, commands.Context):
@@ -42,7 +44,6 @@ class Context(BaseCont, commands.Context):
     await self.send('\n'.join(output))
 
   def __repr__(self):
-    # we need this for our cache key strategy
     return '<Context>'
 
   @discord.utils.cached_property
