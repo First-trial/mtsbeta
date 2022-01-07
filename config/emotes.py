@@ -1,6 +1,6 @@
 import json
 
-_emoji_data: dict = json.load(open("emojis.json"))
+_emoji_data: dict = json.load(open("config/emojis.json"))
 emoji_data  = {}
 
 del json
