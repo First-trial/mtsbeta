@@ -44,6 +44,32 @@
     "nothing": "Nothing in inventory!"
    },
    "success": "'s Inventory"
+  },
+  "balance": {
+   "bank": "bank",
+   "wallet": "wallet",
+   "balance": "'s balance"
+   "new_acc": "Opening account..."
+  },
+  "deposit": {
+   "err": {
+    "insufficient": "You don't have enough money in your wallet to deposit",
+    "minus_0": "Amount should must be greater than 0, not {amount}"
+   },
+   "success": {
+    "depositing": "Depositing {coins} coins in your bank...",
+    "deposited": "Successfully deposited {coins} in your bank"
+   }
+  },
+  "withdraw": {
+   "err": {
+    "insufficient": "You don't have enough money in your bank to withdraw",
+    "minus_0": "Amount should must be greater than 0, not {amount}"
+   },
+   "success": {
+    "withdrawing": "Withdrawing {coins} coins from your bank...",
+    "withdrawed": "Successfully withdrawn {coins} from your bank"
+   }
   }
  }
 }
