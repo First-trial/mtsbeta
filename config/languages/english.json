@@ -38,6 +38,12 @@
     "not_found": "Item `{item}` not found"
    },
    "success": "Available Shop Items"
+  },
+  "inventory": {
+   "err": {
+    "nothing": "Nothing in inventory!"
+   },
+   "success": "'s Inventory"
   }
  }
 }
