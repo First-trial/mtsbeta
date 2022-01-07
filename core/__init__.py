@@ -48,7 +48,7 @@ class MtsBot(appcommands.AutoShardedBot):
     try:
       await self.invoke(ctx)
     finally:
-      await ctx.release()
+      pass
 
   def init(self, *args, **kwargs):
     self.loop.run_until_complete(self._init())

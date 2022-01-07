@@ -31,31 +31,41 @@ def _emote():
   class _M(type):
     def __new__(meta, clsname, bases, attributes: dict):
       cls_attrs = attributes.copy()
-      del cls_attrs["emojis"]
+      cls_attrs["emojis"] = {}
       cls = super().__new__(meta, clsname, bases, cls_attrs)
       for emoji in attributes["emojis"]:
         n = list(emoji.values())[0]
-        full = "<{a}{name}:{id}>".format(
-          name=n["name"],
+        full = "<{name}:{id}>".format(
+          name="{a}"+n["name"],
           id=str(n["id"])
-        ).format(
+        )
+        full=full.format(
           a=("a:" if n["animated"] else "")
         )
         r_emoji = Emoji(full)
         r_emoji.full = full
-        for slot in cls.__slots__:
-          if slot is not "full":
+        for slot in Emoji.__slots__:
+          if slot != "full":
             setattr(
               r_emoji,
               slot,
               list(emoji.values())[0][slot]
             )
         setattr(cls, list(emoji.keys())[0], r_emoji)
+        cls.emojis[list(emoji.keys())[0]] = r_emoji
+      return cls
 
   class _Emote(metaclass=_M):
     emojis = list({emoji: data} for emoji, data in emoji_data.items())
-
+    
+    def json(self):
+      resp = {}
+      for emojin, emoji in self.emojis.items():
+        resp[emojin] = emoji.json()
+        
+      return resp
   return _Emote()
 
+Emote = _emote()
 del emoji_data
 del _emote

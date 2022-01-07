@@ -1,6 +1,5 @@
 import os
-from config import Emote
-print(Emote.tick)
+
 
 class Plugin(object):
   __slots__ = ("bot","name")
@@ -21,6 +20,7 @@ class Plugin(object):
   @property
   def full_name(self):
     return self.__class__.__module__ + "." + self.name
+    
 def all(bot=None):
   for filename in os.listdir("plugins"):
     if filename.endswith(".py") and open("plugins/"+filename, "r").read().splitlines()[0] == "# plugin: loadable: True":

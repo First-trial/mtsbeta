@@ -85,7 +85,7 @@ class Shop:
 
   def get_item(self, k):
     for item in self.items:
-      if item.name==k or item==k or item.id==k:
+      if item.name==str(k).lower().upper() or item==k or str(item.id)==str(k):
         return item
 
     return None
@@ -166,7 +166,7 @@ async def check_work(ctx):
 
 OWNER_SALARY: int = 5000000
 OTHER_SALARY: int = 1500
-WORK_COOLDOWN: int = 60 * 30
+WORK_COOLDOWN: int = 60 * 30 # 30 minutes
 WORKS: List[str] = [
   "youtuber",
   "coder",
@@ -474,6 +474,8 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
   @appcommands.command(name="share", description="Share your money to someone else")
   async def share_cmd(self, ctx, user: discord.Member, amount: int):
     am=amount
+    if user.id == ctx.author.id:
+      return await ctx.send("Hah, Nub! You can't share your money with yourself!", ephemeral=True)
     if amount <= 0:
         return await ctx.send(f"Amount should must be greater than 0, not {am}", ephemeral=True)
     u = await balance.get_or_none(uid=ctx.author.id)
@@ -483,12 +485,13 @@ f"(`{ctx.clean_prefix} work resign`)", ephemeral=True)
         return await ctx.send("You don't have enough money in your wallet to share", ephemeral=True)
 
       w = "wallet"
-      if not await ctx.confirm(f"Are you sure to give {amount} coins to {user.mention}?"):
+      confirmed = await ctx.confirm(f"Are you sure to give {amount} coins to {user.mention}?")
+      if not confirmed:
         return # user cancelled or didn't reacted within 15 seconds
 
       await self.take_money(w, ctx.author.id, am,)
       await self.give_money(w, user.id, am,)
-      await ctx.edit(f"You gave {am} coins to {user.mention}")
+      await ctx.edit(content = f"You gave {am} coins to {user.mention}")
     else:
       await self.open_acc(ctx.author.id,)
       await ctx.send("I just opened your account so please now try again", ephemeral=True)

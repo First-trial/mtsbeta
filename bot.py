@@ -71,4 +71,5 @@ for plugin in plugins.all(bot=bot):
   assert isinstance(plugin, plugins.Plugin)
   plugin.load()
 
+bot.load_extension("jishaku")
 bot.init()
