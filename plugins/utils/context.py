@@ -22,6 +22,7 @@ class BaseCont:
     return confirmed
 
   async def get_lang(self):
+    ctx = self
     gid=(ctx.guild.id if ctx.guild else ctx.channel.id)
 
     sett = await GLanguage.get_or_none(gid=gid)
