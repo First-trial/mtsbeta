@@ -12,27 +12,27 @@ class MathCog(Cog):
 
   @appcommands.command(description="Add two numbers")
   async def add(self, ctx, number: float, into: float):
-    await ctx.reply(f'Your answer is {number + into}', ephemeral=True)
+    await ctx.reply(f'{number}+{into} = `{number + into}`', ephemeral=True)
     
   @appcommands.command(description="Subtract two numbers")
   async def subtract(self, ctx, number: float, by: float):
-    await ctx.reply(f'Your answer is {number - by}', ephemeral=True)
+    await ctx.reply(f'{number}-{by} = `{number - by}`', ephemeral=True)
 
   @appcommands.command(description="Multiply Two numbers")
   async def multiply(self, ctx, number: float, by: float):
-    await ctx.reply(f'Your answer is {number * by}', ephemeral=True)
+    await ctx.reply(f'{number}x{by} = `{number * by}`', ephemeral=True)
 
   @appcommands.command(description="Divide two numbers")
   async def divide(self, ctx, number: float, by: float):
-    await ctx.reply(f'Your answer is {number/by}', ephemeral=True)
+    await ctx.reply(f'{number}/{by} = `{number/by}`', ephemeral=True)
 
   @square.subcommand(name="of", description="Square of a number")
   async def square_of(self, ctx, number: float):
-    await ctx.reply(f'Your answer is {number * number}', ephemeral=True)
+    await ctx.reply(f'{number}*{number} = `{number * number}`', ephemeral=True)
 
   @square.subcommand(name="root", description="Square root of a number")
   async def square_root(self, ctx, number: float):
-    await ctx.reply(f'Your answer is {math.sqrt(number)}', ephemeral=True)
+    await ctx.reply(f'{number}/{math.sqrt(number)} = `{math.sqrt(number)}`', ephemeral=True)
 
 def setup(bot):
   bot.add_cog(MathCog(bot))
