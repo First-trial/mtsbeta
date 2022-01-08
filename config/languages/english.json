@@ -73,5 +73,18 @@
     "withdrawed": "Successfully withdrawn {coins} from your bank"
    }
   }
+ },
+ "plugins": {
+  "utils": {
+   "context": {
+    "err": {
+     "req_cancel": "Request Cancelled."
+    }
+   },
+   "confirm": {
+    "confirm": "confirm",
+    "cancel": "cancel"
+   }
+  }
  }
 }
