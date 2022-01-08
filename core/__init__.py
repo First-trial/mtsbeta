@@ -81,6 +81,7 @@ class MtsBot(appcommands.AutoShardedBot):
     await Tortoise.generate_schemas(safe=True)
 
   async def on_ready(self):
+    await asyncio.sleep(2)
     await config.generate(self)
     self._author = await self.fetch_user(self.author_id)
     print(self.user, " started!")

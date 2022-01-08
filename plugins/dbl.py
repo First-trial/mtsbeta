@@ -69,7 +69,7 @@ class DBL(commands.Cog):
     voted = bool(data['voted'])
     resp = language.has_not if not voted else language.has
 
-    return await ctx.send(resp.format(member.display_name))
+    return await ctx.send(resp.format(user=member.display_name))
 
 
 def setup(bot):
