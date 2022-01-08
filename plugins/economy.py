@@ -406,122 +406,128 @@ class Economy(Cog):
         language.err.not_found.format(prefix=ctx.clean_prefix),
         ephemeral=True
       )
-    elif not await self.give_work(ctx.author.id, work):
-      await ctx.send(language.err.resign.format(prefix=ctx.prefix), ephemeral=True)
+    if not await ctx.confirm(language.confirm.format(work=work)): return
+    if not await self.give_work(ctx.author.id, work):
+      await ctx.edit(content=language.err.resign.format(prefix=ctx.prefix), ephemeral=True)
     else:
-      # TODO: Add Confirmations & confirmation language
-      await ctx.send(language.success.format(work=work))
+      await ctx.edit(content=language.success.format(work=work))
 
   @work.subcommand(name="resign", description="Resign from your work")
   async def work_resign(self, ctx):
-    language = (await self.get_lang(ctx)).economy.work.resign
+    language = (await ctx.get_lang()).economy.work.resign
     worker = workers.get_or_none(uid=ctx.author.id)
     work = await worker
     if not work:
       await ctx.send(language.err.choose.format(prefix=ctx.prefix), ephemeral=True)
     else:
+      if not await ctx.confirm(language.confirm.format(work=work.work)): return
       await worker.delete()
       await ctx.send(language.success.format(work=work.work))
 
 
-# Will do these later #IAmTiredNow #GTGSleep
-
   @work.subcommand(name="list", description="List of available jobs.")
   async def works_list(self, ctx):
+    language = (await ctx.get_lang()).economy.work.list_
     w = discord.Embed(
-      title="**__Available Jobs__**",
+      title=f"**{language.success}**",
       description="\n".join(list(w.value.title() for w in WORKS)),
       color=0x00ffff
     )
-    w.set_footer(text=f"choose a work by `{ctx.clean_prefix}work as <work>`")
+    w.set_footer(text=f"You can choose a work by `{ctx.clean_prefix}work as <work>`")
     await ctx.send(embed=w)
 
 
   @appcommands.command(name="deposit", description="Deposit some money in your bank.")
   async def dep(self, ctx, amount: int):
+    language = (await ctx.get_lang()).economy.deposit
     am = amount
     if amount <= 0:
-        return await ctx.send(f"Amount should must be greater than 0, not {am}", ephemeral=True)
+        return await ctx.send(language.err.minus_0.format(amount=str(am)), ephemeral=True)
     u = await balance.get_or_none(uid=ctx.author.id)
     if u:
       a = "wallet"
       b = "bank"
       am = int(am)
       if am > int(u.hand):
-        await ctx.reply("You don't have enough money in your wallet to deposit", ephemeral=True)
+        await ctx.reply(language.err.insufficient, ephemeral=True)
       else:
-        await ctx.reply(f'Depositing {am} coins in your bank...')
+        await ctx.reply(language.success.depositing.format(coins=am))
         await self.take_money(a, ctx.author.id, am,)
         await self.give_money(b, ctx.author.id, am,)
-        await ctx.edit(content=f"Successfully deposited {am} coins to your bank")
+        await ctx.edit(content=language.success.deposited.format(coins=am))
     else:
       await self.open_acc(ctx.author.id,)
       a = "wallet"
       b = "bank"
       if am > 500:
-        await ctx.reply("you only have 500 coins in your wallet to deposit", ephemeral=True)
+        await ctx.reply(language.err.insufficient, ephemeral=True)
       else:
-        await ctx.reply(f'Depositing {am} coins in your bank...')
+        await ctx.reply(language.success.depositing.format(coins=am))
         await self.take_money(a, ctx.author.id, am,)
         await self.give_money(b, ctx.author.id, am,)
-        await ctx.edit(f"Successfully deposited {am} coins to your bank")
+        await ctx.edit(content=language.success.deposited.format(coins=am))
 
   @appcommands.command(name="withdraw", description="Withdraw some money from your bank")
   async def with_cmd(self, ctx, amount: int):
+    language = (await ctx.get_lang()).economy.withdraw
     am = amount
     if amount <= 0:
-        return await ctx.send(f"Amount should must be greater than 0, not {am}", ephemeral=True)
+        return await ctx.send(language.err.minus_0.format(amount=str(am)), ephemeral=True)
     u = await balance.get_or_none(uid=ctx.author.id)
     if u:
       b = "wallet"
       a = "bank"
       am = int(am)
       if am > int(u.bank):
-        await ctx.reply("You don't have enough money in your bank to withdraw", ephemeral=True)
+        await ctx.reply(language.err.insufficient, ephemeral=True)
       else:
-        await ctx.reply(f'Withdrawing {am} coins from your bank...')
+        await ctx.reply(language.success.withdrawing.format(coins=am))
         await self.take_money(a, ctx.author.id, am,)
         await self.give_money(b, ctx.author.id, am,)
-        await ctx.edit(content=f"Successfully withdrawed {am} coins from your bank")
+        await ctx.edit(content=language.success.withdrawed.format(coins=am))
     else:
-      await ctx.reply("You don't have any money in your bank to withdraw, go deposit some first", ephemeral=True)
+      await ctx.reply(language.err.insufficient, ephemeral=True)
       await self.open_acc(ctx.author.id,)
 
   @appcommands.command(name="share", description="Share your money to someone else")
   async def share_cmd(self, ctx, user: discord.Member, amount: int):
-    am=amount
+    am, language=amount,(await ctx.get_lang()).economy.share
     if user.id == ctx.author.id:
-      return await ctx.send("Hah, Nub! You can't share your money with yourself!", ephemeral=True)
+      return await ctx.send(language.err.same, ephemeral=True)
     if amount <= 0:
-        return await ctx.send(f"Amount should must be greater than 0, not {am}", ephemeral=True)
+        return await ctx.send(language.err.minus_0.format(amount=am), ephemeral=True)
     u = await balance.get_or_none(uid=ctx.author.id)
     if u:
 
       if am > int(u.hand):
-        return await ctx.send("You don't have enough money in your wallet to share", ephemeral=True)
+        return await ctx.send(language.err.insufficient, ephemeral=True)
 
       w = "wallet"
-      confirmed = await ctx.confirm(f"Are you sure to give {amount} coins to {user.mention}?")
+      confirmed = await ctx.confirm(language.confirm.format(amount=am,user=user.mention))
       if not confirmed:
         return # user cancelled or didn't reacted within 15 seconds
 
       await self.take_money(w, ctx.author.id, am,)
       await self.give_money(w, user.id, am,)
-      await ctx.edit(content = f"You gave {am} coins to {user.mention}")
+      await ctx.edit(content = language.success.format(amount=am,user=user.mention))
     else:
       await self.open_acc(ctx.author.id,)
-      await ctx.send("I just opened your account so please now try again", ephemeral=True)
+      await ctx.send(language.err.try_again, ephemeral=True)
 
   @appcommands.command(name="shop",description="Get items of shop.")
   async def shop(self, ctx, item: str = None):
+    language = (await ctx.get_lang()).economy.shop
+
     if not item: d="\n".join([f"**{item.id}: {item.emoji} __{item.name}__** @ `{item.price}coins`" for item in SHOP.items])
-    elif not SHOP.get(item): d=f"Item `{item}` not found!"
-    else: item=SHOP.get(item);d=f"**__ \u200b{item.emoji}{item.name}\u200b \n\n**Cost: **`{item.price}coins`"
-    await ctx.send(embed=discord.Embed(title="**__Available Shop items__**",description=d,color=0x00ffff))
+    elif not SHOP.get(item): d=language.err.not_found.format(item=item)
+    else: item=SHOP.get(item);d=f"**__ \u200b{item.emoji}{item.name}\u200b __**\n\n**Cost: **`{item.price}coins`"
+    await ctx.send(embed=discord.Embed(title=f"**__{language.success}__**",description=d,color=0x00ffff))
 
   @appcommands.command(name="inventory")
   async def get_inv(self, ctx, user: discord.Member = None):
     user = user or ctx.author
+    language = (await ctx.get_lang()).economy.inventory
+
     id_lookup=SHOP.filter_by(include=["id"])
     fmt = []
     for iid in id_lookup:
@@ -531,14 +537,14 @@ class Economy(Cog):
         fmt.append(f"{r_item.emoji} {r_item.name} — {item.count}")
 
     if not fmt:
-      fmt = ["Nothing in inventory"]
+      fmt = [language.err.nothing]
 
     if not await balance.get_or_none(uid=user.id):
       await self.open_acc(user.id)
 
     await ctx.send(
       embed=discord.Embed(
-        title=user.display_name+"'s Inventory",
+        title=user.display_name+language.success,
         description="\n".join(fmt),
         color=0x00ffff
       )
