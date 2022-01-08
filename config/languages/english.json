@@ -75,6 +75,13 @@
    }
   }
  },
+ "dbl": {
+   "votecheck": {
+    "has_not": "{user} has not voted!",
+    "has": "{user} has voted!"
+   }
+  }
+ },
  "plugins": {
   "utils": {
    "context": {
