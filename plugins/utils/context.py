@@ -3,7 +3,8 @@ import asyncio
 import discord
 import io
 from plugins.utils import ConfirmV
-
+from config import languages
+from models import GLanguage
 
 class BaseCont:
   def __init__(self, *args, **kwargs):
@@ -11,13 +12,22 @@ class BaseCont:
 
   async def confirm(self, *args, switch_color: bool = False, **kwargs):
     msg = await self.send(*args, **kwargs)
-    view = ConfirmV(self.author, msg)
+    view = ConfirmV(self.author, msg, language=(await self.get_lang()))
     if switch_color: view.switch_color()
     await msg.edit(view=view)
     await view.wait()
     confirmed = view.confirmed
     if confirmed is False: await msg.edit(content="Request Cancelled!")
     return confirmed
+
+  async def get_lang(self):
+    gid=(ctx.guild.id if ctx.guild else ctx.channel.id)
+
+    sett = await GLanguage.get_or_none(gid=gid)
+    if sett: return languages.get(sett.language)
+    await GLanguage.create(gid=gid)
+    return languages.get("english")
+
 
 
 class Context(BaseCont, commands.Context):
