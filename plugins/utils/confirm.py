@@ -3,9 +3,9 @@ from config import Emote, languages
 
 
 class Button(discord.ui.Button):
-  def __init__(self, lang_attr, **kwargs):
+  def __init__(self, **kwargs):
     super().__init__(**kwargs)
-    self.__lattr = lang_attr
+    self.__lattr = self.label
     self.__language = languages.english
 
   @property
