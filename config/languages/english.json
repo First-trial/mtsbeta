@@ -1,4 +1,6 @@
 {
+ "__name__": "english",
+ "__display__": "English",
  "economy": {
   "work": {
    "now": {
