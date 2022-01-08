@@ -37,13 +37,13 @@ class ConfirmV(discord.ui.View):
 
   @button(label='confirm', style=discord.ButtonStyle.green,emoji=Emote.tick)
   async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
-    self.confirmed=True
+    self.confirmed=True;self.stop()
     await interaction.response.edit_message(view=discord.ui.View())
 
 
   @button(label='cancel', style=discord.ButtonStyle.danger, emoji=Emote.cross)
   async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
-    self.confirmed=False
+    self.confirmed=False;self.stop()
     await interaction.response.edit_message(view=discord.ui.View())
 
 
