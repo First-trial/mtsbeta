@@ -41,7 +41,7 @@ class ConfirmV(discord.ui.View):
     await interaction.response.edit_message(view=discord.ui.View())
 
 
-  @discord.ui.button(label='cancel', style=discord.ButtonStyle.danger, emoji=Emote.cross)
+  @button(label='cancel', style=discord.ButtonStyle.danger, emoji=Emote.cross)
   async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
     self.confirmed=False
     await interaction.response.edit_message(view=discord.ui.View())
