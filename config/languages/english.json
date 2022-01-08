@@ -12,12 +12,14 @@
      "not_found": "This is not valid work.\nSee a list of work by `{prefix}work list`",
      "resign": "You are already doing a job, pls resign from it before taking a new job\n(`{prefix} work resign`)"
     },
+    "confirm": "Are you sure to work as `{work}` from now?",
     "success": "You are working as `{work}` now!"
    },
    "resign": {
     "err": {
      "choose": "You aren't working, pls choose a job (`{prefix}work as <work>`)"
     },
+    "confirm": "Are you sure to resign from the work of `{work}`?",
     "success": "Successfully resigned from the job of `{work}`"
    },
    "list_": {
