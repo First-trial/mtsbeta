@@ -48,6 +48,7 @@ class DBL(commands.Cog):
     """Checks the voting status of a specified member. Defaults to author."""
     if not member:
       member = ctx.author
+    language = (await ctx.get_lang()).dbl.votecheck
 
     # This is the constructed endpoint for the user check
     url = "{}bots/{}/check".format(self.ep, ctx.me.id)
@@ -66,10 +67,9 @@ class DBL(commands.Cog):
 
     data = await response.json()
     voted = bool(data['voted'])
-    status = 'has' if voted else 'has not'
+    resp = language.has_not if not voted else language.has
 
-    return await ctx.send("{} {} voted!".format(member.display_name,
-                                                status))
+    return await ctx.send(resp.format(member.display_name))
 
 
 def setup(bot):
