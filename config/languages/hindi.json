@@ -75,6 +75,12 @@
    }
   }
  },
+ "dbl": {
+  "votecheck": {
+   "has_not": "{user} ने वोट नहीं किया है।",
+   "has": "{user} ने वोट किया है।"
+  }
+ },
  "plugins": {
   "utils": {
    "context": {
