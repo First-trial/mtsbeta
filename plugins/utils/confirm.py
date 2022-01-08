@@ -26,8 +26,8 @@ def button(**kwargs):
 
 
 class ConfirmV(discord.ui.View):
-  def __init__(self, user: discord.User, message: discord.Message, *, language = languages.english):
-    super().__init__(timeout=15)
+  def __init__(self, user: discord.User, message: discord.Message, *, timeout: int, language = languages.english):
+    super().__init__(timeout=timeout)
     self.confirmed: bool = None # None because to detect whether the user clicked or not clicked
     self.user = user
     self.m = message
