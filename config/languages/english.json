@@ -82,8 +82,8 @@
     }
    },
    "confirm": {
-    "confirm": "confirm",
-    "cancel": "cancel"
+    "confirm": "Confirm",
+    "cancel": "Cancel"
    }
   }
  }
