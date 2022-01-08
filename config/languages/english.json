@@ -30,7 +30,8 @@
    "err": {
     "same": "Hah, Nub! You can't share your money with yourself!",
     "insufficient": "You don't have enough money in your wallet to share",
-    "try_again": "I just opened your account so please now try again"
+    "try_again": "I just opened your account so please now try again",
+    "minus_0": "Amount should must be greater than 0, not {amount}"
    },
    "confirm": "Are you sure to give `{amount}` coins to {user}?",
    "success": "You gave `{amount}` coins to {user}"
