@@ -41,6 +41,7 @@ class MtsBot(appcommands.AutoShardedBot):
     self.scheduler = Scheduler()
     self.ready = False
     self._author = None
+    self._BotBase__cogs = commands.core._CaseInsensitiveDict()
 
   def get_interaction_context(self, interaction):
     return CustomCont(self, interaction)
@@ -81,7 +82,7 @@ class MtsBot(appcommands.AutoShardedBot):
     await Tortoise.generate_schemas(safe=True)
 
   async def on_ready(self):
-    await asyncio.sleep(2)
+    await asyncio.sleep(2) # wait for bot to detect all useful data
     await config.generate(self)
     self._author = await self.fetch_user(self.author_id)
     print(self.user, " started!")
