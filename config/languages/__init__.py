@@ -18,7 +18,7 @@ def generate():
   languages = {}
   for file in language_files:
     lname = file.split("/")[-1][:-5]
-    languages[lname] = Language(lname,_gen(lname, json.load(open(file,"r")))
+    languages[lname] = _gen(lname, json.load(open(file,"r")))
 
   languages["languages"] = languages.copy()
   globals().update(languages)
