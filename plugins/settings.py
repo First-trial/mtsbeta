@@ -1,4 +1,4 @@
-# plugin: loadable: False
+# plugin: loadable: True
 
 import appcommands
 from core import Cog
