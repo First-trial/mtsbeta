@@ -95,5 +95,16 @@
     "cancel": "Cancel"
    }
   }
+ },
+ "settings": {
+  "language": {
+   "view": "There is currently `english` language in this server!",
+   "edit": {
+    "err": {
+     "forbidden": "You don't have `manage_server` permissions in this server!"
+    },
+    "success": "You have successfully changed this server's language into `english`"
+   }
+  }
  }
 }
