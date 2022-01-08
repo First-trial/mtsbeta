@@ -11,13 +11,14 @@ class BaseCont:
     super().__init__(*args, **kwargs)
 
   async def confirm(self, *args, switch_color: bool = False, **kwargs):
+    language=(await self.get_lang())
     msg = await self.send(*args, **kwargs)
-    view = ConfirmV(self.author, msg, language=(await self.get_lang()))
+    view = ConfirmV(self.author, msg, language=language)
     if switch_color: view.switch_color()
     await msg.edit(view=view)
     await view.wait()
     confirmed = view.confirmed
-    if confirmed is False: await msg.edit(content="Request Cancelled!")
+    if confirmed is False: await msg.edit(content=language.plugins.utils.context.err.req_cancel)
     return confirmed
 
   async def get_lang(self):
