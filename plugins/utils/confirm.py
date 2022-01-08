@@ -1,28 +1,55 @@
 import discord
-from config import Emote
+from config import Emote, languages
+
+
+class Button(discord.ui.Button):
+  def __init__(self, lang_attr, **kwargs):
+    super().__init__(**kwargs)
+    self.__lattr = lang_attr
+    self.__language = languages.english
+
+  @property
+  def language(self):
+    return self.__language
+
+  @language.setter
+  def language(self, lang):
+    self._underlying.label = getattr(lang.plugins.utils.confirm, self.label,)
+    self.__language = lang
+
+def button(**kwargs):
+  def decor(f):
+    f = discord.ui.button(**kwargs)(f)
+    f.__discord_ui_model_type__ = Button
+    return f
+  return decor
 
 
 class ConfirmV(discord.ui.View):
-  def __init__(self, user: discord.User, message: discord.Message):
+  def __init__(self, user: discord.User, message: discord.Message, *, language = languages.english):
     super().__init__(timeout=15)
     self.confirmed: bool = None # None because to detect whether the user clicked or not clicked
     self.user = user
     self.m = message
+    for child in self.children:
+      child.language = language
 
 
-  @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green,emoji=Emote.tick)
+  @button(label='confirm', style=discord.ButtonStyle.green,emoji=Emote.tick)
   async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
     self.confirmed=True
     await interaction.response.edit_message(view=discord.ui.View())
 
 
-  @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger, emoji=Emote.cross)
+  @discord.ui.button(label='cancel', style=discord.ButtonStyle.danger, emoji=Emote.cross)
   async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
     self.confirmed=False
     await interaction.response.edit_message(view=discord.ui.View())
 
 
   async def on_timeout(self):
+    if self.confirmed: return
+
     for child in self.children:
       child.disabled = True
 
