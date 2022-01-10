@@ -10,10 +10,10 @@ class BaseCont:
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
 
-  async def confirm(self, *args, switch_color: bool = False, language = None, **kwargs):
+  async def confirm(self, *args, user: discord.User = None, switch_color: bool = False, language = None, **kwargs):
     language=(language) or (await self.get_lang())
     msg = await self.send(*args, **kwargs)
-    view = ConfirmV(self.author, msg, language=language)
+    view = ConfirmV((user or self.author), msg, language=language)
     if switch_color: view.switch_color()
     await msg.edit(view=view)
     await view.wait()
