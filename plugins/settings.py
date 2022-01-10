@@ -13,7 +13,10 @@ class Settings(Cog):
 
   @language.subcommand(name="view", description="Get Language of your server")
   async def settings_language_view(self, ctx):
-    await ctx.send((await ctx.get_lang()).settings.language.view)
+    language = await ctx.get_lang()
+    await ctx.send(
+      "There is currently `{language.__display__}` (`{language.__name__}`) language in this server"
+    )
 
   @language.subcommand(name="list", description="Get a list of available languages")
   async def settings_language_list(self, ctx):
