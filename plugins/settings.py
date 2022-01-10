@@ -11,7 +11,7 @@ from models import GLanguage
 # what is written!
 
 class Settings(Cog):
-  settings = appcommands.slashgroup(name="settings", description="Settings",guild_ids=[803824283897823253])
+  settings = appcommands.slashgroup(name="settings", description="Settings")
 
   language = settings.subcommandgroup(name="language", description="Language Settings!")
 
