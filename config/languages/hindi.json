@@ -1,5 +1,4 @@
 {
- "__name__": "hindi",
  "__display__": "हिंदी",
  "economy": {
   "work": {
@@ -93,16 +92,6 @@
    "confirm": {
     "confirm": "हां",
     "cancel": "नही"
-   }
-  }
- },
- "settings": {
-  "language": {
-   "edit": {
-    "err": {
-     "forbidden": "इस सर्वर में, आपके पास `manage_server` की परमिशन नही है।"
-    },
-    "success": "अपने सफलतापूर्वक, इस सर्वर की भाषा `हिंदी` कर दी है।"
    }
   }
  }
