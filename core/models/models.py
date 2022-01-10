@@ -21,3 +21,7 @@ class GLanguage(Model):
 
   gid = fields.BigIntField(unique=True)
   language = fields.TextField(default="english")
+
+  @classmethod
+  def edit(cls, gid, language):
+    return cls.get(gid=gid).update(language=language)
