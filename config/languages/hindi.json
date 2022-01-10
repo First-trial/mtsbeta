@@ -98,7 +98,6 @@
  },
  "settings": {
   "language": {
-   "view": "इस सर्वर पर अभी `हिंदी` भाषा है।",
    "edit": {
     "err": {
      "forbidden": "इस सर्वर में, आपके पास `manage_server` की परमिशन नही है।"
