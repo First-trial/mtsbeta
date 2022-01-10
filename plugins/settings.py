@@ -7,6 +7,9 @@ from config import languages
 from models import GLanguage
 
 
+# Note: No language for settings because for people to understand \
+# what is written!
+
 class Settings(Cog):
   settings = appcommands.slashgroup(name="settings", description="Settings",guild_ids=[803824283897823253])
 
@@ -26,17 +29,23 @@ class Settings(Cog):
 
   @language.subcommand(name="edit", description="Edit language of current server")
   async def settings_language_edit(self, ctx, language: str):
-    if not languages.get(language): return await ctx.send(f"Language {language} not found!", ephemeral=True)
+    if not languages.get(language): return await ctx.send(f"Language {language} not found! (`{ctx.prefix}settings languages list`)", ephemeral=True)
     lang = languages.get(language)
+    english = languages.english
+
     language = await ctx.get_language()
     if not ctx.guild:
-      if await ctx.confirm(f"Are you sure to change language from `{language.__name__}` to `{lang.__name__}`"):
+      if await ctx.confirm(f"Are you sure to change language from `{language.__name__}` to `{lang.__name__}`", language=english):
         await GLanguage.edit(ctx.channel.id, lang.__name__)
-        await ctx.send(f"You have successfully changed the language from `{language.__name__}` to `{lang.__name__}`")
+        await ctx.edit(content=f"You have successfully changed the language from `{language.__name__}` to `{lang.__name__}`")
       return
 
-    await ctx.send("Soon™", ephemeral=True)
+    if not ctx.author.guild_permissions.manage_guild: return await ctx.send("You don't have `manage_guid` permission for this!", ephemeral=True)
 
+    if await ctx.confirm(f"Are you sure to change this server's language from `{language.__name__}` to `{lang.__name__}`", language=english):
+      await GLanguage.edit(ctx.guild.id, lang.__name__)
+      await ctx.edit(content=f"You have successfully changed the language from `{language.__name__}` to `{lang.__name__}`")
+      
 
 def setup(bot):
   bot.add_cog(Settings(bot))
