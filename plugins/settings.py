@@ -1,5 +1,6 @@
 # plugin: loadable: True
 
+import discord
 import appcommands
 from core import Cog
 from config import languages
@@ -16,7 +17,7 @@ class Settings(Cog):
 
   @language.subcommand(name="list", description="Get a list of available languages")
   async def settings_language_list(self, ctx):
-    await ctx.send("\n".join(list(languages.languages.keys())))
+    await ctx.send(embed=discord.Embed("\n".join(list(languages.languages.keys()))))
 
 
 #   async def settings_language_edit(ctx, language: str):
