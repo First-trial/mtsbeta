@@ -9,6 +9,7 @@ def generate():
       def __repr__(self): return k
       def __str__(self): return k
       def __init__(self):
+        self.__name__ = k.split(".")[-1]
         for key,v in fmt.items():
           if isinstance(v, dict): v = _gen(k+"."+key,v)
           setattr(self, key, v)
