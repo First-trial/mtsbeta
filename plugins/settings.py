@@ -19,12 +19,12 @@ class Settings(Cog):
   async def settings_language_view(self, ctx):
     language = await ctx.get_lang()
     await ctx.send(
-      "There is currently `{language.__display__}` (`{language.__name__}`) language in this server"
+      f"There is currently `{language.__display__}` (`{language.__name__}`) language in this server"
     )
 
   @language.subcommand(name="list", description="Get a list of available languages")
   async def settings_language_list(self, ctx):
-    await ctx.send(embed=discord.Embed("\n".join(list(languages.languages.keys()))))
+    await ctx.send(embed=discord.Embed(description="\n".join(list(languages.languages.keys()))))
 
 
   @language.subcommand(name="edit", description="Edit language of current server")
