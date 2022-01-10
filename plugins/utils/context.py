@@ -10,8 +10,8 @@ class BaseCont:
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
 
-  async def confirm(self, *args, switch_color: bool = False, **kwargs):
-    language=(await self.get_lang())
+  async def confirm(self, *args, switch_color: bool = False, language = None, **kwargs):
+    language=(language) or (await self.get_lang())
     msg = await self.send(*args, **kwargs)
     view = ConfirmV(self.author, msg, language=language)
     if switch_color: view.switch_color()
