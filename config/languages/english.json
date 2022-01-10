@@ -1,5 +1,4 @@
 {
- "__name__": "english",
  "__display__": "English",
  "economy": {
   "work": {
@@ -93,16 +92,6 @@
    "confirm": {
     "confirm": "Confirm",
     "cancel": "Cancel"
-   }
-  }
- },
- "settings": {
-  "language": {
-   "edit": {
-    "err": {
-     "forbidden": "You don't have `manage_server` permissions in this server!"
-    },
-    "success": "You have successfully changed this server's language into `english`"
    }
   }
  }
