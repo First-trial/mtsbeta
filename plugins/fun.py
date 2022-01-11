@@ -1,5 +1,6 @@
 # plugin: loadable: True
 
+import json
 import discord
 import asyncio
 from discord.ext import commands
@@ -9,7 +10,25 @@ from core import Cog
 class Fun(Cog):
   fun = appcommands.slashgroup(name="fun", description="Fun Commands!")
 
+  @fun.subcommand(name="kill", description="Kill someone!")
+  async def fun_kill(self, ctx, user: discord.Member):
+    kill = json.load(open("assets/kill.json"))
+
+    if user.id == ctx.author.id:
+      return await ctx.send("Why do u want to kill yourself??", ephemeral=True)
+      
+    response = kill.get("args")
+    if "$author" in response:
+      response=response.replace("$author", ctx.author.display_name)
+      
+    if "$mention" in response:
+      response = response.replace("$mention", user.display_name)
+      
+    await ctx.send(response)
+
+
   fun_animation = fun.subcommandgroup(name="animation", description="Animation Commands!")
+
 
   @fun_animation.subcommand(name="cathi", description="Make a cat say something")
   async def fun_animation_cathi(self, ctx, text: str = "Hi..."):
