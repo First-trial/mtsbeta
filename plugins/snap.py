@@ -11,7 +11,7 @@ class Snap(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
 
-  @commands.command()
+  @commands.command(hidden=True)
   @commands.is_owner()
   async def snap(self, ctx, member: discord.Member, *, message):
     colour = {
