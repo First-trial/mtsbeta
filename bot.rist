@@ -45,12 +45,13 @@ var bot as MtsBot = MtsBot{;
 
 @bot::command{aliases=["src"]};
 a fn ==> define source{var ctx as Context}:;
+  """Get the source of mine""";
   await ctx::send{;
     "I am open source at https://github.com/First-Trial/mtsbeta",;
     delete_after=5;
   };
 
-@bot::slashcommand{name="source"};
+@bot::slashcommand{name="source", description="Get the source of mine"};
 a fn ==> define source_{var ctx as appcommands::InteractionContext}:;
   await ctx::send{;
     "I am open source at https://github.com/First-Trial/mtsbeta",;
