@@ -346,11 +346,14 @@ class Economy(Cog):
         bank = 0
         money = 500 - money
         await self.up_usr(id, bank, money)
-      else:
-        await self.open_acc(id)
+      else: await self.open_acc(id)
 
-  @appcommands.command(name="balance", description="Check balance of your or someone other")
-  async def bal(self, ctx, user: discord.Member = None):
+
+  economy = appcommands.slashgroup(name="economy", description="Economy commands")
+
+
+  @economy.subcommand(name="balance", description="Check balance of your or someone other")
+  async def economy_balance(self, ctx, user: discord.Member = None):
     usr=user or ctx.author
     language = (await self.get_lang(ctx)).economy.balance
     u = await balance.get_or_none(uid=usr.id)
@@ -369,10 +372,10 @@ class Economy(Cog):
           description=f"{language.wallet}: `500 coins`\n{language.bank}: `0 coins`",color=0x00ffff)
       await ctx.edit(content=None, embed=b)
 
-  work = appcommands.slashgroup(name="work",)
+  work = economy.subcommandgroup(name="work", description="Commands related to jobs.")
 
   @work.subcommand(name="now", description="Do some work")
-  async def work_now(self, ctx):
+  async def economy_work_now(self, ctx):
     language = (await self.get_lang(ctx)).economy.work.now
     if not await check_work(ctx):
       return
@@ -399,7 +402,7 @@ class Economy(Cog):
 
 
   @work.subcommand(name="as", description="Choose your work")
-  async def work_as(self, ctx, work: Option("-", "Chosee work", choices=WORKS, required=True)):
+  async def economy_work_as(self, ctx, work: Option("-", "Chosee work", choices=WORKS, required=True)):
     language = (await self.get_lang(ctx)).economy.work.as_
     if work.lower() not in list(w.value.lower() for w in WORKS):
       await ctx.send(
@@ -413,7 +416,7 @@ class Economy(Cog):
       await ctx.edit(content=language.success.format(work=work))
 
   @work.subcommand(name="resign", description="Resign from your work")
-  async def work_resign(self, ctx):
+  async def economy_work_resign(self, ctx):
     language = (await ctx.get_lang()).economy.work.resign
     worker = workers.get_or_none(uid=ctx.author.id)
     work = await worker
@@ -426,7 +429,7 @@ class Economy(Cog):
 
 
   @work.subcommand(name="list", description="List of available jobs.")
-  async def works_list(self, ctx):
+  async def economy_work_list(self, ctx):
     language = (await ctx.get_lang()).economy.work.list_
     w = discord.Embed(
       title=f"**{language.success}**",
@@ -437,8 +440,8 @@ class Economy(Cog):
     await ctx.send(embed=w)
 
 
-  @appcommands.command(name="deposit", description="Deposit some money in your bank.")
-  async def dep(self, ctx, amount: int):
+  @economy.subcommand(name="deposit", description="Deposit some money in your bank.")
+  async def economy_deposit(self, ctx, amount: int):
     language = (await ctx.get_lang()).economy.deposit
     am = amount
     if amount <= 0:
@@ -467,8 +470,8 @@ class Economy(Cog):
         await self.give_money(b, ctx.author.id, am,)
         await ctx.edit(content=language.success.deposited.format(coins=am))
 
-  @appcommands.command(name="withdraw", description="Withdraw some money from your bank")
-  async def with_cmd(self, ctx, amount: int):
+  @economy.subcommand(name="withdraw", description="Withdraw some money from your bank")
+  async def economy_withdraw(self, ctx, amount: int):
     language = (await ctx.get_lang()).economy.withdraw
     am = amount
     if amount <= 0:
@@ -489,8 +492,8 @@ class Economy(Cog):
       await ctx.reply(language.err.insufficient, ephemeral=True)
       await self.open_acc(ctx.author.id,)
 
-  @appcommands.command(name="share", description="Share your money to someone else")
-  async def share_cmd(self, ctx, user: discord.Member, amount: int):
+  @economy.subcommand(name="share", description="Share your money to someone else")
+  async def economy_share(self, ctx, user: discord.Member, amount: int):
     am, language=amount,(await ctx.get_lang()).economy.share
     if user.id == ctx.author.id:
       return await ctx.send(language.err.same, ephemeral=True)
@@ -514,8 +517,8 @@ class Economy(Cog):
       await self.open_acc(ctx.author.id,)
       await ctx.send(language.err.try_again, ephemeral=True)
 
-  @appcommands.command(name="shop",description="Get items of shop.")
-  async def shop(self, ctx, item: str = None):
+  @economy.subcommand(name="shop",description="Get items of shop.")
+  async def economy_shop(self, ctx, item: str = None):
     language = (await ctx.get_lang()).economy.shop
 
     if not item: d="\n".join([f"**{item.id}: {item.emoji} __{item.name}__** @ `{item.price}coins`" for item in SHOP.items])
@@ -523,8 +526,9 @@ class Economy(Cog):
     else: item=SHOP.get(item);d=f"**__ \u200b{item.emoji}{item.name}\u200b __**\n\n**Cost: **`{item.price}coins`"
     await ctx.send(embed=discord.Embed(title=f"**__{language.success}__**",description=d,color=0x00ffff))
 
-  @appcommands.command(name="inventory")
-  async def get_inv(self, ctx, user: discord.Member = None):
+
+  @economy.subcommand(name="inventory", description="Check inventory of your or someone else")
+  async def economy_inventory(self, ctx, user: discord.Member = None):
     user = user or ctx.author
     language = (await ctx.get_lang()).economy.inventory
 
