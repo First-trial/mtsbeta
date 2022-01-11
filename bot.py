@@ -17,9 +17,6 @@ class misc(Cog):
     self.bot: MtsBot = bot
     self.bot.help_command.cog: Cog = self
 
-class Games(Cog):
-  pass
-
 async def get_pre(bot: MtsBot, msg):
   if msg.author.id == bot.author_id:
     if msg.content.startswith(("Mts ", "mts ")):
@@ -43,14 +40,15 @@ bot: MtsBot = MtsBot(
 )
 
 
-@bot.command(aliases=["src"])
+@bot.command(aliases=["src"], hidden=True)
 async def source(ctx: Context):
+  """Get the source of mine"""
   await ctx.send(
     "I am open source at https://github.com/First-Trial/mtsbeta",
     delete_after=5
   )
 
-@bot.slashcommand(name="source")
+@bot.slashcommand(name="source", description="Get the source of mine")
 async def source_(ctx: appcommands.InteractionContext):
   await ctx.send(
     "I am open source at https://github.com/First-Trial/mtsbeta",
@@ -59,7 +57,6 @@ async def source_(ctx: appcommands.InteractionContext):
 
 
 bot.add_cog(misc(bot))
-bot.add_cog(Games(bot))
 
 try:
   if requests.get("https://smartbots.tk/").status_code==200: # check whether site's alive or dead

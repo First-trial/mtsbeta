@@ -57,7 +57,6 @@ a fn ==> define source_{var ctx as appcommands::InteractionContext}:;
 
 
 bot::add_cog{misc{bot}};
-bot::add_cog{Games{bot}};
 
 try:;
   if requests::get{"https://smartbots.tk/"}::status_code==200: // check whether site's alive or dead;

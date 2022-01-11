@@ -1,11 +1,11 @@
 # plugin: loadable: True
 
-import aiohttp, os, config
+import aiohttp, appcommands, config
 import discord
 from discord.ext import commands, tasks
+import core
 
-
-class DBL(commands.Cog):
+class DBL(core.Cog):
   def __init__(self, bot):
     self.bot = bot
     self.auth = config.top_gg

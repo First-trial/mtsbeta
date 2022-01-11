@@ -25,7 +25,6 @@ class CustomCont(context.BaseCont, appcommands.InteractionContext):
 class MtsBot(appcommands.AutoShardedBot):
   def __init__(self, *args, **kwargs):
     super().__init__(**kwargs)
-    self.scheduler = Scheduler()
     self.ready = False
     self._author = None
     self._BotBase__cogs = commands.core._CaseInsensitiveDict()
