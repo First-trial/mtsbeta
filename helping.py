@@ -1,6 +1,9 @@
 from discoutils import MinimalEmbedHelp as Meh
 
 class Myh(Meh):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args,**kwargs,command_attrs={"hidden": True})
+
   def add_bot_commands_formatting(self, commands, heading):
     if commands:
       joined = ',\u2002'.join("`" + c.name + "`" for c in commands)
