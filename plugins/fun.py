@@ -9,10 +9,10 @@ from core import Cog
 class Fun(Cog):
   fun = appcommands.slashgroup(name="fun", description="Fun Commands!")
 
-  animation = fun.subcommandgroup(name="animation", description="Animation Commands!")
+  fun_animation = fun.subcommandgroup(name="animation", description="Animation Commands!")
 
-  @animation.subcommand(name="cathi", description="Make a cat say something")
-  async def cathi(self, ctx, text: str = "Hi..."):
+  @fun_animation.subcommand(name="cathi", description="Make a cat say something")
+  async def fun_animation_cathi(self, ctx, text: str = "Hi..."):
     ctx=await ctx.reply("starting")
     list = (
         """ຸ 　　　＿＿_＿＿
@@ -33,8 +33,8 @@ class Fun(Cog):
         await asyncio.sleep(1)
         
 
-  @animation.subcommand(name="flop", description="...")
-  async def flop(self, ctx):
+  @fun_animation.subcommand(name="flop", description="...")
+  async def fun_animation_flop(self, ctx):
     m = await ctx.send("Starting...")
     list = (
         "(   ° - °) (' - '   )",
@@ -47,16 +47,16 @@ class Fun(Cog):
       await m.edit(content=i)
       await asyncio.sleep(1.5)
 
-  @animation.subcommand(name="poof", description="...")
-  async def poof(self, ctx):
+  @fun_animation.subcommand(name="poof", description="...")
+  async def fun_animation_poof(self, ctx):
     m = await ctx.send("...")
     list = ("(   ' - ')", "' - ')", "- ')", "')", ")", "*poofness*")
     for i in list:
       await m.edit(content=i)
       await asyncio.sleep(1.5)
 
-  @animation.subcommand(name="virus", description="Insert a virus to yourself or someone else")
-  async def virus(self, ctx, user: discord.Member = None, virus: str = "trojan"):
+  @fun_animation.subcommand(name="virus", description="Insert a virus to yourself or someone else")
+  async def fun_animation_virus(self, ctx, user: discord.Member = None, virus: str = "trojan"):
     m = await ctx.send("...")
     user = user or ctx.author
     list = (
@@ -77,8 +77,8 @@ class Fun(Cog):
       await m.edit(content=i)
       await asyncio.sleep(0.8)
 
-  @animation.subcommand(name="boom", description="Booms a message!")
-  async def boom(self, ctx):
+  @fun_animation.subcommand(name="boom", description="Booms a message!")
+  async def fun_animation_boom(self, ctx):
     m = await ctx.send("THIS MESSAGE WILL SELFDESTRUCT IN 5")
     await asyncio.sleep(1)
     list = (
@@ -92,8 +92,8 @@ class Fun(Cog):
       await asyncio.sleep(1)
       await m.edit(content=i)
       
-  @animation.subcommand(name="table", description="Se a table.")
-  async def table(self, ctx):
+  @fun_animation.subcommand(name="table", description="Se a table.")
+  async def fun_animation_table(self, ctx):
     m = await ctx.send("`(\°-°)\  ┬─┬`")
     lst = ("`(\°□°)\  ┬─┬`",
       "`(-°□°)-  ┬─┬`",
@@ -110,8 +110,8 @@ class Fun(Cog):
       await asyncio.sleep(0.5)
       await ctx.edit(content=k)
 
-  @animation.subcommand(name="warning", description="...")
-  async def warning(self, ctx):
+  @fun_animation.subcommand(name="warning", description="...")
+  async def fun_animation_warning(self, ctx):
     await ctx.send("...")
     list = (
       "`LOAD !! WARNING !! SYSTEM OVER`",
