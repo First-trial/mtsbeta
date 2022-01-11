@@ -43,7 +43,7 @@ class DBL(commands.Cog):
           "During DBL update loop received code {}: {}".format(
               response.status, response.reason))
 
-  @commands.command(aliases=['vote_check'])
+  @appcommands.command(description="Check whether you or someone has voted for me or not!")
   async def votecheck(self, ctx, member: discord.Member = None):
     """Checks the voting status of a specified member. Defaults to author."""
     if not member:
