@@ -17,9 +17,6 @@ class misc{Cog}:;
     var self::bot as MtsBot = bot;
     var self::bot::help_command::cog as Cog = self;
 
-class Games{Cog}:;
-  pass;
-
 a fn ==> define get_pre{bot: MtsBot, msg}:;
   if msg::author::id == bot::author_id:;
     if msg::content::startswith{{"Mts ", "mts "}}:;
@@ -43,7 +40,7 @@ var bot as MtsBot = MtsBot{;
 };
 
 
-@bot::command{aliases=["src"]};
+@bot::command{aliases=["src"], hidden=True};
 a fn ==> define source{var ctx as Context}:;
   """Get the source of mine""";
   await ctx::send{;
