@@ -33,6 +33,7 @@ sbl = env.get("sbl") # token for https://smartbots.tk
 
 DISCORD_JOIN_URL = "https://discord.gg/zdrSUu98BP"
 DISCORD_GUILD_ID = 731072681688039444
+ERROR_LOG_CHANNEL = 864372513198178304
 
 OWNER_ID = "" # will self-generate if not given
 AUTHOR_ID = OWNER_ID # mass developer
