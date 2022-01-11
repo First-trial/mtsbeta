@@ -29,11 +29,13 @@ class Settings(Cog):
 
   @language.subcommand(name="edit", description="Edit language of current server")
   async def settings_language_edit(self, ctx, language: str):
+    language=language.lower()
     if not languages.get(language): return await ctx.send(f"Language `{language}` not found! (`{ctx.prefix}settings languages list`)", ephemeral=True)
     lang = languages.get(language)
     english = languages.english
 
     language = await ctx.get_lang()
+    if lang is language: return await ctx.send(f"There is already {lang.__name__} is this server!", ephemeral=True)
     if not ctx.guild:
       if await ctx.confirm(f"Are you sure to change language from `{language.__name__}` to `{lang.__name__}`", language=english):
         await GLanguage.edit(ctx.channel.id, lang.__name__)
