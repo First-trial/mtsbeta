@@ -372,9 +372,9 @@ class Economy(Cog):
           description=f"{language.wallet}: `500 coins`\n{language.bank}: `0 coins`",color=0x00ffff)
       await ctx.edit(content=None, embed=b)
 
-  work = economy.subcommandgroup(name="work", description="Commands related to jobs.")
+  economy_work = economy.subcommandgroup(name="work", description="Commands related to jobs.")
 
-  @work.subcommand(name="now", description="Do some work")
+  @economy_work.subcommand(name="now", description="Do some work")
   async def economy_work_now(self, ctx):
     language = (await self.get_lang(ctx)).economy.work.now
     if not await check_work(ctx):
@@ -401,7 +401,7 @@ class Economy(Cog):
     await self.give_money(w, ctx.author.id, salary,)
 
 
-  @work.subcommand(name="as", description="Choose your work")
+  @economy_work.subcommand(name="as", description="Choose your work")
   async def economy_work_as(self, ctx, work: Option("-", "Chosee work", choices=WORKS, required=True)):
     language = (await self.get_lang(ctx)).economy.work.as_
     if work.lower() not in list(w.value.lower() for w in WORKS):
@@ -415,7 +415,7 @@ class Economy(Cog):
     else:
       await ctx.edit(content=language.success.format(work=work))
 
-  @work.subcommand(name="resign", description="Resign from your work")
+  @economy_work.subcommand(name="resign", description="Resign from your work")
   async def economy_work_resign(self, ctx):
     language = (await ctx.get_lang()).economy.work.resign
     worker = workers.get_or_none(uid=ctx.author.id)
@@ -428,7 +428,7 @@ class Economy(Cog):
       await ctx.send(language.success.format(work=work.work))
 
 
-  @work.subcommand(name="list", description="List of available jobs.")
+  @economy_work.subcommand(name="list", description="List of available jobs.")
   async def economy_work_list(self, ctx):
     language = (await ctx.get_lang()).economy.work.list_
     w = discord.Embed(
