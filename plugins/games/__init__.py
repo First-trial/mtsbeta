@@ -17,11 +17,16 @@ class GameButton(discord.ui.Button):
 
 class Game(discord.ui.View):
   events = {}
-  def __init__(self, message, *players):
+  def __init__(self, message, *players, timeout=15):
     self.running = False
     self.players = players
+    self._child = []
     self.msg = message
-    super().__init__()
+    super().__init__(timeout=timeou)
+
+  async def on_timeout(self):
+    self.end_game()
+    await self.msg.edit(view=self)
 
   def add_event(self, emoji, user, handler, *args):
     self.__class__.events[(self.msg.id, emoji, user)] = (handler, *args)
@@ -40,17 +45,20 @@ class Game(discord.ui.View):
       (handler, args) = cls.events[container]
       await handler(*args, payload)
 
-  async def start_game(self):
+  def start_game(self):
     self.running = True
-    for player in self.players: player.play()
+    for player in self.players: player.play(),player.game=self
+    for child in self._childs: self.children.append(child)
     return self
 
-  async def end_game(self):
+  def end_game(self):
     self.running = False
     for player in self.players: player.stop()
+    for child in self.children: child.disabled = True
     self.stop()
     return self
-    
+
+  def add_item(self, item): self._child.append(item)
 
 class Player:
   WON      =  1
