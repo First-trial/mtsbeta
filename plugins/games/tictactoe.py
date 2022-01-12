@@ -53,8 +53,6 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
       else:
         content = "It's a draw!"
 
-      for child in view.children:
-        child.disabled = True
       view.end_game()
 
 
