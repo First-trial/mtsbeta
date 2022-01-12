@@ -17,7 +17,7 @@ class GameButton(discord.ui.Button):
 
 class Game(discord.ui.View):
   events = {}
-  def __init__(self, message):
+  def __init__(self, message, *players):
     self.running = False
     self.players = players
     self.msg = message
