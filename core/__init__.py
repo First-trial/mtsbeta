@@ -18,9 +18,6 @@ class CustomCont(context.BaseCont, appcommands.InteractionContext):
     self.db = self.pool = b.pool
     self.prefix = self.clean_prefix = "/"
 
-  def respond(self,*a,**kw):
-    self.message = super().respond(*a,**kw)
-    return self.message
 
 class MtsBot(appcommands.AutoShardedBot):
   def __init__(self, *args, **kwargs):
