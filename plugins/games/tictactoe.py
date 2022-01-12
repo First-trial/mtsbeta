@@ -82,6 +82,9 @@ class TicTacToe(Game):
       for y in range(3):
         self.add_item(TicTacToeButton(x, y))
 
+  def switch_player(self):
+    if self.current_player==self.X: self.current_player=self.O
+    elif self.current_player==self.O: self.current_player=self.X
 
   def check_board_winner(self):
     for across in self.board:
