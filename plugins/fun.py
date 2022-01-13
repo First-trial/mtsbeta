@@ -19,11 +19,10 @@ class Fun(Cog):
   async def play_tictactoe(self, ctx, user: discord.User = None):
     user = user or ctx.bot.user
     if user.id == ctx.author.id: return await ctx.send("You can't play tic-tac-toe with yourself!", ephemeral=True)
-    msg = await ctx.send("Starting...")
+    msg = await ctx.send(f"It's <@!{ctx.author.id}>\u200b' turn now!")
     if user.id == ctx.bot.user.id: game = TicTacToe_Ai(msg, ctx.author.id,)
     else: game = TicTacToe(msg, ctx.author.id, user.id)
-    await msg.edit(view=game)
-    game.start_game()
+    await game.start_game()
 
 
   @fun.subcommand(name="kill", description="Kill someone!")
