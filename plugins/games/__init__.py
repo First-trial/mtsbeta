@@ -22,7 +22,7 @@ class Game(discord.ui.View):
     self.players = players
     self._child = []
     self.msg = message
-    super().__init__(timeout=timeou)
+    super().__init__(timeout=timeout)
 
   async def on_timeout(self):
     self.end_game()
