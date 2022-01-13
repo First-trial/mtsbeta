@@ -1,14 +1,30 @@
 # plugin: loadable: True
 
 import json
+import config
 import discord
 import asyncio
 from discord.ext import commands
 import appcommands
 from core import Cog
+from plugins.games.tictactoe import TicTacToe,TicTacToeAi
+
 
 class Fun(Cog):
-  fun = appcommands.slashgroup(name="fun", description="Fun Commands!")
+  play = appcommands.slashgroup(name="play", description=Game commands!",guild_ids=config.TESTING_GUILD_IDS)
+  fun  = appcommands.slashgroup(name="fun", description="Fun Commands!")
+
+
+  @play.subcommand(name="tic-tac-toe", description="play tic-tac-toe with me or somebody")
+  async def play_tictactoe(self, ctx, user: discord.User = None):
+    user = user or ctx.bot
+    if user.id == ctx.author.id: return await ctx.send("You can't play tic-tac-toe with yourself!", ephemeral=True)
+    msg = await ctx.send("Starting...")
+    if user.id == ctx.bot.user.id: game = TicTacToe_Ai(msg, ctx.author.id,)
+    else: game = TicTacToe(msg, ctx.author.id, user.id)
+    await msg.edit(view=game)
+    game.start_game()
+
 
   @fun.subcommand(name="kill", description="Kill someone!")
   async def fun_kill(self, ctx, user: discord.Member):
@@ -17,7 +33,7 @@ class Fun(Cog):
     if user.id == ctx.author.id:
       return await ctx.send("Why do u want to kill yourself??", ephemeral=True)
       
-    response = kill.get("args")
+    response = kill.get("kills")
     if "$author" in response:
       response=response.replace("$author", ctx.author.display_name)
       
