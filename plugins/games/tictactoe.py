@@ -17,8 +17,8 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
     cp,c=view.current_player,None
     gg=view.x if cp==view.X else view.o
     if f"<@!{interaction.user.id}>" not in (view.x,view.o):
-    c="You aren't playing in this match!"
-    elif f"<@!{interaction.user.id}>"!=gg:
+      c="You aren't playing in this match!"
+    elif f"<@!{interaction.user.id}>" != gg:
       c="It's not your turn."
     if c:
       return await interaction.response.send_message(c, ephemeral=True)
@@ -62,7 +62,7 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
     )
 
 
-class TicTacToe(Game):
+class TicTacToe(MultiPlayer):
   children: List[TicTacToeButton]
   X = -1
   O = 1
