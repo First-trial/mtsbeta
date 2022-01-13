@@ -121,7 +121,7 @@ class TicTacToe_Base:
 class TicTacToe(TicTacToe_Base, MultiPlayer):
   def __init__(self, msg, XN, ON):
     x,o = Player(f"<@!{XN}>"), Player(f"<@!{ON}>")
-    super().__init__(msg, x, o, timeout=15.0)
+    super().__init__(msg, x, o, timeout=30.0)
     self.current_player = self.X
 
     self.x = x
@@ -143,7 +143,7 @@ class GameState(enum.IntEnum):
 
 class TicTacToe_Ai(TicTacToe_Base, AiPlayer):
   def __init__(self, msg, player):
-    super().__init__(msg,Player(f"<@!{player}>"), timeout=15.0)
+    super().__init__(msg,Player(f"<@!{player}>"), timeout=30.0)
     self.x,self.o = self.players
     self.current_player = self.X
 
