@@ -17,7 +17,7 @@ class GameButton(discord.ui.Button):
 
 class Game(discord.ui.View):
   events = {}
-  def __init__(self, message, *players, timeout=15):
+  def __init__(self, message, *players, timeout=15.0):
     self.running = False
     self.players = players
     self._child = []
@@ -85,8 +85,8 @@ class Player:
 class SinglePlayer(Game): pass
 
 class AiPlayer(SinglePlayer):
-  def __init__(self, player: Player):
-    super().__init__(player, Player(ai=True))
+  def __init__(self, msg, player: Player, timeout=15.0):
+    super().__init__(msg, player, Player(ai=True), timeout=timeout)
 
 class MultiPlayer(Game): pass
   
