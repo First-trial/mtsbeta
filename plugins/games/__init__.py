@@ -7,7 +7,7 @@ class GameButton(discord.ui.Button):
     self.user = user
 
   async def callback(self, interaction):
-    await MessageManager.dispatch(interaction, self.emoji)
+    await Game.dispatch(interaction, self.emoji)
 
   async def interaction_check(self, interaction):
     if interaction.user.id==self.user.id: return True
