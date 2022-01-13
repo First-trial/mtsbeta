@@ -7,7 +7,7 @@ from plugins.games import Player, AiPlayer, MultiPlayer
 
 class TicTacToeButton(discord.ui.Button['TicTacToe']):
   def __init__(self, x: int, y: int):
-    super().__init__(style=discord.ButtonStyle.secondary, label='\u200b', row=y)
+    super().__init__(style=discord.ButtonStyle.secondary, label='\u200b', row=x)
     self.x = x
     self.y = y
 
