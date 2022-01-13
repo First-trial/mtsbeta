@@ -31,12 +31,12 @@ class Game(discord.ui.View):
   def add_event(self, emoji, user, handler, *args):
     self.__class__.events[(self.msg.id, emoji, user)] = (handler, *args)
 
-  def add_button(self, emoji,user):
-    self.add_item(GameButton(user,emoji=emoji))
+  def add_button(self, emoji,user,**kwargs):
+    self.add_item(GameButton(user,emoji=emoji,**kwargs))
 
-  def add_button_event(self,emoji,user,handler,*args):
+  def add_button_event(self,emoji,user,handler,*args,**kwargs):
     self.add_button(emoji,user)
-    self.add_event(emoji,user,handler,*args)
+    self.add_event(emoji,user,handler,*args,**kwargs)
 
   @classmethod
   async def dispatch(cls, payload,emoji):
@@ -47,13 +47,13 @@ class Game(discord.ui.View):
 
   def start_game(self):
     self.running = True
-    for player in self.players: player.play(),player.game=self
+    for player in self.players: player.play();player.game=self
     for child in self._childs: self.children.append(child)
     return self
 
   def end_game(self):
     self.running = False
-    for player in self.players: player.stop()
+    for player in self.players: player.stop();player.game=None
     for child in self.children: child.disabled = True
     self.stop()
     return self
@@ -70,11 +70,17 @@ class Player:
     self.won = False
     self.lose = False
     self.playing = False
+    self.game = None
 
   def play(self): self.playing = True; return self
   def stop(self): self.playing = False; return self
   def win(self): self.won,self.lose = True,False; return self
   def lose(self): self.won,self.lose = False, True; return self
+
+  __eq__ = (lambda self, other: other==self.name)
+  __ne__ = (lambda self, other: not self.__eq__(other))
+
+  __repr__ = __str__ = (lambda self: self.name)
 
 class SinglePlayer(Game): pass
 
