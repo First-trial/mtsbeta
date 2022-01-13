@@ -17,7 +17,7 @@ class Fun(Cog):
 
   @play.subcommand(name="tic-tac-toe", description="play tic-tac-toe with me or somebody")
   async def play_tictactoe(self, ctx, user: discord.User = None):
-    user = user or ctx.bot
+    user = user or ctx.bot.ussr
     if user.id == ctx.author.id: return await ctx.send("You can't play tic-tac-toe with yourself!", ephemeral=True)
     msg = await ctx.send("Starting...")
     if user.id == ctx.bot.user.id: game = TicTacToe_Ai(msg, ctx.author.id,)
