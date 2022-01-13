@@ -7,7 +7,7 @@ import asyncio
 from discord.ext import commands
 import appcommands
 from core import Cog
-from plugins.games.tictactoe import TicTacToe,TicTacToeAi
+from plugins.games.tictactoe import TicTacToe,TicTacToe_Ai
 
 
 class Fun(Cog):
