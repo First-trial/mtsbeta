@@ -40,6 +40,7 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
       if is_ai_playing: view.board[self.y][self.x] = GameState.player
 
       content = "It's {O}\u200b's turn now!"
+      if is_ai_playing: content=content.replace("{O}","{X}")
     else:
       self.style = discord.ButtonStyle.success
       self.label = 'O'
