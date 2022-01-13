@@ -59,7 +59,9 @@ class Game(discord.ui.View):
     self.stop()
     return self
 
-  def add_item(self, item): self._childs.append(item)
+  def add_item(self, item):
+    if not self.running: self._childs.append(item)
+    else: super().add_item(item)
 
 class Player:
   WON      =  1
