@@ -20,7 +20,7 @@ class Game(discord.ui.View):
   def __init__(self, message, *players, timeout=15.0):
     self.running = False
     self.players = players
-    self._child = []
+    self._childs = []
     self.msg = message
     super().__init__(timeout=timeout)
 
@@ -58,7 +58,7 @@ class Game(discord.ui.View):
     self.stop()
     return self
 
-  def add_item(self, item): self._child.append(item)
+  def add_item(self, item): self._childs.append(item)
 
 class Player:
   WON      =  1
