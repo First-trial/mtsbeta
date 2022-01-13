@@ -67,7 +67,7 @@ class Player:
   LOST     = -1
 
   def __init__(self, name: str = "ai", ai: bool = False):
-    self.name, ai = name, self.ai
+    self.name, self.ai = name, ai
     self.won = False
     self.lose = False
     self.playing = False
