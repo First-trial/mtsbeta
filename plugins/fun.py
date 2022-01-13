@@ -11,7 +11,7 @@ from plugins.games.tictactoe import TicTacToe,TicTacToeAi
 
 
 class Fun(Cog):
-  play = appcommands.slashgroup(name="play", description=Game commands!",guild_ids=config.TESTING_GUILD_IDS)
+  play = appcommands.slashgroup(name="play", description="Game commands!",guild_ids=config.TESTING_GUILD_IDS)
   fun  = appcommands.slashgroup(name="fun", description="Fun Commands!")
 
 
