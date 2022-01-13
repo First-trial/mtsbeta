@@ -3,7 +3,7 @@
 import json
 import config
 import discord
-import asyncio
+import asyncio, random
 from discord.ext import commands
 import appcommands
 from core import Cog
@@ -39,7 +39,8 @@ class Fun(Cog):
     if user.id == ctx.author.id:
       return await ctx.send("Why do u want to kill yourself??", ephemeral=True)
       
-    response = kill.get("kills")
+    response = random.choice(kill.get("kills"))
+
     if "$author" in response:
       response=response.replace("$author", ctx.author.display_name)
       
