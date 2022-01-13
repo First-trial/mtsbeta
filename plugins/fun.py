@@ -16,19 +16,23 @@ class Fun(Cog):
 
 
   @play.subcommand(name="tic-tac-toe", description="play tic-tac-toe with me or somebody")
-  async def play_tictactoe(self, ctx, user: discord.User = None):
-    user = user or ctx.bot.user
+  async def play_tictactoe(self, ctx, with_player: discord.User = None):
+    user = with_player or ctx.bot.user
     if user.id == ctx.author.id: return await ctx.send("You can't play tic-tac-toe with yourself!", ephemeral=True)
-    msg = await ctx.send(f"It's <@!{ctx.author.id}>\u200b' turn now!")
-    if user.id == ctx.bot.user.id: game = TicTacToe_Ai(msg, ctx.author.id,)
-    else:
+    if (not user.id == ctx.bot.user.id) and (not user.bot):
       if not await ctx.confirm(
         f"{user.mention}, {ctx.author.mention} wants to play tic-tac-toe with you, confirm by clicking on buttons below",
         user=user,
         language=config.languages.english
       ): return
 
-      game = TicTacToe(msg, ctx.author.id, user.id)
+      game = TicTacToe(ctx.message, ctx.author.id, user.id)
+      await ctx.edit(f"It's <@!{ctx.author.id}>\u200b's turn now!",)
+    elif (not user.id == ctx.bot.user.id) and user.bot: return await ctx.send("You can't play with a bot, you can play with me if you are alone", ephemeral=True)
+    else:
+      msg = await ctx.send(f"It's <@!{ctx.author.id}>\u200b's turn now!")
+      game = TicTacToe_Ai(msg, ctx.author.id,)
+
     await game.start_game()
 
 
