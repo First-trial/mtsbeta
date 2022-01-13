@@ -3,7 +3,7 @@ import enum
 import math
 
 from discord import ButtonStyle
-from plugins.games import Player, AiGame, MultiPlayer
+from plugins.games import Player, AiPlayer, MultiPlayer
 
 class TicTacToeButton(discord.ui.Button['TicTacToe']):
   def __init__(self, x: int, y: int):
@@ -140,7 +140,7 @@ class GameState(enum.IntEnum):
     player = -1
     ai = +1
 
-class TicTacToe_Ai(TicTacToe_Base, AiGame):
+class TicTacToe_Ai(TicTacToe_Base, AiPlayer):
   def __init__(self, msg, player):
     super().__init__(msg,Player(f"<@!{player}>"), timeout=15.0)
     self.x,self.o = self.players
