@@ -175,7 +175,7 @@ class TicTacToe_Ai(TicTacToe_Base, AiPlayer):
       return [player, player, player] in win_states
 
     def evaluate(board_):
-      if determine_win_state(board_, GameSate.ai):
+      if determine_win_state(board_, GameState.ai):
         score = +1
       elif determine_win_state(board_, GameState.player):
         score = -1
