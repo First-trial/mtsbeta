@@ -11,19 +11,19 @@ class MathCog(Cog):
   math = appcommands.slashgroup(name="math",)
   math_square = math.subcommandgroup(name="sqaure",)
 
-  @math.subcommand(description="Add two numbers")
+  @math.subcommand(name="add",description="Add two numbers")
   async def math_add(self, ctx, number: float, into: float):
     await ctx.reply(f'{number}+{into} = `{number + into}`', ephemeral=True)
     
-  @math.subcommand(description="Subtract two numbers")
+  @math.subcommand(name="subtract",description="Subtract two numbers")
   async def math_subtract(self, ctx, number: float, by: float):
     await ctx.reply(f'{number}-{by} = `{number - by}`', ephemeral=True)
 
-  @math.subcommand(description="Multiply Two numbers")
+  @math.subcommand(name="multiply",description="Multiply Two numbers")
   async def math_multiply(self, ctx, number: float, by: float):
     await ctx.reply(f'{number}x{by} = `{number * by}`', ephemeral=True)
 
-  @math.subcommand(description="Divide two numbers")
+  @math.subcommand(name="divide",description="Divide two numbers")
   async def math_divide(self, ctx, number: float, by: float):
     await ctx.reply(f'{number}/{by} = `{number/by}`', ephemeral=True)
 
