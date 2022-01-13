@@ -11,7 +11,7 @@ from plugins.games.tictactoe import TicTacToe,TicTacToe_Ai
 
 
 class Fun(Cog):
-  play = appcommands.slashgroup(name="play", description="Game commands!",guild_ids=config.TESTING_GUILD_IDS)
+  play = appcommands.slashgroup(name="play", description="Game commands!")
   fun  = appcommands.slashgroup(name="fun", description="Fun Commands!")
 
 
@@ -21,7 +21,14 @@ class Fun(Cog):
     if user.id == ctx.author.id: return await ctx.send("You can't play tic-tac-toe with yourself!", ephemeral=True)
     msg = await ctx.send(f"It's <@!{ctx.author.id}>\u200b' turn now!")
     if user.id == ctx.bot.user.id: game = TicTacToe_Ai(msg, ctx.author.id,)
-    else: game = TicTacToe(msg, ctx.author.id, user.id)
+    else:
+      if not await ctx.confirm(
+        f"{user.mention}, {ctx.author.mention} wants to play tic-tac-toe with you, confirm by clicking on buttons below",
+        user=user,
+        language=config.languages.english
+      ): return
+
+      game = TicTacToe(msg, ctx.author.id, user.id)
     await game.start_game()
 
 
