@@ -2,7 +2,7 @@ import copy
 import enum
 import math
 
-from discord import ButtonStyle
+import discord
 from plugins.games import Player, AiPlayer, MultiPlayer
 
 class TicTacToeButton(discord.ui.Button['TicTacToe']):
