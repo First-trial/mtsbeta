@@ -69,14 +69,14 @@ class Player:
   def __init__(self, name: str = "ai", ai: bool = False):
     self.name, self.ai = name, ai
     self.won = False
-    self.lose = False
+    self.lost = False
     self.playing = False
     self.game = None
 
   def play(self): self.playing = True; return self
   def stop(self): self.playing = False; return self
-  def win(self): self.won,self.lose = True,False; return self
-  def lose(self): self.won,self.lose = False, True; return self
+  def win(self): self.won,self.lost = True,False; return self
+  def lose(self): self.won,self.lost = False, True; return self
 
   __eq__ = (lambda self, other: other==self.name)
   __ne__ = (lambda self, other: not self.__eq__(other))
