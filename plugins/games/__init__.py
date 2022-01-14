@@ -9,9 +9,9 @@ class GameButton(discord.ui.Button):
   async def callback(self, interaction):
     await Game.dispatch(interaction, self.emoji)
 
-  async def interaction_check(self, interaction):
+  async def int_check(self, interaction):
     if interaction.user.id==self.user.id: return True
-    await interaction.response.send_message("You aren't authorised to use this menu!", ephemeral=True)
+    if not interaction.response.is_done(): await interaction.response.send_message("You aren't authorised to use this menu!", ephemeral=True)
     return False
 
 
@@ -65,6 +65,14 @@ class Game(discord.ui.View):
   def add_item(self, item):
     if not self.running: self._childs.append(item)
     else: super().add_item(item)
+
+  async def interaction_check(self, interaction):
+    res = []
+    for child in self.children:
+      if hasattr(child, "int_check"): res.append(await child.int_check(interaction))
+
+    return all(res)
+
 
 class Player:
   WON      =  1
