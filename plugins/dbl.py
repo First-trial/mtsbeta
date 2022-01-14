@@ -51,7 +51,7 @@ class DBL(core.Cog):
     language = (await ctx.get_lang()).dbl.votecheck
 
     # This is the constructed endpoint for the user check
-    url = "{}bots/{}/check".format(self.ep, bot.user.id)
+    url = "{}bots/{}/check".format(self.ep, ctx.bot.user.id)
 
     # Define our request parameters
     params = dict(userId=member.id)
