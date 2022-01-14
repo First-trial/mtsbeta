@@ -99,7 +99,7 @@ class Hand:
 
     return a, b
 
-class Blackjack:
+class Blackjack_Logic:
   def __init__(self):
     self.player_turn = True
     self.deck = Deck()
@@ -168,3 +168,15 @@ class Blackjack:
   def has_player_won(self):
     result = self.get_game_result()
     return result == "WIN"
+
+
+from plugins.games import AiPlayer
+
+
+class Blackjack(AiPlayer):
+  def __init__(self,*args):
+    super().__init__(*args, timeout=30.0)
+    self.blackjack = Blackjack()
+    self.players[-1].name = "dealer"
+
+# Soon™
