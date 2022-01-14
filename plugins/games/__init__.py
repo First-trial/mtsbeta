@@ -45,12 +45,15 @@ class Game(discord.ui.View):
       (handler, args) = cls.events[container]
       await handler(*args, payload)
 
-  async def start_game(self):
+  async def start(self):
     self.running = True
     for player in self.players: player.play();player.game=self
     for child in self._childs: super().add_item(child)
     await self.msg.edit(view=self)
+    await self.start_game()
     return self
+
+  async def start_game(self): pass
 
   def end_game(self):
     self.running = False
