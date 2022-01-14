@@ -31,7 +31,7 @@ class Fun(Cog):
     else:
       msg = await ctx.send(f"It's <@!{ctx.author.id}>\u200b's turn now!")
       game = TicTacToe_Ai(msg, ctx.author.id,)
-
+      if user.id != ctx.bot.user.id: game.o.name = user.mention
     await game.start_game()
 
 
