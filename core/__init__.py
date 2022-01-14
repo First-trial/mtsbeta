@@ -185,9 +185,12 @@ from appcommands import Cog as _Cog
 class Cog(_Cog):
   def __init__(self, bot):
     self.bot = bot
-    self.db = self.bot.pool
-    self.author_id = self.bot.author_id
 
   @property
-  def author(self):
-    return self.bot.author
+  def db(self): return self.bot.pool
+
+  @property
+  def author_id(self): return self.bot.author_id
+
+  @property
+  def author(self): return self.bot.author
