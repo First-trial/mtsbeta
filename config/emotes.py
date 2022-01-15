@@ -2,10 +2,17 @@ import json
 
 _emoji_data: dict = json.load(open("config/emojis.json"))
 emoji_data  = {}
+def_ems = {}
 
 del json
 
 for emoji, data in _emoji_data.items():
+  if emoji == "defaults":
+    for emojin, emojiv in data.items():
+      globals()["def_ems"][emojin] = emojiv
+
+    continue
+
   _=[]
   for alias in data.get("aliases",[emoji]) or [emoji]:
     _.append(alias)
@@ -32,6 +39,7 @@ def _emote():
     def __new__(meta, clsname, bases, attributes: dict):
       cls_attrs = attributes.copy()
       cls_attrs["emojis"] = {}
+      cls_attrs["defaults"] = {}
       cls = super().__new__(meta, clsname, bases, cls_attrs)
       for emoji in attributes["emojis"]:
         n = list(emoji.values())[0]
@@ -53,11 +61,18 @@ def _emote():
             )
         setattr(cls, list(emoji.keys())[0], r_emoji)
         cls.emojis[list(emoji.keys())[0]] = r_emoji
+
+      for emojin, emojiv in attributes["defaults"].values():
+        setattr(cls, emojin, emojiv)
+        cls.emojis[emojin] = emojiv
+        cls.defaults[emojin] = emojiv
+
       return cls
 
   class _Emote(metaclass=_M):
     emojis = list({emoji: data} for emoji, data in emoji_data.items())
-    
+    defaults = def_ems.copy()
+
     def json(self):
       resp = {}
       for emojin, emoji in self.emojis.items():
@@ -69,3 +84,4 @@ def _emote():
 Emote = _emote()
 del emoji_data
 del _emote
+del def_ems
