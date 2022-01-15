@@ -196,11 +196,12 @@ class Blackjack(AiPlayer):
     else:
       self.blackjack.hit()
 
-    if self.blackjack.is_player_busted(): self.blakjack.stand()
+    if self.children[-2].label == "Split": self.remove_item(self.children[-2])
+    if self.blackjack.is_player_busted(): self.stand()
     await self.update(interaction)
 
   async def on_stand(self, interaction):
-    self.blackjack.stand()
+    self.stand()
     await interaction.response.pong()
 
   async def update(self, interaction):
@@ -214,6 +215,7 @@ class Blackjack(AiPlayer):
 
   async def on_quit(self, interaction):
     self.end_game()
+    self.player.lose()
     await self.update(interaction)
 
   async def on_split(self, inter):
@@ -221,7 +223,7 @@ class Blackjack(AiPlayer):
     self.remove_item(self.children[-2])
     await self.update(inter)
 
-  async def get_board(self):
+  def get_board(self):
     content = "```diff\n"
     if self.blackjack.player_turn:
       content += "- Dealer's cards:\n" \
@@ -249,12 +251,19 @@ class Blackjack(AiPlayer):
 
     if self.player.won:
       content += "You have won!\n"
-    elif self.player.lose:
+    elif self.player.lost:
       content += "You have lost!\n"
-    else:
+    elif not player.game:
       content += "Game ended in draw!\n"
 
     content += "```"
     return content
+
+  def stand(self):
+    self.blackjack.stand()
+    if self.blackjack.has_player_won():
+      self.player.win()
+    elif not self.blackjack.has_ended_in_draw():
+      self.player.lose()
 
   async def start_game(self): await self.msg.edit(content=self.get_board())
