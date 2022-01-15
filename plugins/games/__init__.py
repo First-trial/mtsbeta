@@ -9,11 +9,6 @@ class GameButton(discord.ui.Button):
   async def callback(self, interaction):
     await Game.dispatch(interaction, self.emoji)
 
-  async def int_check(self, interaction):
-    if interaction.user.id==self.user.id: return True
-    if not interaction.response.is_done(): await interaction.response.send_message("You aren't authorised to use this menu!", ephemeral=True)
-    return False
-
 
 class Game(discord.ui.View):
   events = {}
@@ -66,12 +61,6 @@ class Game(discord.ui.View):
     if not self.running: self._childs.append(item)
     else: super().add_item(item)
 
-  async def interaction_check(self, interaction):
-    res = []
-    for child in self.children:
-      if hasattr(child, "int_check"): res.append(await child.int_check(interaction))
-
-    return all(res)
 
 
 class Player:
@@ -103,4 +92,24 @@ class AiPlayer(SinglePlayer):
     super().__init__(msg, player, Player(ai=True), timeout=timeout)
 
 class MultiPlayer(Game): pass
-  
+
+
+# Utils
+
+
+def CopyView(view, disable: bool = False):
+  v = discord.ui.View()
+  for child in view.children:
+    v.add_item(
+      discord.ui.Button(
+        label=child.label,
+        emoji=child.emoji,
+        url=child.url,
+        disabled=disable or child.disabled,
+        custom_id=child.custom_id,
+        style=child.style,
+        row=child.row
+      )
+    )
+
+  return v
