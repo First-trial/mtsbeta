@@ -30,8 +30,8 @@ class Game(discord.ui.View):
     self.add_item(GameButton(user,emoji=emoji,**kwargs))
 
   def add_button_event(self,emoji,user,handler,*args,**kwargs):
-    self.add_button(emoji,user)
-    self.add_event(emoji,user,handler,*args,**kwargs)
+    self.add_button(emoji,user,**kwargs)
+    self.add_event(emoji,user,handler,*args)
 
   @classmethod
   async def dispatch(cls, payload,emoji):
