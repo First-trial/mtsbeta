@@ -64,16 +64,16 @@
    "orange": "\ud83d\udfe7"
   },
   "NUMBERS": {
-   "0": "0\ufe0f\u20e3",
-   "1": "1\ufe0f\u20e3",
-   "2": "2\ufe0f\u20e3",
-   "3": "3\ufe0f\u20e3",
-   "4": "4\ufe0f\u20e3",
-   "5": "5\ufe0f\u20e3",
-   "6": "6\ufe0f\u20e3",
-   "7": "7\ufe0f\u20e3",
-   "8": "8\ufe0f\u20e3",
-   "9": "9\ufe0f\u20e3"
+   "zero": "0\ufe0f\u20e3",
+   "one": "1\ufe0f\u20e3",
+   "two": "2\ufe0f\u20e3",
+   "three": "3\ufe0f\u20e3",
+   "four": "4\ufe0f\u20e3",
+   "five": "5\ufe0f\u20e3",
+   "six": "6\ufe0f\u20e3",
+   "seven": "7\ufe0f\u20e3",
+   "eight": "8\ufe0f\u20e3",
+   "nine": "9\ufe0f\u20e3"
   }
  }
 }
