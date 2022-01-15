@@ -3,7 +3,7 @@ import enum
 import math
 
 import discord
-from plugins.games import Player, AiPlayer, MultiPlayer
+from plugins.games import Player, AiPlayer, MultiPlayer, CopyView
 
 class TicTacToeButton(discord.ui.Button['TicTacToe']):
   def __init__(self, x: int, y: int):
@@ -48,8 +48,14 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
       view.board[self.y][self.x] = view.O
       content = "It's {X}\u200b's turn now!"
 
-    if is_ai_playing: view.process_turn()
-    else: view.switch_player()
+    if is_ai_playing:
+      await interaction.response.edit_message(
+        content="Processing...",
+        view=CopyView(view, disable=True)
+      )
+      view.process_turn()
+      respond = interaction.edit_original_message
+    else: view.switch_player(); respond = interaction.response.edit_message
 
     winner = view.check_board_winner()
     if winner is not None:
@@ -67,7 +73,7 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
       view.end_game()
 
 
-    await interaction.response.edit_message(
+    await respond(
       content=content.format(X=view.x.name,O=view.o.name),
       view=view
     )
