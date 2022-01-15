@@ -178,5 +178,6 @@ class Blackjack(AiPlayer):
     super().__init__(*args, timeout=30.0)
     self.blackjack = Blackjack()
     self.players[-1].name = "dealer"
+    # self.add_button_event
 
 # Soon™
