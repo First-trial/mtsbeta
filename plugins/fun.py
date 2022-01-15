@@ -8,12 +8,17 @@ from discord.ext import commands
 import appcommands
 from core import Cog
 from plugins.games.tictactoe import TicTacToe,TicTacToe_Ai
-
+from plugins.games.blackjack import Blackjack
 
 class Fun(Cog):
   play = appcommands.slashgroup(name="play", description="Game commands!")
   fun  = appcommands.slashgroup(name="fun", description="Fun Commands!")
 
+  @appcommands.command(guild_ids=config.TESTING_GUILD_IDS)
+  async def blackjack(self,ctx):
+    msg = await ctx.send("...")
+    game = Blackjack(msg, str(ctx.author.id))
+    await game.start()
 
   @play.subcommand(name="tic-tac-toe", description="play tic-tac-toe with me or somebody")
   async def play_tictactoe(self, ctx, with_player: discord.User = None):
