@@ -203,7 +203,7 @@ class Blackjack(AiPlayer):
 
   async def on_stand(self, interaction):
     self.stand()
-    await interaction.response.pong()
+    await self.update(interaction)
 
   async def update(self, interaction):
     board = self.get_board()
@@ -263,10 +263,10 @@ class Blackjack(AiPlayer):
   def stand(self):
     self.blackjack.stand()
     if self.blackjack.has_ended_in_draw():
-      self.game_drew=True
+      self.game_drew=True;self.end_game()
     elif self.blackjack.has_player_won():
-      self.player.win()
+      self.player.win();self.end_game()
     elif self.blackjack.is_player_busted():
-      self.player.lose()
+      self.player.lose();self.end_game()
 
   async def start_game(self): await self.msg.edit(content=self.get_board())
