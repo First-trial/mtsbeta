@@ -61,7 +61,11 @@ class Game(discord.ui.View):
     if not self.running: self._childs.append(item)
     else: super().add_item(item)
 
+  def __await__(self):
+    async def _(): return self
+    return _().__await__()
 
+  def __call__(self): return self
 
 class Player:
   WON      =  1
