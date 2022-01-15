@@ -2,12 +2,13 @@ import discord
 
 
 class GameButton(discord.ui.Button):
-  def __init__(self,user,**kwargs):
-    super().__init__(**kwargs)
+  def __init__(self,user,emoji,**kwargs):
+    super().__init__(emoji=emoji,**kwargs)
     self.user = user
+    self.emoji_
 
   async def callback(self, interaction):
-    await Game.dispatch(interaction, self.emoji)
+    await Game.dispatch(interaction, self.emoji_)
 
 
 class Game(discord.ui.View):
@@ -24,7 +25,7 @@ class Game(discord.ui.View):
     await self.msg.edit(view=self)
 
   def add_event(self, emoji, user, handler, *args):
-    self.__class__.events[(self.msg.id, emoji, user)] = (handler, *args)
+    self.__class__.events[(self.msg.id, emoji, user)] = (handler, (*args or []))
 
   def add_button(self, emoji,user,**kwargs):
     self.add_item(GameButton(user,emoji=emoji,**kwargs))
