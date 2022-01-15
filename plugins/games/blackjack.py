@@ -177,7 +177,7 @@ from plugins.games import AiPlayer
 class Blackjack(AiPlayer):
   def __init__(self,*args):
     super().__init__(*args, timeout=30.0)
-    self.blackjack = Blackjack()
+    self.blackjack = Blackjack_Logic()
     self.players[-1].name = "dealer"
     self.player, self.ai = self.players
     self.player.id = int(self.player.name)
@@ -257,3 +257,4 @@ class Blackjack(AiPlayer):
     content += "```"
     return content
 
+  async def start_game(self): await self.msg.edit(content=self.get_board())
