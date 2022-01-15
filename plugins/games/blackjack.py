@@ -180,6 +180,7 @@ class Blackjack(AiPlayer):
     self.blackjack = Blackjack_Logic()
     self.players[-1].name = "dealer"
     self.player, self.ai = self.players
+    self.game_drew=False
     self.player.id = int(self.player.name)
     self.add_button_event(Emote.ALPHABET.h, self.player.id, self.on_hit, label="Hit")
     self.add_button_event(Emote.ALPHABET.s, self.player.id, self.on_stand, label="Stand")
@@ -249,21 +250,23 @@ class Blackjack(AiPlayer):
 
     content += "\n"
 
-    if self.player.won:
+    if self.game_drew:
+      content += "Game ended in draw!\n"
+    elif self.player.won:
       content += "You have won!\n"
     elif self.player.lost:
       content += "You have lost!\n"
-    elif not self.player.game:
-      content += "Game ended in draw!\n"
 
     content += "```"
     return content
 
   def stand(self):
     self.blackjack.stand()
-    if self.blackjack.has_player_won():
+    if self.blackjack.has_ended_in_draw():
+      self.game_drew=True
+    elif self.blackjack.has_player_won():
       self.player.win()
-    elif not self.blackjack.has_ended_in_draw():
+    elif self.blackjack.is_player_busted():
       self.player.lose()
 
   async def start_game(self): await self.msg.edit(content=self.get_board())
