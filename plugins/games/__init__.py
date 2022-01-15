@@ -5,7 +5,7 @@ class GameButton(discord.ui.Button):
   def __init__(self,user,emoji,**kwargs):
     super().__init__(emoji=emoji,**kwargs)
     self.user = user
-    self.emoji_
+    self.emoji_=emoji
 
   async def callback(self, interaction):
     await Game.dispatch(interaction, self.emoji_)
