@@ -63,9 +63,21 @@ def _emote():
         cls.emojis[list(emoji.keys())[0]] = r_emoji
 
       for emojin, emojiv in attributes["defaults"].items():
-        setattr(cls, emojin, emojiv)
-        cls.emojis[emojin] = emojiv
-        cls.defaults[emojin] = emojiv
+        if not isinstance(emojiv, dict):
+          setattr(cls, emojin, emojiv)
+          cls.emojis[emojin] = emojiv
+          cls.defaults[emojin] = emojiv
+          continue
+
+        class _: pass
+        cls_sub = _()
+        cls.emojis[emojin] = {}
+        cls.defaults[emojin] = {}
+        for emojina, emojiva in emojiv.items():
+          setattr(cls_sub, emojina, emojiva)
+          cls.emojis[emojin][emojina] = emojiva
+          cls.defaults[emojin][emojina] = emojiva
+        setattr(cls,emojin,cls_sub)
 
       return cls
 
