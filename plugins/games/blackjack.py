@@ -171,12 +171,12 @@ class Blackjack_Logic:
 
 
 from config import Emote
-from plugins.games import AiPlayer
+from plugins.games import AiPlayer, Player
 
 
 class Blackjack(AiPlayer):
-  def __init__(self,*args):
-    super().__init__(*args, timeout=30.0)
+  def __init__(self,msg,pid):
+    super().__init__(msg, Player(pid), timeout=30.0)
     self.blackjack = Blackjack_Logic()
     self.players[-1].name = "dealer"
     self.player, self.ai = self.players
