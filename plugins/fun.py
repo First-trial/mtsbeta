@@ -14,8 +14,8 @@ class Fun(Cog):
   play = appcommands.slashgroup(name="play", description="Game commands!")
   fun  = appcommands.slashgroup(name="fun", description="Fun Commands!")
 
-  @appcommands.command(guild_ids=config.TESTING_GUILD_IDS)
-  async def blackjack(self,ctx):
+  @play.subcommand(name="blackjack", description="Play blackjack with me!")
+  async def play_blackjack(self,ctx):
     msg = await ctx.send("...")
     game = Blackjack(msg, str(ctx.author.id))
     await game.start()
