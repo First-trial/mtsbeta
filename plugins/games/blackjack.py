@@ -253,7 +253,7 @@ class Blackjack(AiPlayer):
       content += "You have won!\n"
     elif self.player.lost:
       content += "You have lost!\n"
-    elif not player.game:
+    elif not self.player.game:
       content += "Game ended in draw!\n"
 
     content += "```"
