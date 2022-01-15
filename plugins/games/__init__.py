@@ -25,7 +25,7 @@ class Game(discord.ui.View):
     await self.msg.edit(view=self)
 
   def add_event(self, emoji, user, handler, *args):
-    self.__class__.events[(self.msg.id, emoji, user)] = (handler, (*args or []))
+    self.__class__.events[(self.msg.id, emoji, user)] = (handler, args)
 
   def add_button(self, emoji,user,**kwargs):
     self.add_item(GameButton(user,emoji=emoji,**kwargs))
