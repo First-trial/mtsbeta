@@ -170,6 +170,7 @@ class Blackjack_Logic:
     return result == "WIN"
 
 
+from config import Emote
 from plugins.games import AiPlayer
 
 
@@ -178,6 +179,81 @@ class Blackjack(AiPlayer):
     super().__init__(*args, timeout=30.0)
     self.blackjack = Blackjack()
     self.players[-1].name = "dealer"
-    # self.add_button_event
+    self.player, self.ai = self.players
+    self.player.id = int(self.player.name)
+    self.add_button_event(Emote.ALPHABET.h, self.player.id, self.on_hit, label="Hit")
+    self.add_button_event(Emote.ALPHABET.s, self.player.id, self.on_stand, label="Stand")
+    if self.blackjack.can_split():
+      self.add_button_event(Emote.SPLIT, self.player.id, self.on_split, label="Split")
+    self.add_button_event(Emote.QUIT, self.player.id, self.on_quit, label="End")
 
-# Soon™
+  async def on_hit(self, interaction):
+    if len(self.blackjack.player_hands) == 2:
+      if max(self.blackjack.player_hands[0].get_value()) > 21:
+        self.blackjack.hit(hand=1)
+      else:
+        self.blackjack.hit()
+    else:
+      self.blackjack.hit()
+
+    if self.blackjack.is_player_busted(): self.blakjack.stand()
+    await self.update(interaction)
+
+  async def on_stand(self, interaction):
+    self.blackjack.stand()
+    await interaction.response.pong()
+
+  async def update(self, interaction):
+    board = self.get_board()
+    await interaction.response.edit_message(content=board,view=self)
+
+  async def interaction_check(self, interaction):
+    if interaction.user.id==int(self.player.name): return True
+    if not interaction.response.is_done(): await interaction.response.send_message("You aren't authorised to use this menu!", ephemeral=True)
+    return False
+
+  async def on_quit(self, interaction):
+    self.end_game()
+    await self.update(interaction)
+
+  async def on_split(self, inter):
+    self.blackjack.split_hand()
+    self.remove_item(self.children[-2])
+    await self.update(inter)
+
+  async def get_board(self):
+    content = "```diff\n"
+    if self.blackjack.player_turn:
+      content += "- Dealer's cards:\n" \
+      f"   {self.blackjack.dealer_hand.cards[0].__str__()}\n" \
+      f"   <hidden card>\n"
+    else:
+      a, b = self.blackjack.dealer_hand.get_value()
+      if a == b:
+        content += f"- Dealer's cards: value = {a}\n"
+      else:
+        content += f"- Dealer's cards: value = {a} or {b}\n"
+      for card in self.blackjack.dealer_hand.cards:
+        content += f"   {card.__str__()}\n"
+
+    for hand in self.blackjack.player_hands:
+      a, b = hand.get_value()
+      if a == b:
+        content += f"\n+ Player's cards: value = {a}\n"
+      else:
+        content += f"\n+ Player's cards: value = {a} or {b}\n"
+      for card in hand.cards:
+        content += f"   {card.__str__()}\n"
+
+    content += "\n"
+
+    if self.player.won:
+      content += "You have won!\n"
+    elif self.player.lose:
+      content += "You have lost!\n"
+    else:
+      content += "Game ended in draw!\n"
+
+    content += "```"
+    return content
+
