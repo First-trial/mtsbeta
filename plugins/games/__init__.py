@@ -1,4 +1,5 @@
 import discord
+import random
 
 
 class GameButton(discord.ui.Button):
@@ -67,6 +68,9 @@ class Game(discord.ui.View):
     return _().__await__()
 
   def __call__(self): return self
+
+  def get_random_word(self): return random.choice(" ".join(open("assets/words.txt").read().splitlines()).split(" "))
+
 
 class Player:
   WON      =  1
