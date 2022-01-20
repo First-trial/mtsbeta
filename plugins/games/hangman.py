@@ -7,7 +7,6 @@ class Hangman_Logic:
     self.current_word = ["_" for i in self.word]
     self.guessed = []
 
-
   def guess(self, char):
     if char in self.guessed:
       return
@@ -22,19 +21,11 @@ class Hangman_Logic:
         self.current_word[i] = char
       self.guessed.append(char)
 
-
   def has_won(self):
     return "_" not in self.current_word
 
-
   def has_lost(self):
     return self.lives <= 0
-
-
-  def has_drawn(self):
-    pass  # can't draw in hangman
-
-
 
 
 HANGMAN0 = "_______"
@@ -127,6 +118,24 @@ HANGMEN = [
 
 # Main Game
 
-from plugins.games import SinglePlayer
+from config import Emote
+from string import ascii_lowercase
+from plugins.games import SinglePlayer, Player
 
 
+class Hangman(SinglePlayer):
+  def __init__(self,uid):
+    super().__init__(Player(uid))
+    self.logic = Hangman_Logic()
+    self.player = uid
+
+  async def start_game(self)
+    for i in range(len(ascii_lowercase)):
+      lett = ascii_lowercase[i]
+      emoji = getattr(Emote.ALPHABET, lett)
+      if not i < 13: self.msg = await #
+      self.add_button_event(emoji, self.player, self.on_click, lett)
+
+  async def on_click(self, lett, inter):
+    self.remove_item([b for b in self.children if b.emoji == getattr(Emote.ALPHABET,lett)][0])
+    self.logic.guess(lett)
