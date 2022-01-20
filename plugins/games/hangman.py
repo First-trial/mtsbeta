@@ -128,12 +128,18 @@ class Hangman(SinglePlayer):
     super().__init__(Player(uid))
     self.logic = Hangman_Logic()
     self.player = uid
+    for i in range(len(ascii_lowercase)):
+      lett = ascii_lowercase[i]
+      emoji = getattr(Emote.ALPHABET, lett)
+      if i >= 13: return
+      self.add_button_event(emoji, self.player, self.on_click, lett)
 
   async def start_game(self)
     for i in range(len(ascii_lowercase)):
       lett = ascii_lowercase[i]
       emoji = getattr(Emote.ALPHABET, lett)
-      if not i < 13: self.msg = await #
+      if i < 13: continue
+      self.msg = await self.msg.channel.send("\u200b")
       self.add_button_event(emoji, self.player, self.on_click, lett)
 
   async def on_click(self, lett, inter):
