@@ -37,7 +37,7 @@ class _GBase(discord.ui.View):
   def get_board(): return ""
 
 class ElfView(_GBase):
-  def __init__(message, parent, **kw):
+  def __init__(self,message, parent, **kw):
     super().__init__(**kw)
     self.parent = parent
     self.msg = message
@@ -58,7 +58,7 @@ class Game(_GBase):
     super().__init__(timeout=timeout)
 
   async def create_elf(self, msg):
-    self.elf = ElfView(msg, self, timeout=self.timeout)
+    self.elf = ElfView(msg, self, timeout=None)
     return self.elf
 
   async def on_timeout(self):
