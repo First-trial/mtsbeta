@@ -137,7 +137,6 @@ class Hangman(SinglePlayer):
       emoji = getattr(Emote.ALPHABET, lett)
       if i >= 13: return
       self.add_button_event(emoji, self.player, self.on_click, lett)
-      self.children[-1].msg = None
 
   async def start_game(self):
     elf = await self.create_elf(await self.msg.channel.send("More Buttons..."))
