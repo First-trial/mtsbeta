@@ -1,6 +1,9 @@
 # Logic
 
-class Hangman_Logic:
+from plugins.games import LogicBase
+
+
+class Hangman_Logic(LogicBase):
   def __init__(self):
     self.lives = 10
     self.word = self.get_random_word()
@@ -133,15 +136,31 @@ class Hangman(SinglePlayer):
       emoji = getattr(Emote.ALPHABET, lett)
       if i >= 13: return
       self.add_button_event(emoji, self.player, self.on_click, lett)
+      self.children[-1].msg = None
 
-  async def start_game(self)
+  async def start_game(self):
+    self.org_msg = self.msg
+    self.msg = await self.msg.channel.send("More Buttons...")
     for i in range(len(ascii_lowercase)):
       lett = ascii_lowercase[i]
       emoji = getattr(Emote.ALPHABET, lett)
       if i < 13: continue
-      self.msg = await self.msg.channel.send("\u200b")
       self.add_button_event(emoji, self.player, self.on_click, lett)
+      self._childs[-1].msg = self.msg
+
+    await self.msg.edit(view=self)
+    self.msg = self.org_msg
 
   async def on_click(self, lett, inter):
     self.remove_item([b for b in self.children if b.emoji == getattr(Emote.ALPHABET,lett)][0])
     self.logic.guess(lett)
+    # if ...
+    await self.update(inter)
+
+  def get_board(self):
+    _word = self.logic.current_word
+    hngmn = HANGMEN[self.logic.lives]
+    word = ""
+    for chr in _word: word += ("__ " if chr is "_" else f"{chr} ")
+    content = f"```\n{hngmn}\n\nWord: {word}\n```"
+    
