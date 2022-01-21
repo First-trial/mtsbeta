@@ -24,10 +24,12 @@ class Hangman_Logic(LogicBase):
         self.current_word[i] = char
       self.guessed.append(char)
 
-  def has_won(self):
+  @property
+  def won(self):
     return "_" not in self.current_word
 
-  def has_lost(self):
+  @property
+  def lost(self):
     return self.lives <= 0
 
 
@@ -139,23 +141,37 @@ class Hangman(SinglePlayer):
       self.children[-1].msg = None
 
   async def start_game(self):
-    self.org_msg = self.msg
-    self.msg = await self.msg.channel.send("More Buttons...")
+    elf = await self.create_elf(await self.msg.channel.send("More Buttons..."))
+
     for i in range(len(ascii_lowercase)):
       lett = ascii_lowercase[i]
       emoji = getattr(Emote.ALPHABET, lett)
       if i < 13: continue
-      self.add_button_event(emoji, self.player, self.on_click, lett)
-      self._childs[-1].msg = self.msg
+      elf.add_button_event(emoji, self.player, self.on_click, lett)
+      elf._childs[-1].msg = self.msg
 
-    await self.msg.edit(view=self)
-    self.msg = self.org_msg
+    elf.add_button_event(Emote.STOP, self.player, self.on_quit)
+
+    await elf.msg.edit(view=elf)
+    await self.msg.edit(content=self.get_board())
+
+  async def on_quit(self, inter):
+    self.lose()
+    await self.update(inter)
 
   async def on_click(self, lett, inter):
-    self.remove_item([b for b in self.children if b.emoji == getattr(Emote.ALPHABET,lett)][0])
+    elf = self.elf
     self.logic.guess(lett)
-    # if ...
-    await self.update(inter)
+
+    if self.logic.won: self.win()
+    elif self.logic.lost: self.lose()
+
+    if inter.view is self.elf:
+      elf.remove_item([b for b in elf.children if b.emoji == getattr(Emote.ALPHABET,lett)][0])
+      await elf.update(inter)
+    else:
+      self.remove_item([b for b in self.children if b.emoji == getattr(Emote.ALPHABET,lett)][0])
+      await self.update(inter)
 
   def get_board(self):
     _word = self.logic.current_word
@@ -163,4 +179,8 @@ class Hangman(SinglePlayer):
     word = ""
     for chr in _word: word += ("__ " if chr is "_" else f"{chr} ")
     content = f"```\n{hngmn}\n\nWord: {word}\n```"
-    
+
+    if self.won: content += "```\nYou have won the game!\n```"
+    elif self.lost: content += f"```\nYou have lost the game!\nThe word was: '{self.logic.word}'\n```"
+
+    return content
