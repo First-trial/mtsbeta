@@ -41,6 +41,7 @@ class ElfView(_GBase):
     super().__init__(**kw)
     self.parent = parent
     self.msg = message
+    self._childs = []
 
   async def fully_end(self):
     for child in self.children: child.disabled = True
@@ -128,14 +129,13 @@ class Player:
 class SinglePlayer(Game):
   def __init__(self, m, p, timeout=30.0):
     super().__init__(m, Player(p), timeout=timeout)
-    self.player = self.players[0]
-    self.player.id = p
+    self.player = p
     self.won = False
     self.lost = False
     self.drew = False
 
-  def win(self): self.end_game();self.won=True;self.player.win()
-  def lose(self): self.end_game();self.lost=True;self.player.lose()
+  def win(self): self.end_game();self.won=True;self.players[0].win()
+  def lose(self): self.end_game();self.lost=True;self.players[0].lose()
   def draw(self): self.end_game();self.drew=True
     
 class AiPlayer(Game):
