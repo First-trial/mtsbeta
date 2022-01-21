@@ -129,10 +129,9 @@ from plugins.games import SinglePlayer, Player
 
 
 class Hangman(SinglePlayer):
-  def __init__(self,uid):
-    super().__init__(Player(uid))
+  def __init__(self,*args):
+    super().__init__(*args, timeout=30.0)
     self.logic = Hangman_Logic()
-    self.player = uid
     for i in range(len(ascii_lowercase)):
       lett = ascii_lowercase[i]
       emoji = getattr(Emote.ALPHABET, lett)
@@ -178,7 +177,7 @@ class Hangman(SinglePlayer):
     _word = self.logic.current_word
     hngmn = HANGMEN[self.logic.lives]
     word = ""
-    for chr in _word: word += ("__ " if chr is "_" else f"{chr} ")
+    for chr in _word: word += ("__ " if chr == "_" else f"{chr} ")
     content = f"```\n{hngmn}\n\nWord: {word}\n```"
 
     if self.won: content += "```\nYou have won the game!\n```"
