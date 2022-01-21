@@ -166,9 +166,10 @@ class Hangman(SinglePlayer):
     if self.logic.won: self.win()
     elif self.logic.lost: self.lose()
 
-    if inter.view is self.elf:
+    if inter.view is elf:
       elf.remove_item([b for b in elf.children if b.emoji == getattr(Emote.ALPHABET,lett)][0])
-      await elf.update(inter)
+      if elf.children: await elf.update(inter)
+      else: await elf.delete()
     else:
       self.remove_item([b for b in self.children if b.emoji == getattr(Emote.ALPHABET,lett)][0])
       await self.update(inter)
