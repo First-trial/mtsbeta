@@ -9,22 +9,10 @@ class GameButton(discord.ui.Button):
     self.emoji_=emoji
 
   async def callback(self, interaction):
-    await Game.dispatch(interaction, self.emoji_)
+    await _GBase.dispatch(interaction, self.emoji_)
 
-
-class Game(discord.ui.View):
+class _GBase(discord.ui.View):
   events = {}
-  def __init__(self, message, *players, timeout=15.0):
-    self.running = False
-    self.players = players
-    self._childs = []
-    self.msg = message
-    super().__init__(timeout=timeout)
-
-  async def on_timeout(self):
-    self.end_game()
-    await self.msg.edit(view=self)
-
   def add_event(self, emoji, user, handler, *args):
     self.__class__.events[(self.msg.id, emoji, user)] = (handler, args)
 
@@ -41,6 +29,35 @@ class Game(discord.ui.View):
     if container in cls.events.keys():
       (handler, args) = cls.events[container]
       await handler(*args, payload)
+
+class ElfView(_GBase):
+  def __init__(message, parents, **kw):
+    super().__init__(**kw)
+    self.parent = parent
+    self.msg = message
+
+  async def fully_end(self):
+    for child in self.children: child.disabled = True
+    self.stop()
+    await self.msg.edit(view=self)
+
+class Game(_GBase):
+  def __init__(self, message, *players, timeout=15.0):
+    self.running = False
+    self.players = players
+    self._childs = []
+    self.msg = message
+    self.elf = None
+    super().__init__(timeout=timeout)
+
+  async def create_elf(self, msg):
+    self.elf = ElfView(msg, self, timeout=self.timeout)
+    return self.elf
+
+  async def on_timeout(self):
+    self.end_game()
+    if self.elf: await self.fully_end()
+    await self.msg.edit(view=self)
 
   async def start(self):
     self.running = True
