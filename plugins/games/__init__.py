@@ -86,6 +86,14 @@ class Game(_GBase):
 
   def __call__(self): return self
 
+
+class LogicBase:
+  def __await__(self):
+    async def _(): return self
+    return _().__await__()
+
+  def __call__(self): return self
+
   def get_random_word(self): return random.choice(" ".join(open("assets/words.txt").read().splitlines()).split(" "))
 
 
