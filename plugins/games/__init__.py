@@ -137,7 +137,12 @@ class SinglePlayer(Game):
   def win(self): self.end_game();self.won=True;self.players[0].win()
   def lose(self): self.end_game();self.lost=True;self.players[0].lose()
   def draw(self): self.end_game();self.drew=True
-    
+
+  async def interaction_check(self, interaction):
+    if interaction.user.id==self.player: return True
+    if not interaction.response.is_done(): await interaction.response.send_message("You aren't authorised to use this menu!", ephemeral=True)
+    return False
+
 class AiPlayer(Game):
   def __init__(self, msg, player: Player, timeout=30.0):
     super().__init__(msg, player, Player(ai=True), timeout=timeout)
