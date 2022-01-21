@@ -411,7 +411,7 @@ class Economy(Cog):
       )
     if not await ctx.confirm(language.confirm.format(work=work)): return
     if not await self.give_work(ctx.author.id, work):
-      await ctx.edit(content=language.err.resign.format(prefix=ctx.prefix), ephemeral=True)
+      await ctx.edit(content=language.err.resign.format(prefix=ctx.prefix))
     else:
       await ctx.edit(content=language.success.format(work=work))
 
