@@ -31,7 +31,7 @@ class _GBase(discord.ui.View):
       await handler(*args, payload)
 
 class ElfView(_GBase):
-  def __init__(message, parents, **kw):
+  def __init__(message, parent, **kw):
     super().__init__(**kw)
     self.parent = parent
     self.msg = message
