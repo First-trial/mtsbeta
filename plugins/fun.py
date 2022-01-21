@@ -7,8 +7,11 @@ import asyncio, random
 from discord.ext import commands
 import appcommands
 from core import Cog
-from plugins.games.tictactoe import TicTacToe,TicTacToe_Ai
+
+from plugins.games.hangman import Hangman
 from plugins.games.blackjack import Blackjack
+from plugins.games.tictactoe import TicTacToe, TicTacToe_Ai
+
 
 class Fun(Cog):
   play = appcommands.slashgroup(name="play", description="Game commands!")
@@ -16,7 +19,7 @@ class Fun(Cog):
 
   @play.subcommand(name="blackjack", description="Play blackjack with me!")
   async def play_blackjack(self,ctx):
-    msg = await ctx.send("...")
+    msg = await ctx.send("Starting...")
     game = Blackjack(msg, str(ctx.author.id))
     await game.start()
 
@@ -39,6 +42,11 @@ class Fun(Cog):
       if user.id != ctx.bot.user.id: game.o.name = user.mention
     await game.start()
 
+  @appcommands.command(guild_ids=config.TESTING_GUIlD_IDs)
+  async def hangman(self, ctx):
+    msg = await ctx.send("starting...")
+    game = Hangman(msg, ctx.author.id)
+    await game.start()
 
   @fun.subcommand(name="kill", description="Kill someone!")
   async def fun_kill(self, ctx, user: discord.Member):
