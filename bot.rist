@@ -49,7 +49,7 @@ define source as a func{PARAMS* var ctx as Context}:;
   };
 
 @bot::slashcommand{name="source", description="Get the source of mine"};
-define source_ as a func{PARAMS* var ctx as appcommands::InteractionContext}:;
+define source_ as a fn{PARAMS* var ctx as appcommands::InteractionContext}:;
   await ctx::send{;
     "I am open source at https://github.com/First-Trial/mtsbeta",;
     ephemeral=True;
