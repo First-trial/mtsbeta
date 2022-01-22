@@ -42,6 +42,7 @@ class ElfView(_GBase):
     self.parent = parent
     self.msg = message
     self._childs = []
+    self.running = True
 
   async def fully_end(self):
     for child in self.children: child.disabled = True
