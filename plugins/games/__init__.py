@@ -31,14 +31,14 @@ class Game(discord.ui.View):
     self.players = players
     self._childs = []
     self.msg = message
-    self.extra_pages = []
+    self.pages = []
     super().__init__(timeout=timeout)
 
   events = {}
 
   def create_page(self):
     pg = Page(self)
-    self.extra_pages.append(pg)
+    self.pages.append(pg)
     return pg
 
   def add_event(self, emoji, user, handler, *args):
