@@ -11,19 +11,6 @@ class GameButton(discord.ui.Button):
   async def callback(self, interaction):
     await Game.dispatch(interaction, self.emoji_)
 
-class ElfView(_GBase):
-  def __init__(self,message, parent, **kw):
-    super().__init__(**kw)
-    self.parent = parent
-    self.msg = message
-    self._childs = []
-    self.running = True
-
-  async def fully_end(self):
-    for child in self.children: child.disabled = True
-    self.stop()
-    await self.msg.edit(view=self)
-
 
 class Page:
   def __init__(self, par):
@@ -56,8 +43,10 @@ class Game(discord.ui.View):
   def add_event(self, emoji, user, handler, *args):
     self.__class__.events[(self.msg.id, emoji, user)] = (handler, args)
 
-  def add_button(self, emoji,user,**kwargs):
-    self.add_item(GameButton(user,emoji=emoji,**kwargs))
+  def add_button(self, emoji,user,page=None,**kwargs):
+    if not page: meth = self.add_item
+    else: meth = page.cont.append
+    meth(GameButton(user,emoji=emoji,**kwargs))
 
   def add_button_event(self,emoji,user,handler,*args,**kwargs):
     self.add_button(emoji,user,**kwargs)
