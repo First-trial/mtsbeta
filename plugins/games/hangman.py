@@ -146,7 +146,6 @@ class Hangman(SinglePlayer):
       emoji = getattr(Emote.ALPHABET, lett)
       if i < 13: continue
       elf.add_button_event(emoji, self.player, self.on_click, lett)
-      elf._childs[-1].msg = self.msg
 
     elf.add_button_event(Emote.STOP, self.player, self.on_quit)
 
