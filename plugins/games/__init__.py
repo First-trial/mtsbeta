@@ -9,10 +9,50 @@ class GameButton(discord.ui.Button):
     self.emoji_=emoji
 
   async def callback(self, interaction):
-    await _GBase.dispatch(interaction, self.emoji_)
+    await Game.dispatch(interaction, self.emoji_)
 
-class _GBase(discord.ui.View):
+class ElfView(_GBase):
+  def __init__(self,message, parent, **kw):
+    super().__init__(**kw)
+    self.parent = parent
+    self.msg = message
+    self._childs = []
+    self.running = True
+
+  async def fully_end(self):
+    for child in self.children: child.disabled = True
+    self.stop()
+    await self.msg.edit(view=self)
+
+
+class Page:
+  def __init__(self, par):
+    self.par,self.msg=par,par.msg
+    self.cont=[]
+    self.backup=[]
+
+  async def show(self, cont=[]):
+    self.backup = self.par.children
+    for i in self.par.children: self.par.remove_item(i)
+    for i in (cont or self.cont): self.par.add_item(cont)
+    await self.msg.edit(view=self.par)
+
+class Game(discord.ui.View):
+  def __init__(self, message, *players, timeout=15.0):
+    self.running = False
+    self.players = players
+    self._childs = []
+    self.msg = message
+    self.extra_pages = []
+    super().__init__(timeout=timeout)
+
   events = {}
+
+  async def create_page(self):
+    pg = Page(self)
+    self.extra_pages.append(pg)
+    return pg
+
   def add_event(self, emoji, user, handler, *args):
     self.__class__.events[(self.msg.id, emoji, user)] = (handler, args)
 
@@ -36,35 +76,8 @@ class _GBase(discord.ui.View):
 
   def get_board(): return ""
 
-class ElfView(_GBase):
-  def __init__(self,message, parent, **kw):
-    super().__init__(**kw)
-    self.parent = parent
-    self.msg = message
-    self._childs = []
-    self.running = True
-
-  async def fully_end(self):
-    for child in self.children: child.disabled = True
-    self.stop()
-    await self.msg.edit(view=self)
-
-class Game(_GBase):
-  def __init__(self, message, *players, timeout=15.0):
-    self.running = False
-    self.players = players
-    self._childs = []
-    self.msg = message
-    self.elf = None
-    super().__init__(timeout=timeout)
-
-  async def create_elf(self, msg):
-    self.elf = ElfView(msg, self, timeout=None)
-    return self.elf
-
   async def on_timeout(self):
     self.end_game()
-    if self.elf: await self.fully_end()
     await self.msg.edit(view=self)
 
   async def start(self):
