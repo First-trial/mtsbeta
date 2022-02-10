@@ -1,5 +1,5 @@
 # Logic
-
+import discord
 from plugins.games import LogicBase
 
 
