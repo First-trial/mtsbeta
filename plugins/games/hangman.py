@@ -135,41 +135,50 @@ class Hangman(SinglePlayer):
     for i in range(len(ascii_lowercase)):
       lett = ascii_lowercase[i]
       emoji = getattr(Emote.ALPHABET, lett)
-      if i >= 13: return
+      if lett in ["u","v","w","x","y","z"]: return
       self.add_button_event(emoji, self.player, self.on_click, lett)
 
+    self.add_item(discord.ui.Button(emoji=Emote.ARROW_LEFT, disabled=True))
+    self.add_item(discord.ui.Button(label="\u200b", disabled=True))
+    self.add_button_event(Emote.STOP, self.player, self.on_quit,)
+    self.add_item(discord.ui.Button(label="\u200b", disabled=True))
+    self.add_button_event(Emote.ARROW_RIGHT, self.player, self.on_next,)
+
   async def start_game(self):
-    elf = await self.create_elf(await self.msg.channel.send("More Buttons..."))
+    pg = self.create_page()
 
     for i in range(len(ascii_lowercase)):
       lett = ascii_lowercase[i]
       emoji = getattr(Emote.ALPHABET, lett)
-      if i < 13: continue
-      elf.add_button_event(emoji, self.player, self.on_click, lett)
+      if lett not in ["u","v","w","x","y","z"]: continue
+      row = (1 if lett in ["u","v","w"] else 2)
+      self.add_button_event(emoji, self.player, self.on_click, lett, page=pg, row=row)
 
-    elf.add_button_event(Emote.STOP, self.player, self.on_quit)
+    self.add_button_event(Emote.ARROW_LEFT, self.player, self.on_prev, page=pg,row=3)
+    self.add_button(Emote.STOP, self.player, page=pg,row=3)
+    pg.cont.append(discord.ui.Button(emoji=Emote.ARROW_RIGHT, disabled=True,row=3))
 
-    await elf.msg.edit(view=elf)
     await self.msg.edit(content=self.get_board())
 
   async def on_quit(self, inter):
     self.lose()
     await self.update(inter)
 
+  async def on_nexy(self, inter):
+    await self.pages[-1].show(inter)
+
+  async def on_prev(self, inter):
+    await self.pages[-1].show(inter,self.pages[-1].backup,)
+
   async def on_click(self, lett, inter):
-    elf = self.elf
+    pg = self.pages[-1]
     self.logic.guess(lett)
 
     if self.logic.won: self.win()
     elif self.logic.lost: self.lose()
 
-    if inter.view is elf:
-      elf.remove_item([b for b in elf.children if b.emoji == getattr(Emote.ALPHABET,lett)][0])
-      if elf.children: await elf.update(inter)
-      else: await elf.delete()
-    else:
-      self.remove_item([b for b in self.children if b.emoji == getattr(Emote.ALPHABET,lett)][0])
-      await self.update(inter)
+    [b for b in self.children if b.emoji == getattr(Emote.ALPHABET,lett)][0].disabled=True
+    await self.update(inter)
 
   def get_board(self):
     _word = self.logic.current_word
