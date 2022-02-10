@@ -18,11 +18,12 @@ class Page:
     self.cont=[]
     self.backup=[]
 
-  async def show(self, cont=[]):
+  async def show(self, inter=None, cont=[]):
     self.backup = self.par.children
     for i in self.par.children: self.par.remove_item(i)
     for i in (cont or self.cont): self.par.add_item(cont)
-    await self.msg.edit(view=self.par)
+    meth = (self.msg.edit if not inter else inter.response.edit_message)
+    await meth(view=self.par)
 
 class Game(discord.ui.View):
   def __init__(self, message, *players, timeout=15.0):
