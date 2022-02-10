@@ -35,7 +35,7 @@ class Game(discord.ui.View):
 
   events = {}
 
-  async def create_page(self):
+  def create_page(self):
     pg = Page(self)
     self.extra_pages.append(pg)
     return pg
