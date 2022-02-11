@@ -24,7 +24,7 @@ class BaseCont:
   async def get_lang(self):
     sett = await UserLanguage.get_or_none(uid=self.author.id)
     if sett: return languages.get(sett.language) or languages.english
-    await UserLanguage.create(uid=uid)
+    await UserLanguage.create(uid=self.author.id)
     return languages.get("english")
 
 class Context(BaseCont, commands.Context):
