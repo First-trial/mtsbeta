@@ -4,7 +4,7 @@ import discord
 import io
 from plugins.utils import ConfirmV
 from config import languages
-from models import GLanguage
+from models import UserLanguage
 
 class BaseCont:
   def __init__(self, *args, **kwargs):
@@ -22,15 +22,10 @@ class BaseCont:
     return confirmed
 
   async def get_lang(self):
-    ctx = self
-    gid=(ctx.guild.id if ctx.guild else ctx.channel.id)
-
-    sett = await GLanguage.get_or_none(gid=gid)
-    if sett: return languages.get(sett.language)
-    await GLanguage.create(gid=gid)
+    sett = await UserLanguage.get_or_none(uid=uid)
+    if sett: return languages.get(sett.language) or languages.english
+    await UserLanguage.create(uid=uid)
     return languages.get("english")
-
-
 
 class Context(BaseCont, commands.Context):
   def __init__(self,*args, **kwargs):
