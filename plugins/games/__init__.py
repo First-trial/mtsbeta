@@ -1,6 +1,8 @@
 import discord
 import random
 
+from models import UserLanguage
+from config import languages
 
 class GameButton(discord.ui.Button):
   def __init__(self,user,emoji,**kwargs):
@@ -131,6 +133,7 @@ class Player:
 
   __repr__ = __str__ = (lambda self: self.name)
 
+
 class SinglePlayer(Game):
   def __init__(self, m, p, timeout=30.0):
     super().__init__(m, Player(p), timeout=timeout)
@@ -147,6 +150,11 @@ class SinglePlayer(Game):
     if interaction.user.id==self.player: return True
     if not interaction.response.is_done(): await interaction.response.send_message("You aren't authorised to use this menu!", ephemeral=True)
     return False
+
+  async def get_lang(self):
+    lang = await UserLanguage.get_or_none(uid=self.player)
+    if lang: return languages.get(lang.language) or languages.english
+    return languages.english
 
 class AiPlayer(Game):
   def __init__(self, msg, player: Player, timeout=30.0):
