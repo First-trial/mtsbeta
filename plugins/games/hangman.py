@@ -189,9 +189,10 @@ class Hangman(SinglePlayer):
     for chr in _word: word += ("__ " if chr == "_" else f"{chr} ")
     word = lang.hangman.word.format(word=word)
     content = f"```\n{hngmn}\n\n{word}\n```"
+    w_waz = lang.hangman.word_was.format(word=f"'{self.logic.word}'")
 
     if self.won: content += "```\n{lang.won}\n```"
-    elif self.lost: content += f"```\n{lang.lose}\n{lang.hangman.word_was.format(word=\"'self.logic.word'\"}\n```"
+    elif self.lost: content += f"```\n{lang.lose}\n{w_was}\n```"
 
     if self.bet:
       u=balance.get(uid=self.player)
@@ -199,6 +200,8 @@ class Hangman(SinglePlayer):
       if self.won:
         content+="```\n{lang.coins.won.format(coins=self.bet)}\n```"
         await u.update(hand=(await u.hand)+(self.bet*2))
-      elif self.lose: content+="```\n{lang.coins.lose.format(coins=self.bet)}\n```"
+      elif self.lose:
+        content+="```\n{lang.coins.lose.format(coins=self.bet)}\n```"
+        # Nothing here cuz we already took money from user
 
     return content
