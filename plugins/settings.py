@@ -15,7 +15,7 @@ class Settings(Cog):
 
   language = settings.subcommandgroup(name="language", description="Language Settings!")
 
-  @language.subcommand(name="view", description="Get Language of your server")
+  @language.subcommand(name="view", description="Get Language of your")
   async def settings_language_view(self, ctx):
     language = await ctx.get_lang()
     await ctx.send(
@@ -26,7 +26,7 @@ class Settings(Cog):
   async def settings_language_list(self, ctx):
     await ctx.send(embed=discord.Embed(color=0x00ffff,description="\n".join(list(languages.languages.keys()))))
 
-  @language.subcommand(name="edit", description="Edit language of current server")
+  @language.subcommand(name="edit", description="Edit language of yours")
   async def settings_language_edit(self, ctx, language: str):
     language=language.lower()
     if not languages.get(language): return await ctx.send(f"Language `{language}` not found! (`{ctx.prefix}settings languages list`)", ephemeral=True)
