@@ -19,7 +19,8 @@ class Page:
     self.backup=[]
 
   async def show(self, inter=None, cont=[]):
-    self.backup = self.par.children
+    self.backup=[]
+    self.backup.extend(self.par.children)
     self.par.clear_items()
     for i in (cont or self.cont): self.par.add_item(i)
     meth = (self.msg.edit if not inter else inter.response.edit_message)
