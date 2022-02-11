@@ -185,7 +185,7 @@ class Hangman(SinglePlayer):
     _word = self.logic.current_word
     hngmn = HANGMEN[self.logic.lives]
     word = ""
-    lang=(await self.get_lang()).plugins.games.
+    lang=(await self.get_lang()).plugins.games
     for chr in _word: word += ("__ " if chr == "_" else f"{chr} ")
     word = lang.hangman.word.format(word=word)
     content = f"```\n{hngmn}\n\n{word}\n```"
