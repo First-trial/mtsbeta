@@ -177,7 +177,7 @@ class Hangman(SinglePlayer):
     elif self.logic.lost: self.lose()
 
     try: [b for b in self.children if b.emoji == getattr(Emote.ALPHABET,lett)][0].disabled=True
-    except: print(" ".join([b.emoji for b in self.children],"\nRecieved:", lett); return # Track the error got in here
+    except: print(" ".join([b.emoji for b in self.children]),"\nRecieved:", lett); return # Track the error got in here
 
     await self.update(inter)
 
