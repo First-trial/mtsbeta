@@ -163,7 +163,7 @@ class Hangman(SinglePlayer):
     self.lose()
     await self.update(inter)
 
-  async def on_nexy(self, inter):
+  async def on_next(self, inter):
     await self.pages[-1].show(inter)
 
   async def on_prev(self, inter):
@@ -176,7 +176,9 @@ class Hangman(SinglePlayer):
     if self.logic.won: self.win()
     elif self.logic.lost: self.lose()
 
-    [b for b in self.children if b.emoji == getattr(Emote.ALPHABET,lett)][0].disabled=True
+    try: [b for b in self.children if b.emoji == getattr(Emote.ALPHABET,lett)][0].disabled=True
+    except: print(" ".join([b.emoji for b in self.children],"\nRecieved:", lett); return # Track the error got in here
+
     await self.update(inter)
 
   def get_board(self):
