@@ -129,7 +129,7 @@ from plugins.games import SinglePlayer, Player
 
 
 class Hangman(SinglePlayer):
-  def __init__(self,*args):
+  def __init__(self,*args, coins):
     super().__init__(*args, timeout=30.0)
     self.logic = Hangman_Logic()
     for lett in ascii_lowercase:
@@ -142,6 +142,7 @@ class Hangman(SinglePlayer):
     self.add_button_event(Emote.STOP, self.player, self.on_quit,)
     self.add_item(discord.ui.Button(label="\u200b", disabled=True))
     self.add_button_event(Emote.ARROW_RIGHT, self.player, self.on_next,)
+    self.bet = coins
 
   async def start_game(self):
     pg = self.create_page()
@@ -180,14 +181,24 @@ class Hangman(SinglePlayer):
 
     await self.update(inter)
 
-  def get_board(self):
+  async def get_board(self):
     _word = self.logic.current_word
     hngmn = HANGMEN[self.logic.lives]
     word = ""
+    lang=(await self.get_lang()).plugins.games.
     for chr in _word: word += ("__ " if chr == "_" else f"{chr} ")
-    content = f"```\n{hngmn}\n\nWord: {word}\n```"
+    word = lang.hangman.word.format(word=word)
+    content = f"```\n{hngmn}\n\n{word}\n```"
 
-    if self.won: content += "```\nYou have won the game!\n```"
-    elif self.lost: content += f"```\nYou have lost the game!\nThe word was: '{self.logic.word}'\n```"
+    if self.won: content += "```\n{lang.won}\n```"
+    elif self.lost: content += f"```\n{lang.lose}\n{lang.hangman.word_was.format(word=\"'self.logic.word'\"}\n```"
+
+    if self.bet:
+      u=balance.get(uid=self.player)
+
+      if self.won:
+        content+="```\n{lang.coins.won.format(coins=self.bet)}\n```"
+        await u.update(hand=(await u.hand)+(self.bet*2))
+      elif self.lose: content+="```\n{lang.coins.lose.format(coins=self.bet)}\n```"
 
     return content
