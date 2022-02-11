@@ -159,7 +159,7 @@ class Hangman(SinglePlayer):
     self.add_button(Emote.STOP, self.player, page=pg,row=3)
     pg.cont.append(discord.ui.Button(emoji=Emote.ARROW_RIGHT, disabled=True,row=3))
 
-    await self.msg.edit(content=self.get_board())
+    await self.msg.edit(content=await self.get_board())
 
   async def on_quit(self, inter):
     self.lose()
