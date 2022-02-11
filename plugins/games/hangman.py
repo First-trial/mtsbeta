@@ -132,11 +132,10 @@ class Hangman(SinglePlayer):
   def __init__(self,*args):
     super().__init__(*args, timeout=30.0)
     self.logic = Hangman_Logic()
-    for i in range(len(ascii_lowercase)):
-      lett = ascii_lowercase[i]
+    for lett in ascii_lowercase:
       emoji = getattr(Emote.ALPHABET, lett)
-      if lett in ["u","v","w","x","y","z"]: return
-      self.add_button_event(emoji, self.player, self.on_click, lett)
+      if lett not in ["u","v","w","x","y","z"]:
+        self.add_button_event(emoji, self.player, self.on_click, lett)
 
     self.add_item(discord.ui.Button(emoji=Emote.ARROW_LEFT, disabled=True))
     self.add_item(discord.ui.Button(label="\u200b", disabled=True))
