@@ -13,13 +13,15 @@ from plugins.games.blackjack import Blackjack
 from plugins.games.tictactoe import TicTacToe, TicTacToe_Ai
 
 
+coins_opt = appcommands.Option("_", "Bet How many coins? (You can lose them also)", required=False, type=appcommands.OptionType.INTEGER)
+
 class Fun(Cog):
   play = appcommands.slashgroup(name="play", description="Game commands!")
   fun  = appcommands.slashgroup(name="fun", description="Fun Commands!")
 
   @play.subcommand(name="blackjack", description="Play blackjack with me!")
   async def play_blackjack(self,ctx):
-    msg = await ctx.send("Starting...")
+    msg = await ctx.send((await ctx.get_lang()).plugins.fun.starting)
     game = Blackjack(msg, str(ctx.author.id))
     await game.start()
 
@@ -43,9 +45,9 @@ class Fun(Cog):
     await game.start()
 
   @play.subcommand(name="hangman", description="Play hangman")
-  async def play_hangman(self, ctx):
-    msg = await ctx.send("Starting...")
-    game = Hangman(msg, ctx.author.id)
+  async def play_hangman(self, ctx, coins: coins_opt = None):
+    msg = await ctx.send((await ctx.get_lang()).plugins.fun.starting)
+    game = Hangman(msg, ctx.author.id, coins=coins)
     await game.start()
 
   @fun.subcommand(name="kill", description="Kill someone!")
