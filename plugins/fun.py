@@ -8,6 +8,8 @@ from discord.ext import commands
 import appcommands
 from core import Cog
 
+from models import balance
+
 from plugins.games.hangman import Hangman
 from plugins.games.blackjack import Blackjack
 from plugins.games.tictactoe import TicTacToe, TicTacToe_Ai
@@ -57,7 +59,7 @@ class Fun(Cog):
   @play.subcommand(name="hangman", description="Play hangman")
   async def play_hangman(self, ctx, coins: coins_opt = None):
     try: 
-      if await self.transact(coins=coins): return
+      if await self.transact(ctx,coins=coins): return
     except: return
     msg = await ctx.send((await ctx.get_lang()).plugins.fun.starting)
     game = Hangman(msg, ctx.author.id, coins=coins)
