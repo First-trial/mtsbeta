@@ -190,7 +190,7 @@ class Hangman(SinglePlayer):
     for chr in _word: word += ("__ " if chr == "_" else f"{chr} ")
     word = lang.hangman.word.format(word=word)
     content = f"```\n{hngmn}\n\n{word}\n```"
-    w_waz = lang.hangman.word_was.format(word=f"'{self.logic.word}'")
+    w_was = lang.hangman.word_was.format(word=f"'{self.logic.word}'")
 
     if self.won: content += "```\n{lang.won}\n```"
     elif self.lost: content += f"```\n{lang.lost}\n{w_was}\n```"
