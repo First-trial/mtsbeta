@@ -26,7 +26,7 @@ class Fun(Cog):
       if not u: await self.bot.economy.open_acc(ctx.author.id);hand=500
       else: hand=u.hand
 
-      if coins > hand: return await ctx.send((await ctx.get_lang()).plugins.games.insufficient)
+      if coins > hand: return await ctx.send((await ctx.get_lang()).plugins.games.insufficient, ephemeral=True)
       await self.bot.economy.take_money("wallet", ctx.author.id, coins)
 
   @play.subcommand(name="blackjack", description="Play blackjack with me!")
