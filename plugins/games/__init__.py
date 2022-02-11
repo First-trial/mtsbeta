@@ -60,7 +60,7 @@ class Game(discord.ui.View):
       (handler, args) = cls.events[container]
       await handler(*args, payload)
 
-  async def update(self, inter):
+  async def update(self, interaction):
     brd = self.get_board() or self.msg.content
     await interaction.response.edit_message(content=brd,view=self)
 
