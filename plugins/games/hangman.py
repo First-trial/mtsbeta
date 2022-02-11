@@ -200,7 +200,7 @@ class Hangman(SinglePlayer):
 
       if self.won:
         content+=f"```\n{lang.coins.won.format(coins=self.bet)}\n```"
-        await u.update(hand=(await u.hand)+(self.bet*2))
+        await u.update(hand=(await u).hand+(self.bet*2))
       elif self.lost:
         content+=f"```\n{lang.coins.lose.format(coins=self.bet)}\n```"
         # Nothing here cuz we already took money from user
