@@ -3,7 +3,7 @@
 import discord, asyncio
 from discord.ext import commands
 import appcommands
-from models import balance, workers, inventory, GLanguage
+from models import balance, workers, inventory
 from core import Cog
 from appcommands import Option
 from typing import List
@@ -282,12 +282,7 @@ class Economy(Cog):
     await balance.create(uid=int(id), bank=0, hand=500); return True
 
   async def get_lang(self, ctx):
-    gid=(ctx.guild.id if ctx.guild else ctx.channel.id)
-
-    sett = await GLanguage.get_or_none(gid=gid)
-    if sett: return languages.get(sett.language)
-    await GLanguage.create(gid=gid)
-    return languages.get("english")
+    return await ctx.get_lang()
 
   async def give_work(self, id, work):
     try:
