@@ -4,11 +4,11 @@ import discord
 import appcommands
 from core import Cog
 from config import languages
-from models import GLanguage
+from models import UserLanguage
 
 
-# Note: No language for settings because for people to understand \
-# what is written!
+# Note: No language for settings because for people to understand
+#       what is written!
 
 class Settings(Cog):
   settings = appcommands.slashgroup(name="settings", description="Settings")
@@ -19,13 +19,12 @@ class Settings(Cog):
   async def settings_language_view(self, ctx):
     language = await ctx.get_lang()
     await ctx.send(
-      f"There is currently `{language.__display__}` (`{language.__name__}`) language in this server"
+      f"There is currently `{language.__display__}` (`{language.__name__}`) language for you"
     )
 
   @language.subcommand(name="list", description="Get a list of available languages")
   async def settings_language_list(self, ctx):
-    await ctx.send(embed=discord.Embed(description="\n".join(list(languages.languages.keys()))))
-
+    await ctx.send(embed=discord.Embed(color=0x00ffff,description="\n".join(list(languages.languages.keys()))))
 
   @language.subcommand(name="edit", description="Edit language of current server")
   async def settings_language_edit(self, ctx, language: str):
@@ -35,19 +34,11 @@ class Settings(Cog):
     english = languages.english
 
     language = await ctx.get_lang()
-    if lang is language: return await ctx.send(f"There is already {lang.__name__} is this server!", ephemeral=True)
-    if not ctx.guild:
-      if await ctx.confirm(f"Are you sure to change language from `{language.__name__}` to `{lang.__name__}`", language=english):
-        await GLanguage.edit(ctx.channel.id, lang.__name__)
-        await ctx.edit(content=f"You have successfully changed the language from `{language.__name__}` to `{lang.__name__}`")
-      return
-
-    if not ctx.author.guild_permissions.manage_guild: return await ctx.send("You don't have `manage_guid` permission for this!", ephemeral=True)
-
-    if await ctx.confirm(f"Are you sure to change this server's language from `{language.__name__}` to `{lang.__name__}`", language=english):
-      await GLanguage.edit(ctx.guild.id, lang.__name__)
+    if lang is language: return await ctx.send(f"There is already {lang.__name__} for you!", ephemeral=True)
+    if await ctx.confirm(f"Are you sure to change language from `{language.__name__}` to `{lang.__name__}`", language=english):
+      await UserLanguage.edit(ctx.author.id, lang.__name__)
       await ctx.edit(content=f"You have successfully changed the language from `{language.__name__}` to `{lang.__name__}`")
-      
+
 
 def setup(bot):
   bot.add_cog(Settings(bot))
