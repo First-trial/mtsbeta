@@ -48,6 +48,10 @@ class MtsBot(appcommands.AutoShardedBot):
     return config.DISCORD_JOIN_URL
 
   @property
+  def economy(self):
+    return self.get_cog("economy")
+
+  @property
   def guild(self):
     return self.get_guild(self.guild_id)
 
