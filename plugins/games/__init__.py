@@ -62,10 +62,10 @@ class Game(discord.ui.View):
       await handler(*args, payload)
 
   async def update(self, interaction):
-    brd = self.get_board() or self.msg.content
+    brd = (await self.get_board()) or self.msg.content
     await interaction.response.edit_message(content=brd,view=self)
 
-  def get_board(): return ""
+  async def get_board(): return ""
 
   async def on_timeout(self):
     self.end_game()
