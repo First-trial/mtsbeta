@@ -42,7 +42,7 @@ class Fun(Cog):
       if user.id != ctx.bot.user.id: game.o.name = user.mention
     await game.start()
 
-  @play.subcommand(description="Play hangman")
+  @play.subcommand(name="hangman", description="Play hangman")
   async def play_hangman(self, ctx):
     msg = await ctx.send("Starting...")
     game = Hangman(msg, ctx.author.id)
