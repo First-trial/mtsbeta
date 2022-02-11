@@ -15,13 +15,13 @@ class inventory(Model):
   item_uid = fields.CharField(110, unique=True)
   count = fields.BigIntField()
 
-class GLanguage(Model):
+class UserLanguage(Model):
   class Meta:
-    table = "guild_language"
+    table = "user_language"
 
-  gid = fields.BigIntField(unique=True)
+  uid = fields.BigIntField(unique=True)
   language = fields.TextField(default="english")
 
   @classmethod
-  def edit(cls, gid, language):
-    return cls.get(gid=gid).update(language=language)
+  def edit(cls, uid, language):
+    return cls.get(uid=uid).update(language=language)
