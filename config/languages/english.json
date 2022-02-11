@@ -102,8 +102,8 @@
    "lost": "You have lost!",
    "drew": "Game ended in draw!",
    "coins": {
-    "won": "You have been given {coins} for winning",
-    "lose": "You have been charged {coins} for losing!",
+    "won": "You have been given {coins} coins for winning",
+    "lose": "You have been charged {coins} coins for losing!",
     "draw": "Nothing Happened to your coins as the match drew!"
    },
    "hangman": {
