@@ -205,10 +205,6 @@ class Blackjack(AiPlayer):
     self.stand()
     await self.update(interaction)
 
-  async def update(self, interaction):
-    board = self.get_board()
-    await interaction.response.edit_message(content=board,view=self)
-
   async def interaction_check(self, interaction):
     if interaction.user.id==int(self.player.name): return True
     if not interaction.response.is_done(): await interaction.response.send_message("You aren't authorised to use this menu!", ephemeral=True)
@@ -224,7 +220,7 @@ class Blackjack(AiPlayer):
     self.remove_item(self.children[-2])
     await self.update(inter)
 
-  def get_board(self):
+  async def get_board(self):
     content = "```diff\n"
     if self.blackjack.player_turn:
       content += "- Dealer's cards:\n" \
@@ -269,4 +265,4 @@ class Blackjack(AiPlayer):
     elif self.blackjack.is_player_busted():
       self.player.lose();self.end_game()
 
-  async def start_game(self): await self.msg.edit(content=self.get_board())
+  async def start_game(self): await self.msg.edit(content=await self.get_board())
