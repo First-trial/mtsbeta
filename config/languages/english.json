@@ -101,6 +101,7 @@
    "won": "You have won!",
    "lost": "You have lost!",
    "drew": "Game ended in draw!",
+   "insufficient": "You don't have enough money in your wallet to play",
    "coins": {
     "won": "You have been given {coins} coins for winning",
     "lose": "You have been charged {coins} coins for losing!",
