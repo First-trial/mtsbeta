@@ -22,7 +22,7 @@ class BaseCont:
     return confirmed
 
   async def get_lang(self):
-    sett = await UserLanguage.get_or_none(uid=uid)
+    sett = await UserLanguage.get_or_none(uid=self.author.id)
     if sett: return languages.get(sett.language) or languages.english
     await UserLanguage.create(uid=uid)
     return languages.get("english")
