@@ -19,6 +19,16 @@ class Fun(Cog):
   play = appcommands.slashgroup(name="play", description="Game commands!")
   fun  = appcommands.slashgroup(name="fun", description="Fun Commands!")
 
+  async def transact(self, ctx, coins):
+    coins = coins or None
+    if coins:
+      u=await balance.get_or_none(uid=ctx.author.id)
+      if not u: await self.bot.economy.open_acc(ctx.author.id);hand=500
+      else: hand=u.hand
+
+      if coins > hand: return await ctx.send((await ctx.get_lang()).plugins.games.insufficient)
+      await self.bot.economy.take_money("wallet", ctx.author.id, coins)
+
   @play.subcommand(name="blackjack", description="Play blackjack with me!")
   async def play_blackjack(self,ctx):
     msg = await ctx.send((await ctx.get_lang()).plugins.fun.starting)
@@ -46,6 +56,9 @@ class Fun(Cog):
 
   @play.subcommand(name="hangman", description="Play hangman")
   async def play_hangman(self, ctx, coins: coins_opt = None):
+    try: 
+      if await self.transact(coins=coins): return
+    except: return
     msg = await ctx.send((await ctx.get_lang()).plugins.fun.starting)
     game = Hangman(msg, ctx.author.id, coins=coins)
     await game.start()
