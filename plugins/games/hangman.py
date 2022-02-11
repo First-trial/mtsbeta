@@ -124,6 +124,7 @@ HANGMEN = [
 # Main Game
 
 from config import Emote
+from models import balance
 from string import ascii_lowercase
 from plugins.games import SinglePlayer, Player
 
@@ -192,7 +193,7 @@ class Hangman(SinglePlayer):
     w_waz = lang.hangman.word_was.format(word=f"'{self.logic.word}'")
 
     if self.won: content += "```\n{lang.won}\n```"
-    elif self.lost: content += f"```\n{lang.lose}\n{w_was}\n```"
+    elif self.lost: content += f"```\n{lang.lost}\n{w_was}\n```"
 
     if self.bet:
       u=balance.get(uid=self.player)
