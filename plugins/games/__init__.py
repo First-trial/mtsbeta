@@ -20,7 +20,7 @@ class Page:
 
   async def show(self, inter=None, cont=[]):
     self.backup = self.par.children
-    for i in self.par.children: self.par.remove_item(i)
+    self.par.clear_items()
     for i in (cont or self.cont): self.par.add_item(i)
     meth = (self.msg.edit if not inter else inter.response.edit_message)
     await meth(view=self.par)
