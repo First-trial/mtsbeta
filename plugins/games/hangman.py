@@ -192,7 +192,7 @@ class Hangman(SinglePlayer):
     content = f"```\n{hngmn}\n\n{word}\n```"
     w_was = lang.hangman.word_was.format(word=f"'{self.logic.word}'")
 
-    if self.won: content += "```\n{lang.won}\n```"
+    if self.won: content += f"```\n{lang.won}\n```"
     elif self.lost: content += f"```\n{lang.lost}\n{w_was}\n```"
 
     if self.bet:
