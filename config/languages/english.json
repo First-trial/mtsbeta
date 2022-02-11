@@ -93,6 +93,19 @@
     "confirm": "Confirm",
     "cancel": "Cancel"
    }
+  },
+  "fun": {
+   "starting": "Starting..."
+  },
+  "games": {
+   "won": "You have won!",
+   "lost": "You have lost!",
+   "drew": "Game endes in draw!",
+   "coins": {
+    "won": "You have been given {coins} for winning",
+    "lose": "You have been charged {coins} for losing!",
+    "draw": "Nothing Happened to your coins as the match drew!"
+   }
   }
  }
 }
