@@ -113,7 +113,7 @@ from plugin.games import SinglePlayer
 class Game_2048(SinglePlayer):
   def __init__(self, size: int = 4, *args):
     super().__init__(*args, timeout=300)
-    self.logic = Logic_2048(size)
+    self.logic, self.lost = Logic_2048(size), False
     self.add_item(discord.ui.Button(label="\u200b", disabled=True))
     self.add_button_event(Emote.ARROW_UP, self.player, self.on_up,)
     self.add_item(discord.ui.Button(label="\u200b", disabled=True))
@@ -128,11 +128,11 @@ class Game_2048(SinglePlayer):
   async def on_left(self,i): self.logic.MoveLeft(); await self.update(i)
   async def on_down(self,i): self.logic.MoveDown(); await self.update(i)
   async def on_right(self,i): self.logic.MoveRight(); await self.update(i)
-  async def on_quit(self,i): await self.update(i)
+  async def on_quit(self,i): self.lost=True; await self.update(i)
 
   async def get_board(self):
     e=discord.Embed(description=self.logic.number_to_emoji())
-    if 0 not in self.logic.board:
+    if self.lost or (0 not in self.logic.board):
       lang=(await self.get_lang()).plugins.games
       e.add_field(name="Status", field=f"```\n{lang.lost}```")
       for c in self.children: c.disabled=True
