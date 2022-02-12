@@ -123,6 +123,7 @@ class TicTacToe_Base:
     if self.current_player==self.X: self.current_player=self.O
     elif self.current_player==self.O: self.current_player=self.X
 
+  async def interaction_check(self): return True
 
 class TicTacToe(TicTacToe_Base, MultiPlayer):
   def __init__(self, msg, XN, ON):
@@ -231,4 +232,3 @@ class TicTacToe_Ai(TicTacToe_Base, AiPlayer):
     button.label = "O"
     button.disabled = True
     button.style = discord.ButtonStyle.success
-
