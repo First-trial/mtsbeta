@@ -179,10 +179,9 @@ class Blackjack(AiPlayer):
   def __init__(self,msg,pid,coins=None):
     super().__init__(msg, pid, timeout=30.0)
     self.blackjack = Blackjack_Logic()
-    self.players[-1].name = "dealer"
     self.player_ = Player(pid)
     self.game_drew=False
-    self.player_.id = int(self.player.name)
+    self.player_.id = pid
     self.add_button_event(Emote.ALPHABET.h, self.player.id, self.on_hit, label="Hit")
     self.add_button_event(Emote.ALPHABET.s, self.player.id, self.on_stand, label="Stand")
     if self.blackjack.can_split():
