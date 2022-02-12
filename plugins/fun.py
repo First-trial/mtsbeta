@@ -32,9 +32,13 @@ class Fun(Cog):
       await self.bot.economy.take_money("wallet", ctx.author.id, coins)
 
   @play.subcommand(name="blackjack", description="Play blackjack with me!")
-  async def play_blackjack(self,ctx):
+  async def play_blackjack(self,ctx, coins: coins_opt = -1):
+    if coins:
+      try:
+        if await self.transact(ctx,coins): return
+      except: return
     msg = await ctx.send((await ctx.get_lang()).plugins.fun.starting)
-    game = Blackjack(msg, str(ctx.author.id))
+    game = Blackjack(msg, ctx.author.id, coins=coins)
     await game.start()
 
   @play.subcommand(name="tic-tac-toe", description="play tic-tac-toe with me or somebody")
