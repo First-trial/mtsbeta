@@ -150,7 +150,7 @@ class GameState(enum.IntEnum):
 class TicTacToe_Ai(TicTacToe_Base, AiPlayer):
   def __init__(self, msg, player):
     super().__init__(msg,Player(f"<@!{player}>"), timeout=30.0)
-    self.x,self.o = self.players
+    self.x,self.o = self.players[0],Player("ai",ai=True)
     self.current_player = self.X
 
     self.board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
