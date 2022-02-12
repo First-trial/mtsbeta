@@ -10,8 +10,8 @@ class Logic_2048:
     self.board = [[0 for _ in range(size)] for _ in range(size)]
     self.size = size
     _={}
-    for i in [2,4,8,16,32,64,256,512,1024,2048,4096]:_[str(i)]=getattr(Emote,"2048_"+str(i))
-    _["0"]=Emote.2048_empty
+    for i in [2,4,8,16,32,64,256,512,1024,2048,4096]:_[str(i)]=getattr(Emote,"_2048_"+str(i))
+    _["0"]=Emote._2048_empty
     self._conversion = _
     self.board[random.randrange(4)][random.randrange(4)] = 2
     self.board[random.randrange(4)][random.randrange(4)] = 2
