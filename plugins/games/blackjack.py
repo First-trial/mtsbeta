@@ -171,22 +171,24 @@ class Blackjack_Logic:
 
 
 from config import Emote
+from models import balance
 from plugins.games import AiPlayer, Player
 
 
 class Blackjack(AiPlayer):
-  def __init__(self,msg,pid):
-    super().__init__(msg, Player(pid), timeout=30.0)
+  def __init__(self,msg,pid,coins=None):
+    super().__init__(msg, pid, timeout=30.0)
     self.blackjack = Blackjack_Logic()
     self.players[-1].name = "dealer"
-    self.player, self.ai = self.players
+    self.player_ = Player(pid)
     self.game_drew=False
-    self.player.id = int(self.player.name)
+    self.player_.id = int(self.player.name)
     self.add_button_event(Emote.ALPHABET.h, self.player.id, self.on_hit, label="Hit")
     self.add_button_event(Emote.ALPHABET.s, self.player.id, self.on_stand, label="Stand")
     if self.blackjack.can_split():
       self.add_button_event(Emote.SPLIT, self.player.id, self.on_split, label="Split")
     self.add_button_event(Emote.QUIT, self.player.id, self.on_quit, label="End")
+    self.bet = coins
 
   async def on_hit(self, interaction):
     if len(self.blackjack.player_hands) == 2:
@@ -205,14 +207,9 @@ class Blackjack(AiPlayer):
     self.stand()
     await self.update(interaction)
 
-  async def interaction_check(self, interaction):
-    if interaction.user.id==int(self.player.name): return True
-    if not interaction.response.is_done(): await interaction.response.send_message("You aren't authorised to use this menu!", ephemeral=True)
-    return False
-
   async def on_quit(self, interaction):
     self.end_game()
-    self.player.lose()
+    self.player_.lose()
     await self.update(interaction)
 
   async def on_split(self, inter):
@@ -245,14 +242,27 @@ class Blackjack(AiPlayer):
         content += f"   {card.__str__()}\n"
 
     content += "\n"
+    lang=(await self.get_lang()).plugins.games
 
     if self.game_drew:
-      content += "Game ended in draw!\n"
-    elif self.player.won:
-      content += "You have won!\n"
-    elif self.player.lost:
-      content += "You have lost!\n"
+      content += lang.drew
+    elif self.player_.won:
+      content += lang.won
+    elif self.player_.lost:
+      content += lang.lost
+    content+="\n"
+    if self.bet:
+      u=balance.get(uid=self.player)
 
+      if self.won:
+        content+=lang.coins.won.format(coins=self.bet)
+        await u.update(hand=(await u).hand+(self.bet*2))
+      elif self.lost:
+        content+=lang.coins.lose.format(coins=self.bet)
+      elif self.game_drew:
+        content+=lang.coins.draw
+        await u.update(hand=(await u).hand+self.bet)
+        
     content += "```"
     return content
 
@@ -261,8 +271,8 @@ class Blackjack(AiPlayer):
     if self.blackjack.has_ended_in_draw():
       self.game_drew=True;self.end_game()
     elif self.blackjack.has_player_won():
-      self.player.win();self.end_game()
+      self.player_.win();self.end_game()
     elif self.blackjack.is_player_busted():
-      self.player.lose();self.end_game()
+      self.player_.lose();self.end_game()
 
   async def start_game(self): await self.msg.edit(content=await self.get_board())
