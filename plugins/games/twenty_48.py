@@ -104,3 +104,43 @@ class Logic_2048:
       GameString += "".join(row) + "\n"
 
     return GameString
+
+# Game
+
+from plugin.games import SinglePlayer
+
+
+class Game_2048(SinglePlayer):
+  def __init__(self, size: int = 4, *args):
+    super().__init__(*args, timeout=300)
+    self.logic = Logic_2048(size)
+    self.add_item(discord.ui.Button(label="\u200b", disabled=True))
+    self.add_button_event(Emote.ARROW_UP, self.player, self.on_up,)
+    self.add_item(discord.ui.Button(label="\u200b", disabled=True))
+    self.add_button_event(Emote.ARROW_LEFT, self.player, self.on_left)
+    self.add_button_event(Emote.STOP, self.player, self.on_quit,)
+    self.add_button_event(Emote.ARROW_RIGHT, self.player, self.on_right)
+    self.add_item(discord.ui.Button(label="\u200b", disabled=True))
+    self.add_button_event(Emote.ARROW_DOWN, self.player, self.on_down)
+    self.add_item(discord.ui.Button(label="\u200b", disabled=True))
+
+  async def on_up(self,i): self.logic.MoveUp(); await self.update(i)
+  async def on_left(self,i): self.logic.MoveLeft(); await self.update(i)
+  async def on_down(self,i): self.logic.MoveDown(); await self.update(i)
+  async def on_right(self,i): self.logic.MoveRight(); await self.update(i)
+  async def on_quit(self,i): await self.update(i)
+
+  async def get_board(self):
+    e=discord.Embed(description=self.logic.number_to_emoji())
+    if 0 not in self.logic.board:
+      lang=(await self.get_lang()).plugins.games
+      e.add_field(name="Status", field=f"```\n{lang.lost}```")
+      for c in self.children: c.disabled=True
+      self.stop()
+    return e
+
+  async def start_game(self):
+    await self.msg.edit(embed=discord.Embed(description=self.logic.number_to_emoji()))
+
+  async def update(self, inter):
+    await interaction.response.edit_message(embed=await self.get_board(),view=self)
