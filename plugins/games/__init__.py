@@ -156,12 +156,12 @@ class SinglePlayer(Game):
     if lang: return languages.get(lang.language) or languages.english
     return languages.english
 
-class AiPlayer(Game):
-  def __init__(self, msg, player: Player, timeout=30.0):
-    super().__init__(msg, player, Player(ai=True), timeout=timeout)
 
 class MultiPlayer(Game): pass
+class AiPlayer(SinglePlayer, MultiPlayer): pass
 
+# SinglePlayer cuz people will play alone
+# MultiPlayer cus an ai is also there
 
 # Utils
 
