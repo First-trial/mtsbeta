@@ -106,8 +106,9 @@ class Logic_2048:
     return GameString
 
 # Game
+import discord
 
-from plugin.games import SinglePlayer
+from plugins.games import SinglePlayer
 
 
 class Game_2048(SinglePlayer):
@@ -117,12 +118,12 @@ class Game_2048(SinglePlayer):
     self.add_item(discord.ui.Button(label="\u200b", disabled=True))
     self.add_button_event(Emote.ARROW_UP, self.player, self.on_up,)
     self.add_item(discord.ui.Button(label="\u200b", disabled=True))
-    self.add_button_event(Emote.ARROW_LEFT, self.player, self.on_left)
-    self.add_button_event(Emote.STOP, self.player, self.on_quit,)
-    self.add_button_event(Emote.ARROW_RIGHT, self.player, self.on_right)
-    self.add_item(discord.ui.Button(label="\u200b", disabled=True))
-    self.add_button_event(Emote.ARROW_DOWN, self.player, self.on_down)
-    self.add_item(discord.ui.Button(label="\u200b", disabled=True))
+    self.add_button_event(Emote.ARROW_LEFT, self.player, self.on_left,row=2)
+    self.add_button_event(Emote.STOP, self.player, self.on_quit,row=2)
+    self.add_button_event(Emote.ARROW_RIGHT, self.player, self.on_right,row=2)
+    self.add_item(discord.ui.Button(label="\u200b", disabled=True,row=3))
+    self.add_button_event(Emote.ARROW_DOWN, self.player, self.on_down,row=3)
+    self.add_item(discord.ui.Button(label="\u200b", disabled=True,row=3))
 
   async def on_up(self,i): self.logic.MoveUp(); await self.update(i)
   async def on_left(self,i): self.logic.MoveLeft(); await self.update(i)
@@ -132,9 +133,9 @@ class Game_2048(SinglePlayer):
 
   async def get_board(self):
     e=discord.Embed(description=self.logic.number_to_emoji())
-    if self.lost or (0 not in self.logic.board):
+    if self.lost or all([(0 not in i) for i in self.logic.board]):
       lang=(await self.get_lang()).plugins.games
-      e.add_field(name="Status", field=f"```\n{lang.lost}```")
+      e.add_field(name="Status", value=f"```\n{lang.lost}```")
       for c in self.children: c.disabled=True
       self.stop()
     return e
@@ -142,5 +143,5 @@ class Game_2048(SinglePlayer):
   async def start_game(self):
     await self.msg.edit(embed=discord.Embed(description=self.logic.number_to_emoji()))
 
-  async def update(self, inter):
+  async def update(self, interaction):
     await interaction.response.edit_message(embed=await self.get_board(),view=self)

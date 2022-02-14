@@ -43,12 +43,12 @@ def _emote():
       cls = super().__new__(meta, clsname, bases, cls_attrs)
       for emoji in attributes["emojis"]:
         n = list(emoji.values())[0]
-        full = "<{name}:{id}>".format(
+        full = "<:{name}:{id}>".format(
           name="{a}"+n["name"],
           id=str(n["id"])
         )
         full=full.format(
-          a=("a:" if n["animated"] else "")
+          a=("a" if n["animated"] else "")
         )
         r_emoji = Emoji(full)
         r_emoji.full = full
