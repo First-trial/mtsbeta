@@ -112,6 +112,7 @@ class Logic_2048:
     return GameString
 
 # Game
+
 import discord
 
 from plugins.games import SinglePlayer
@@ -138,7 +139,7 @@ class Game_2048(SinglePlayer):
   async def on_quit(self,i): self.lost=True; await self.update(i)
 
   async def get_board(self):
-    e=discord.Embed(description=self.logic.number_to_emoji())
+    e=discord.Embed(description=self.logic.number_to_emoji(),color=0x00ffff)
     if self.lost:
       lang=(await self.get_lang()).plugins.games
       e.add_field(name="Result", value=f"```\n{lang.lost}```")
@@ -147,7 +148,7 @@ class Game_2048(SinglePlayer):
     return e
 
   async def start_game(self):
-    await self.msg.edit(embed=discord.Embed(description=self.logic.number_to_emoji()))
+    await self.msg.edit(content=None,embed=discord.Embed(description=self.logic.number_to_emoji(),color=0x00ffff))
 
   async def update(self, interaction):
     await interaction.response.edit_message(embed=await self.get_board(),view=self)
