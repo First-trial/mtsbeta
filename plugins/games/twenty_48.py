@@ -104,7 +104,7 @@ class Logic_2048:
     board[i][j] = 2
     self.has_empty = True
 
-    if [i for i in self.board if 0 not in i]:
+    if all([0 not in i for i in self.board]):
       self.has_empty = False
 
   def number_to_emoji(self):
@@ -121,7 +121,7 @@ class Logic_2048:
       return
 
     board = [[b for b in i] for i in self.board]
-    restore = lambda: setattr(self,"board",boarf)
+    restore = lambda: setattr(self,"board",board)
 
     self.MoveUp()
     if self.board != board: return restore()
