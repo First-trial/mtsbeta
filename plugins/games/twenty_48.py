@@ -6,7 +6,8 @@ from config import Emote
 
 
 class Logic_2048:
-  def __init__(self, size: int = 4):
+  def __init__(self, size: int = 4, par = None):
+    assert par is not None
     self.board = [[0 for _ in range(size)] for _ in range(size)]
     self.size = size
     _={}
@@ -15,6 +16,7 @@ class Logic_2048:
     self._conversion = _
     self.board[random.randrange(4)][random.randrange(4)] = 2
     self.board[random.randrange(4)][random.randrange(4)] = 2
+    self.par = par
 
   def reverse(self, board):
     new_board = []
@@ -57,6 +59,7 @@ class Logic_2048:
     stage = self.merge(stage)
     stage = self.compress(stage)
     self.board = stage
+    if not self.spawn_new(): self.par.lost = True
 
   def MoveRight(self):
     stage = self.reverse(self.board)
@@ -65,6 +68,7 @@ class Logic_2048:
     stage = self.compress(stage)
     stage = self.reverse(stage)
     self.board = stage
+    if not self.spawn_new(): self.par.lost = True
 
   def MoveUp(self):
     stage = self.transp(self.board)
@@ -73,6 +77,7 @@ class Logic_2048:
     stage = self.compress(stage)
     stage = self.transp(stage)
     self.board = stage
+    if not self.spawn_new(): self.par.lost = True
 
   def MoveDown(self):
     stage = self.transp(self.board)
@@ -83,6 +88,7 @@ class Logic_2048:
     stage = self.reverse(stage)
     stage = self.transp(stage)
     self.board = stage
+    if not self.spawn_new(): self.par.lost = True
 
   def spawn_new(self):
     board = self.board
@@ -114,7 +120,7 @@ from plugins.games import SinglePlayer
 class Game_2048(SinglePlayer):
   def __init__(self, size: int = 4, *args):
     super().__init__(*args, timeout=300)
-    self.logic, self.lost = Logic_2048(size), False
+    self.logic, self.lost = Logic_2048(size, self), False
     self.add_item(discord.ui.Button(label="\u200b", disabled=True))
     self.add_button_event(Emote.ARROW_UP, self.player, self.on_up,)
     self.add_item(discord.ui.Button(label="\u200b", disabled=True))
@@ -133,9 +139,9 @@ class Game_2048(SinglePlayer):
 
   async def get_board(self):
     e=discord.Embed(description=self.logic.number_to_emoji())
-    if self.lost or all([(0 not in i) for i in self.logic.board]):
+    if self.lost:
       lang=(await self.get_lang()).plugins.games
-      e.add_field(name="Status", value=f"```\n{lang.lost}```")
+      e.add_field(name="Result", value=f"```\n{lang.lost}```")
       for c in self.children: c.disabled=True
       self.stop()
     return e
