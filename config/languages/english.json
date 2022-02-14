@@ -110,6 +110,9 @@
    "hangman": {
     "word": "Word: {word}",
     "word_was": "You word was: {word}"
+   },
+   "_2048": {
+    "value_err": "The size should neither be less than `4` and nor more than `10`"
    }
   }
  }
