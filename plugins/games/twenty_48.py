@@ -14,6 +14,7 @@ class Logic_2048:
     for i in [2,4,8,16,32,64,128,256,512,1024,2048,4096]:_[str(i)]=getattr(Emote,"_2048_"+str(i))
     _["0"]=Emote._2048_empty
     self._conversion = _
+    self.has_empty = True
     self.board[random.randrange(4)][random.randrange(4)] = 2
     self.board[random.randrange(4)][random.randrange(4)] = 2
     self.par = par
@@ -59,7 +60,7 @@ class Logic_2048:
     stage = self.merge(stage)
     stage = self.compress(stage)
     self.board = stage
-    if not self.spawn_new(): self.par.lost = True
+    self.spawn_new()
 
   def MoveRight(self):
     stage = self.reverse(self.board)
@@ -68,7 +69,7 @@ class Logic_2048:
     stage = self.compress(stage)
     stage = self.reverse(stage)
     self.board = stage
-    if not self.spawn_new(): self.par.lost = True
+    self.spawn_new()
 
   def MoveUp(self):
     stage = self.transp(self.board)
@@ -77,7 +78,7 @@ class Logic_2048:
     stage = self.compress(stage)
     stage = self.transp(stage)
     self.board = stage
-    if not self.spawn_new(): self.par.lost = True
+    self.spawn_new()
 
   def MoveDown(self):
     stage = self.transp(self.board)
@@ -88,7 +89,7 @@ class Logic_2048:
     stage = self.reverse(stage)
     stage = self.transp(stage)
     self.board = stage
-    if not self.spawn_new(): self.par.lost = True
+    self.spawn_new()
 
   def spawn_new(self):
     board = self.board
@@ -96,11 +97,15 @@ class Logic_2048:
       (j, i) for j, sub in enumerate(board) for i, el in enumerate(sub) if el == 0
     ]
     if not zeroes:
-      return False
+      self.has_empty = False
+      return
 
     i, j = random.choice(zeroes)
     board[i][j] = 2
-    return True
+    self.has_empty = True
+
+    if [i for i in self.board if 0 not in i]:
+      self.has_empty = False
 
   def number_to_emoji(self):
     board = self.board
@@ -110,6 +115,23 @@ class Logic_2048:
       GameString += "".join(row) + "\n"
 
     return GameString
+
+  def process(self):
+    if self.has_empty:
+      return
+
+    board = [[b for b in i] for i in self.board]
+    restore = lambda: setattr(self,"board",boarf)
+
+    self.MoveUp()
+    if self.board != board: return restore()
+    self.MoveDown()
+    if self.board != board: return restore()
+    self.MoveLeft()
+    if self.board != board: return restore()
+    self.MoveRight()
+    if self.board != board: return restore()
+    self.par.lost = True
 
 # Game
 
@@ -132,10 +154,10 @@ class Game_2048(SinglePlayer):
     self.add_button_event(Emote.ARROW_DOWN, self.player, self.on_down,row=3)
     self.add_item(discord.ui.Button(label="\u200b", disabled=True,row=3))
 
-  async def on_up(self,i): self.logic.MoveUp(); await self.update(i)
-  async def on_left(self,i): self.logic.MoveLeft(); await self.update(i)
-  async def on_down(self,i): self.logic.MoveDown(); await self.update(i)
-  async def on_right(self,i): self.logic.MoveRight(); await self.update(i)
+  async def on_up(self,i): self.logic.MoveUp(); self.logic.process(); await self.update(i)
+  async def on_left(self,i): self.logic.MoveLeft(); self.logic.process(); await self.update(i)
+  async def on_down(self,i): self.logic.MoveDown(); self.logic.process(); await self.update(i)
+  async def on_right(self,i): self.logic.MoveRight(); self.logic.process(); await self.update(i)
   async def on_quit(self,i): self.lost=True; await self.update(i)
 
   async def get_board(self):
@@ -151,4 +173,7 @@ class Game_2048(SinglePlayer):
     await self.msg.edit(content=None,embed=discord.Embed(description=self.logic.number_to_emoji(),color=0x00ffff))
 
   async def update(self, interaction):
-    await interaction.response.edit_message(embed=await self.get_board(),view=self)
+    b=await self.get_board()
+    try:
+      await interaction.response.edit_message(embed=b,view=self)
+    except: await self.msg.edit(embed=b,view=self)
