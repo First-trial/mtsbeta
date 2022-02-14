@@ -72,7 +72,7 @@ class Fun(Cog):
 
   @play.subcommand(name="2048", description="Play the game of 2048")
   async def play_2048(ctx, size: int = 4):
-    if size<4 or size>10: return await ctx.send(((await ctx.get_lang()).plugins.games._2048.value_err, ephemeral=True)
+    if size<4 or size>10: return await ctx.send((await ctx.get_lang()).plugins.games._2048.value_err, ephemeral=True)
 
     msg = await ctx.send((await ctx.get_lang()).plugins.fun.starting)
     game = Game_2048(size, msg, ctx.author.id)
