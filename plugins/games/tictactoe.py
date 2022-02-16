@@ -232,4 +232,4 @@ class TicTacToe_Ai(TicTacToe_Base, AiPlayer):
     button.disabled = True
     button.style = discord.ButtonStyle.success
 
-  async def interaction_check(self): return True
+  async def interaction_check(self, _): return True
