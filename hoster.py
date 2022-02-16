@@ -9,7 +9,7 @@ def index():
   return "Mts Bot is Hosted!"
 
 def host_site():
-  site.run("0.0.0.0", 8080)
+  site.run("0.0.0.0", 8080, debug=True)
 
 def host_on_replit(obj, func_name, extra_works: list = None, *args, **kwargs):
   for work in extra_works:
