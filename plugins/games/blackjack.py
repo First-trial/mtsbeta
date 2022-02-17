@@ -182,11 +182,11 @@ class Blackjack(AiPlayer):
     self.player_ = Player(pid)
     self.game_drew=False
     self.player_.id = pid
-    self.add_button_event(Emote.ALPHABET.h, self.player.id, self.on_hit, label="Hit")
-    self.add_button_event(Emote.ALPHABET.s, self.player.id, self.on_stand, label="Stand")
+    self.add_button_event(Emote.ALPHABET.h, self.player, self.on_hit, label="Hit")
+    self.add_button_event(Emote.ALPHABET.s, self.player, self.on_stand, label="Stand")
     if self.blackjack.can_split():
-      self.add_button_event(Emote.SPLIT, self.player.id, self.on_split, label="Split")
-    self.add_button_event(Emote.QUIT, self.player.id, self.on_quit, label="End")
+      self.add_button_event(Emote.SPLIT, self.player, self.on_split, label="Split")
+    self.add_button_event(Emote.QUIT, self.player, self.on_quit, label="End")
     self.bet = coins
 
   async def on_hit(self, interaction):
