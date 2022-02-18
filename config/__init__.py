@@ -36,9 +36,9 @@ DISCORD_GUILD_ID  = 731072681688039444
 ERROR_LOG_CHANNEL = 864372513198178304
 TESTING_GUILD_IDS = [821599275929567232, 803824283897823253]
 
-OWNER_ID = "" # will self-generate if not given
+OWNER_ID = 730454267533459568 # will self-generate if not given
 AUTHOR_ID = OWNER_ID # mass developer
-AUTHOR_IDS = [] # all developers
+AUTHOR_IDS = [730454267533459568] # all developers
 BOT_ID = "" # will self-generate
 BOT_INVITE_URL = "" # will self-generate if not given
 
