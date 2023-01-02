@@ -1,0 +1,4 @@
+{
+  "main": "bot.rist",
+  "dirs": ["plugins","plugins/utils"]
+}

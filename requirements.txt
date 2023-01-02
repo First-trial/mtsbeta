@@ -1,7 +1,8 @@
 git+https://github.com/Rapptz/discord.py@45d498c1b76deaf3b394d17ccf56112fa691d160
 git+https://github.com/Rishiraj0100/discoutils.git
 dpy-appcommands
-git+https://github.com/RistPy/PyRist
+RistLang==1.1.0
 git+https://github.com/Rishiraj0100/shell-reader
 pytz
 PyNaCl
+akinator.py

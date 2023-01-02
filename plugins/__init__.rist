@@ -1,0 +1,27 @@
+@+ os
+
+
+class Plugin{object}:
+  __slots__ = {"bot","name"}
+  __init__${self, name, bot = None}:
+    self.bot  = bot
+    self.name = name[:-3]
+    super{}.__init__{}
+
+  __repr__ = $la self: self.name
+  __str__  = $la self: self.name
+  
+  load${self, bot=None}:
+    if not self.bot and not bot: raise RuntimeError
+    if bot: self.bot = bot
+
+    self.bot.load_extension{self.full_name}
+
+  @property
+  full_name${self}:
+    return self.__class__.__module__ + "." + self.name
+    
+all${bot=None}:
+  for filename in os.listdir{"plugins"}:
+    if filename.endswith{".py"} and open{"plugins/"+filename, "r"}.read{}.splitlines{}[0] == "# plugin: loadable: True":
+      yield Plugin{filename, bot}
