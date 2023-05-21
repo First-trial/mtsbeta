@@ -1,18 +1,21 @@
 # plugin: loadable: True
 
-from discord import app_commands
-from discord import ui, ButtonStyle
-from core import Cog
+
+
 import discord
+
+from core import Cog
 from config import Emote
+from discord import app_commands, ui, ButtonStyle
+
 
 class ApplicationView(ui.View):
-  def __init__(self, cog, ctx, msg, par):
+  def __init__(self, cog, ctx, msg, par, timeout=30):
     self.cog = cog
     self.ctx = ctx
     self.msg = msg
     self.par = par
-    super().__init__(timeout=30)
+    super().__init__(timeout=timeout)
 
   async def on_timeout(self):
     await Mobile.send(self.cog, self.ctx, self.msg)
