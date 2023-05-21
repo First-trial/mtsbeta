@@ -3,6 +3,8 @@ import random
 
 from models import UserLanguage
 from config import languages
+from plugins.mobile import ApplicationView
+
 
 class GameButton(discord.ui.Button):
   def __init__(self,user,emoji,**kwargs):
@@ -28,14 +30,13 @@ class Page:
     meth = (self.msg.edit if not inter else inter.response.edit_message)
     await meth(view=self.par)
 
-class Game(discord.ui.View):
-  def __init__(self, message, *players, timeout=15.0):
+class Game(ApplicationView):
+  def __init__(self, *args, players, timeout=15.0):
     self.running = False
     self.players = players
     self._childs = []
-    self.msg = message
     self.pages = []
-    super().__init__(timeout=timeout)
+    super().__init__(*args, timeout=timeout, add_back_button=False)
 
   events = {}
 
@@ -47,7 +48,7 @@ class Game(discord.ui.View):
   def add_event(self, emoji, user, handler, *args):
     self.__class__.events[(self.msg.id, emoji, user)] = (handler, args)
 
-  def add_button(self, emoji,user,page=None,**kwargs):
+  def add_button(self, emoji, user, page=None, **kwargs):
     if not page: meth = self.add_item
     else: meth = page.cont.append
     meth(GameButton(user,emoji=emoji,**kwargs))
@@ -57,21 +58,17 @@ class Game(discord.ui.View):
     self.add_event(emoji,user,handler,*args)
 
   @classmethod
-  async def dispatch(cls, payload,emoji):
+  async def dispatch(cls, payload, emoji):
     container = (payload.message.id, emoji, payload.user.id)
     if container in cls.events.keys():
       (handler, args) = cls.events[container]
       await handler(*args, payload)
 
-  async def update(self, interaction):
+  async def update(self, ctx):
     brd = (await self.get_board()) or self.msg.content
-    await interaction.response.edit_message(content=brd,view=self)
+    await ctx.respond(content=brd, edit=True, view=self)
 
   async def get_board(): return ""
-
-  async def on_timeout(self):
-    self.end_game()
-    await self.msg.edit(view=self)
 
   async def start(self):
     self.running = True
@@ -135,9 +132,9 @@ class Player:
 
 
 class SinglePlayer(Game):
-  def __init__(self, m, p, timeout=30.0):
-    super().__init__(m, Player(p), timeout=timeout)
-    self.player = p
+  def __init__(self, *args, player, timeout=30.0):
+    super().__init__(*args[:4], player=[Player(player)], timeout=timeout)
+    self.player = player
     self.won = False
     self.lost = False
     self.drew = False
@@ -146,9 +143,9 @@ class SinglePlayer(Game):
   def lose(self): self.end_game();self.lost=True;self.players[0].lose()
   def draw(self): self.end_game();self.drew=True
 
-  async def interaction_check(self, interaction):
-    if interaction.user.id==self.player: return True
-    if not interaction.response.is_done(): await interaction.response.send_message("You aren't authorised to use this menu!", ephemeral=True)
+  async def interaction_check(self, ctx):
+    if ctx.user.id==self.player: return True
+    if not ctx.response.is_done(): await ctx.send("You aren't authorised to use this menu!", ephemeral=True)
     return False
 
   async def get_lang(self):
@@ -160,8 +157,6 @@ class SinglePlayer(Game):
 class MultiPlayer(Game): pass
 class AiPlayer(SinglePlayer, MultiPlayer): pass
 
-# SinglePlayer cuz people will play alone
-# MultiPlayer cus an ai is also there
 
 # Utils
 
