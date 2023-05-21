@@ -12,7 +12,7 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
     self.y = x
 
 
-  async def callback(self, interaction: discord.Interaction):
+  async def callback(self, ctx):
     assert self.view is not None
     view: TicTacToe = self.view
     state = view.board[self.y][self.x]
@@ -23,12 +23,12 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
       gg=view.x if cp==view.X else view.o
     else: gg = view.x
 
-    if f"<@!{interaction.user.id}>" not in (view.x,view.o):
+    if f"<@!{ctx.user.id}>" not in (view.x,view.o):
       c="You aren't playing in this match!"
-    elif f"<@!{interaction.user.id}>" != gg:
+    elif f"<@!{ctx.user.id}>" != gg:
       c="It's not your turn."
     if c:
-      return await interaction.response.send_message(c, ephemeral=True)
+      return await ctx.send(c, ephemeral=True)
     if state in (view.X, view.O):
       return
 
@@ -49,14 +49,15 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
       content = "It's {X}\u200b's turn now!"
 
     if is_ai_playing:
-      await interaction.response.edit_message(
+      await ctx.respond(
+        edit=True,
         content="Processing...",
         view=CopyView(view, disable=True)
       )
       view.process_turn()
-      respond = interaction.edit_original_response
-    else: view.switch_player(); respond = interaction.response.edit_message
-
+      respond = ctx.edit
+    else: view.switch_player();respond = ctx.response.edit_message
+      
     winner = view.check_board_winner()
     if winner is not None:
       if winner == view.X:
@@ -124,9 +125,9 @@ class TicTacToe_Base:
     elif self.current_player==self.O: self.current_player=self.X
 
 class TicTacToe(TicTacToe_Base, MultiPlayer):
-  def __init__(self, msg, XN, ON):
+  def __init__(self, *args, XN, ON):
     x,o = Player(f"<@!{XN}>"), Player(f"<@!{ON}>")
-    super().__init__(msg, x, o, timeout=30.0)
+    super().__init__(*args, players=[x, p], timeout=30.0)
     self.current_player = self.X
 
     self.x = x
@@ -138,7 +139,7 @@ class TicTacToe(TicTacToe_Base, MultiPlayer):
       for y in range(3):
         self.add_item(TicTacToeButton(x, y))
 
-  async def interaction_check(self): return True
+  async def interaction_check(self, ctx): return True
 
 # Ai
 
@@ -148,8 +149,8 @@ class GameState(enum.IntEnum):
     ai = +1
 
 class TicTacToe_Ai(TicTacToe_Base, AiPlayer):
-  def __init__(self, msg, player):
-    super().__init__(msg,Player(f"<@!{player}>"), timeout=30.0)
+  def __init__(self, *args, player):
+    super().__init__(*args, Player(f"<@!{player}>"), timeout=30.0)
     self.x,self.o = self.players[0],Player("ai",ai=True)
     self.current_player = self.X
 
