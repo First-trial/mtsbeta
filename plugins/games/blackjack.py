@@ -57,7 +57,7 @@ class Card:
     return suits_[self.suit] + " " + str(values_[self.rank])
 
 
-class Deck():
+class Deck:
   def __init__(self):
     self.deck = []
     for suit in suits:
@@ -176,8 +176,8 @@ from plugins.games import AiPlayer, Player
 
 
 class Blackjack(AiPlayer):
-  def __init__(self,msg,pid,coins=None):
-    super().__init__(msg, pid, timeout=30.0)
+  def __init__(self,*args, pid,coins=None):
+    super().__init__(*args, pid, timeout=30.0)
     self.blackjack = Blackjack_Logic()
     self.player_ = Player(pid)
     self.game_drew=False
@@ -189,7 +189,7 @@ class Blackjack(AiPlayer):
     self.add_button_event(Emote.QUIT, self.player, self.on_quit, label="End")
     self.bet = coins
 
-  async def on_hit(self, interaction):
+  async def on_hit(self, ctx):
     if len(self.blackjack.player_hands) == 2:
       if max(self.blackjack.player_hands[0].get_value()) > 21:
         self.blackjack.hit(hand=1)
@@ -200,16 +200,16 @@ class Blackjack(AiPlayer):
 
     if self.children[-2].label == "Split": self.remove_item(self.children[-2])
     if self.blackjack.is_player_busted(): self.stand()
-    await self.update(interaction)
+    await self.update(ctx)
 
-  async def on_stand(self, interaction):
+  async def on_stand(self, ctx):
     self.stand()
-    await self.update(interaction)
+    await self.update(ctx)
 
-  async def on_quit(self, interaction):
+  async def on_quit(self, ctx):
     self.end_game()
     self.player_.lose()
-    await self.update(interaction)
+    await self.update(ctx)
 
   async def on_split(self, inter):
     self.blackjack.split_hand()
