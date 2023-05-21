@@ -11,11 +11,11 @@ class Plugin{object}:
   __repr__ = $la self: self.name
   __str__  = $la self: self.name
   
-  load${self, bot=None}:
+  $load${self, bot=None}:
     if not self.bot and not bot: raise RuntimeError
     if bot: self.bot = bot
 
-    self.bot.load_extension{self.full_name}
+    ?self.bot.load_extension{self.full_name}
 
   @property
   full_name${self}:

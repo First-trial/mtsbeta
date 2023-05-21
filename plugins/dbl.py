@@ -1,4 +1,4 @@
-# plugin: loadable: True
+# plugin: loadable: False
 
 import aiohttp, appcommands, config
 import discord
@@ -72,5 +72,5 @@ class DBL(core.Cog):
     return await ctx.send(resp.format(user=member.display_name))
 
 
-def setup(bot):
-  bot.add_cog(DBL(bot))
+async def setup(bot):
+  await bot.add_cog(DBL(bot))

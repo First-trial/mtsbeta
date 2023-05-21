@@ -54,7 +54,7 @@ class TicTacToeButton(discord.ui.Button['TicTacToe']):
         view=CopyView(view, disable=True)
       )
       view.process_turn()
-      respond = interaction.edit_original_message
+      respond = interaction.edit_original_response
     else: view.switch_player(); respond = interaction.response.edit_message
 
     winner = view.check_board_winner()

@@ -1,1 +1,1 @@
-from core.models.models import *
+from core.models import *

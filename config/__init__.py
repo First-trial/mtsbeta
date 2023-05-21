@@ -1,19 +1,21 @@
+import os
 from .emotes import Emote
 
 from os import environ as env
 
-
+#env.update()
 top_gg = env.get("top_gg")
 token = env.get("token")
-postgres_database_url = env.get("psql")
-
+# postgres_database_url = env.get("psql")
+db=env.get('TempDb')
 
 from tortoise.backends.base.config_generator import expand_db_url
 
 
 tortoise = {
   "connections": {
-    "default": expand_db_url(postgres_database_url),
+ #   "default": expand_db_url(postgres_database_url),
+    "default": expand_db_url(db)
   },
   "apps": {
     "default": {
@@ -37,8 +39,8 @@ ERROR_LOG_CHANNEL = 864372513198178304
 TESTING_GUILD_IDS = [821599275929567232, 803824283897823253]
 
 OWNER_ID = 730454267533459568 # will self-generate if not given
-AUTHOR_ID = OWNER_ID # mass developer
-AUTHOR_IDS = [730454267533459568] # all developers
+AUTHOR_ID = OWNER_ID # main developer
+AUTHOR_IDS = [730454267533459568, 1109466227140743239] # all developers
 BOT_ID = "" # will self-generate
 BOT_INVITE_URL = "" # will self-generate if not given
 
@@ -49,7 +51,7 @@ async def generate(bot):
 
   if not OWNER_ID:
     change("OWNER_ID",owner)
-  else:
+  elif not AUTHOR_IDS:
     bot.owner_id = OWNER_ID
 
   if not AUTHOR_ID:
@@ -57,7 +59,9 @@ async def generate(bot):
 
   if not AUTHOR_IDS:
     change("AUTHOR_IDS",[owner])
-
+  else:
+    bot.owner_ids = AUTHOR_IDS
+    
   if not BOT_INVITE_URL:
     change(
       "BOT_INVITE_URL",
@@ -69,13 +73,13 @@ async def generate(bot):
 # Jishaku Flags
 
 flags = [
-  "jishaku_no underscore",
-  "jishaku hide",
-  "jishaku retain",
-  "jishaku_force paginator",
-  "jishaku_no_dm traceback",
+  "no underscore",
+  "hide",
+  "retain",
+  "force paginator",
+  "no dm_traceback",
 ]
 
-for flag in flags: env[flag.upper().replace(" ","_")] = "t"
+for flag in flags: env[("jishaku_"+flag).upper().replace(" ","_")] = "t"
 del flags
 

@@ -5,7 +5,7 @@
 +@ discord.ext.commands @+ Cog
 +@ typing @+ List
 +@ plugins.utils.context @+ Context
-@+ appcommands, requests
+@+ requests # , appcommands
 @+ plugins
 
 shards: List[int] = [0, 1, 2, 3, 4, 5]
@@ -18,7 +18,7 @@ class misc{Cog}:
     self.bot.help_command.cog = self
 
 $get_pre${bot: MtsBot, msg}:
-  if msg.author.id == bot.author_id:
+  if msg.author.id in bot.owner_ids:
     if msg.content.startswith{{"Mts ", "mts "}}:
       return {"Mts ", "mts "};
     if bot.get_command{msg.content}:
@@ -40,23 +40,15 @@ bot: MtsBot = MtsBot{
 }
 
 
-@bot.command{aliases=["src"], hidden=True}
-$source${ctx: Context}:
+@bot.hybrid_command{aliases=["src"], hidden=True}
+$source${ctx}:
   """Get the source of mine"""
-  ?ctx.send{
+  ?ctx.reply{
     "I am open source at https://github.com/First-Trial/mtsbeta",
     delete_after=5
   }
 
-@bot.slashcommand{name="source", description="Get the source of mine"}
-$source_${ctx: appcommands.InteractionContext}:
-  ?ctx.send{
-    "I am open source at https://github.com/First-Trial/mtsbeta",
-    ephemeral=True
-  }
 
-
-bot.add_cog{misc{bot}}
 
 $y:
   if requests.get{"https://smartbots.tk/"}.status_code==200: # check whether site's alive or dead
@@ -64,9 +56,13 @@ $y:
 $ex:
   pass
 
-for plugin in plugins.all{bot=bot}:
-  assert isinstance{plugin, plugins.Plugin}
-  plugin.load{}
+$load${}:
+  for plugin in plugins.all{bot=bot}:
+    assert isinstance{plugin, plugins.Plugin}
+    ?plugin.load{}
 
-bot.load_extension{"jishaku"}
-# bot.init{}
+  ?bot.load_extension{"jishaku"}
+  ?bot.add_cog{misc{bot}}
+
+asyncio.get_event_loop{}.run_until_complete{load{}}
+bot.init{}

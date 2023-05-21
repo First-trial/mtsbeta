@@ -30,5 +30,9 @@ del generate
 def get(lang: str):
   return globals().get(lang)
 
-def all():
-  return list(languages.keys())
+def all(direct: bool = False):
+  return list(
+    languages.values()
+  ) if direct else list(
+    languages.keys()
+  )

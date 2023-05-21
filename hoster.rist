@@ -22,7 +22,7 @@ host_on_replit${obj, func_name, extra_works: list = None, *args, **kwargs}:
     w += ")"
     eval{w}
 
-  BackgroundRunner{target=host_site}.start{}
+  # BackgroundRunner{target=host_site}.start{}
   run=getattr{obj, func_name}
   run{*args,**kwargs}
 

@@ -1,4 +1,4 @@
-# plugin: loadable: True
+# plugin: loadable: False
 
 import discord, asyncio
 from discord.ext import commands
@@ -176,7 +176,7 @@ WORKS: List[str] = [
   "memer",
   "farmer",
   "engineer",
-  "ghost"
+  "policeman"
 ]
 
 SHOP: Shop = Shop();i=1
