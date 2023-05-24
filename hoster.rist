@@ -1,3 +1,7 @@
+# Kind of archived file
+
+
+"""
 +@ flask @+ Flask as Site
 +@ threading @+ Thread as BackgroundRunner
 
@@ -10,7 +14,7 @@ index${}:
 
 host_site${}:
   site.run{"0.0.0.0", 8080, debug=True}
-
+"""
 host_on_replit${obj, func_name, extra_works: list = None, *args, **kwargs}:
   for work in extra_works:
     w = work["work"]+"(" + ", ".join{work["args"]}
@@ -27,6 +31,7 @@ host_on_replit${obj, func_name, extra_works: list = None, *args, **kwargs}:
   run{*args,**kwargs}
 
 host${bot, token}:
+  """
   ew = [
     (
       "work": "setattr",
@@ -34,4 +39,5 @@ host${bot, token}:
       "kwargs": <>
     )
   ]
-  host_on_replit{bot, "run", ew, token}
+  """
+  host_on_replit{bot, "run", [], token}
