@@ -1,4 +1,6 @@
-# git clone https://github.com/First-Trial/mtsbeta
-# cp -r mtsbeta/* .
-# rm mtsbeta -rf
+# DBH
+
+git clone https://github.com/First-Trial/mtsbeta
+cp -r mtsbeta/* .
+rm mtsbeta -rf
 bash main.sh
